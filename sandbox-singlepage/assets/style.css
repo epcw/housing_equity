@@ -1,0 +1,70 @@
+body h1, #subheading,.gtitle {
+  font-family: 'Barlow', sans-serif;
+  text-align:center;
+}
+.gtitle {
+  font-size:x-small!important;
+}
+body {
+  margin:0;
+}
+a {
+  text-decoration:none;
+}
+
+/* y axis toggle*/
+#y-toggle {
+position: absolute;
+top: 5px;
+left: 3%;
+text-align: center;
+margin-bottom:5px
+}
+#y-toggle h4 {
+  font-family:Barlow;
+  font-weight:700;
+}
+#yaxis_type {
+  border: 1px double #660066;
+  padding:5px;
+  font-family:Barlow;
+  color:#gray;
+}
+/*END*/
+
+/*data selection dropdown*/
+#data-dropdown {
+float: right;
+    position: absolute;
+    top: 5px;
+    right: 2%;
+    min-width: 300px;
+    font-family:Barlow;
+}
+#data-dropdown h4 {
+  font-weight:700;
+  text-align: center;
+}
+#data-dropdown .Select-control {
+  border: 1px double #606;
+}
+/*END*/
+
+#app_menu {
+	position: absolute;
+	margin-top: -160px;
+	z-index: 9999;
+	color: white;
+	margin-left: 1%;
+	font-size: large;
+	font-family: Barlow,'Open Sans',sans-serif;
+	font-weight: 700;
+	border: 2px solid #ffd140;
+  border-radius: 5px;
+	padding: 5px 15px;
+}
+#app_menu:hover {
+	color: #660066;
+  background-color:#ffd140;
+	border: 2px solid #ffffff;
+}
