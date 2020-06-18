@@ -9,6 +9,11 @@ import json
 import geopandas as gp
 from geopy import distance
 from fa2 import ForceAtlas2
+import matplotlib
+import matplotlib.pyplot as plt
+import sklearn
+from sklearn.cluster import KMeans
+import numpy as np
 
 app = dash.Dash(__name__)
 # Beanstalk looks for application by default, if this isn't set you will get a WSGI error.
@@ -94,6 +99,40 @@ del gdf['TRACT_NUM_y']
 del gdf['GEOID_x']
 del gdf['GEOID_y']
 
+#Kmeans clustering
+Y = df[['GEOID','TWENTY_PCTILE_2010','minority_pop_pct']]
+Y = Y[~Y['minority_pop_pct'].isnull()]
+Y = Y[~Y['TWENTY_PCTILE_2010'].isnull()]
+X = Y[['TWENTY_PCTILE_2010','minority_pop_pct']]
+K = 4
+kmeans = KMeans(n_clusters=K, random_state=0).fit(X)
+Y['labels'] = kmeans.labels_
+c0 = kmeans.cluster_centers_[0]
+c1 = kmeans.cluster_centers_[1]
+c = pd.DataFrame(kmeans.transform(X), columns=['center_{}'.format(i) for i in range(K)])
+for i in range(K):
+    Y['center_{}'.format(i)] = c['center_{}'.format(i)]
+for i in range(K):
+    Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
+#re-merge with df
+df = df.merge(Y, how='left', left_on=['GEOID','minority_pop_pct','TWENTY_PCTILE_2010'], right_on=['GEOID','minority_pop_pct','TWENTY_PCTILE_2010'])
+
+grp0 = df[(df['labels'] == 0)]
+grp0 = grp0[['COUNTY','TRACT_NUM','minority_pop_pct','TWENTY_PCTILE_2010','labels','d']]
+grp0_length = str(grp0.shape)
+grp1 = df[(df['labels'] == 1)]
+grp1 = grp1[['COUNTY','TRACT_NUM','minority_pop_pct','TWENTY_PCTILE_2010','labels','d']]
+grp1_length = str(grp1.shape)
+
+grp2 = df[(df['labels'] == 2)]
+grp2 = grp2[['COUNTY','TRACT_NUM','minority_pop_pct','TWENTY_PCTILE_2010','labels','d']]
+grp2_length = str(grp2.shape)
+
+grp3 = df[(df['labels'] == 3)]
+grp3 = grp3[['COUNTY','TRACT_NUM','minority_pop_pct','TWENTY_PCTILE_2010','labels','d']]
+grp3_length = str(grp3.shape)
+
+#alpha time
 alpha = .5
 gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.distance*10e-04)
 
@@ -271,7 +310,7 @@ for node, adjacencies in enumerate(G.adjacency()):
 for node in G.nodes():
     node_text = df["TRACT_NUM"] + ' - ' + df['minority_pop_pct'].round(2).astype('str') + '%' + ' City: ' + df['CITYNAME']
 
-node_trace.marker.color = df['index__muni']
+node_trace.marker.color = df['labels']
 node_trace.text = node_text
 
 fig = go.Figure(data=[edge_trace, node_trace],
@@ -302,7 +341,7 @@ fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 '''
 
 #generate a table if you want this.  Else just comment out  56 rows because states+territories for this dataset If you really need to style this, can add some classes.
-def generate_table(dataframe, max_rows=100):
+def generate_table(dataframe, max_rows=398):
     return html.Table([
         html.Thead(
             html.Tr([html.Th(col) for col in dataframe.columns])
@@ -324,12 +363,15 @@ def serve_layout():
             dcc.Graph(figure=fig,
                       id='housing_networkx'
                       ),
-            # html.H1('Testing NetworkX Example'),
-            # html.P('Example comparison', className='description'),
-            # dcc.Graph(figure=fig5,
-            #            id='housing_networkx_example'
-            #        ),
-            #generate_table(df)
+             html.H1('Groupings'),
+             html.P('Group 0 - size: ' + str(grp0_length), className='description'),
+            generate_table(grp0),
+            html.P('Group 1 - size: ' + str(grp1_length), className='description'),
+            generate_table(grp1),
+            html.P('Group 2 - size: ' + str(grp2_length), className='description'),
+            generate_table(grp2),
+            html.P('Group 3 - size: ' + str(grp3_length), className='description'),
+            generate_table(grp3)
         ], className='container')
     ], id='sandbox')
 
