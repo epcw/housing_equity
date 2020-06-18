@@ -1,11 +1,11 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+#from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.graph_objects as go
 import networkx as nx
-import json
+#import json
 import geopandas as gp
 from geopy import distance
 from fa2 import ForceAtlas2
@@ -136,7 +136,7 @@ grp3_length = str(grp3.shape)
 alpha = .5
 gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.distance*10e-04)
 
-gdf = gdf[gdf['distance'] < 5000]
+gdf = gdf[gdf['distance'] < 3500]
 
 #create cityname df
 muni_gdf = gp.read_file('data/shapefiles/Municipal_Boundaries/Municipal_Boundaries.shp')

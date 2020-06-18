@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="407d2a06-5db4-4fff-adac-31d0ec76bfbf" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../kmeans_example.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../kmeans_example.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../production" beforeDir="false" afterPath="$PROJECT_DIR$/../production" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sandbox-singlepage.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sandbox-singlepage.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
     </list>
@@ -35,7 +31,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.CommitDialog" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
@@ -111,6 +107,7 @@
       <workItem from="1592332108742" duration="9672000" />
       <workItem from="1592421408296" duration="3967000" />
       <workItem from="1592513584284" duration="2818000" />
+      <workItem from="1592516515776" duration="3442000" />
     </task>
     <servers />
   </component>
@@ -130,25 +127,25 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="1316" y="473" key="CommitChangelistDialog2/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592516421814" />
-    <state width="1342" height="266" key="GridCell.Tab.0.bottom" timestamp="1592516384876">
+    <state width="1342" height="266" key="GridCell.Tab.0.bottom" timestamp="1592520174257">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1342" height="266" key="GridCell.Tab.0.bottom/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592516384876" />
+    <state width="1342" height="266" key="GridCell.Tab.0.bottom/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592520174257" />
     <state width="1342" height="266" key="GridCell.Tab.0.bottom/0.0.2560.1410/-3840.-731.2560.1440@0.0.2560.1410" timestamp="1591767561971" />
-    <state width="1342" height="266" key="GridCell.Tab.0.center" timestamp="1592516384875">
+    <state width="1342" height="266" key="GridCell.Tab.0.center" timestamp="1592520174256">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1342" height="266" key="GridCell.Tab.0.center/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592516384875" />
+    <state width="1342" height="266" key="GridCell.Tab.0.center/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592520174256" />
     <state width="1342" height="266" key="GridCell.Tab.0.center/0.0.2560.1410/-3840.-731.2560.1440@0.0.2560.1410" timestamp="1591767561971" />
-    <state width="1342" height="266" key="GridCell.Tab.0.left" timestamp="1592516384875">
+    <state width="1342" height="266" key="GridCell.Tab.0.left" timestamp="1592520174256">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1342" height="266" key="GridCell.Tab.0.left/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592516384875" />
+    <state width="1342" height="266" key="GridCell.Tab.0.left/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592520174256" />
     <state width="1342" height="266" key="GridCell.Tab.0.left/0.0.2560.1410/-3840.-731.2560.1440@0.0.2560.1410" timestamp="1591767561971" />
-    <state width="1342" height="266" key="GridCell.Tab.0.right" timestamp="1592516384876">
+    <state width="1342" height="266" key="GridCell.Tab.0.right" timestamp="1592520174256">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1342" height="266" key="GridCell.Tab.0.right/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592516384876" />
+    <state width="1342" height="266" key="GridCell.Tab.0.right/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592520174256" />
     <state width="1342" height="266" key="GridCell.Tab.0.right/0.0.2560.1410/-3840.-731.2560.1440@0.0.2560.1410" timestamp="1591767561971" />
     <state width="1342" height="329" key="GridCell.Tab.1.bottom" timestamp="1592348827115">
       <screen x="0" y="0" width="2560" height="1400" />
@@ -166,10 +163,15 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1342" height="329" key="GridCell.Tab.1.right/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592348827115" />
-    <state x="992" y="234" key="SettingsEditor" timestamp="1591220808452">
-      <screen x="0" y="0" width="2560" height="1410" />
+    <state x="992" y="232" key="SettingsEditor" timestamp="1592517662490">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
+    <state x="992" y="232" key="SettingsEditor/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592517662490" />
     <state x="992" y="234" key="SettingsEditor/0.0.2560.1410/-3840.-731.2560.1440@0.0.2560.1410" timestamp="1591220808452" />
+    <state x="1287" y="611" key="Vcs.Push.Dialog.v2" timestamp="1592516540484">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1287" y="611" key="Vcs.Push.Dialog.v2/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592516540484" />
     <state x="1260" y="340" key="com.intellij.ide.util.TipDialog" timestamp="1592513607226">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -181,6 +183,6 @@
     <state x="1147" y="310" key="search.everywhere.popup/0.0.2560.1410/-3840.-731.2560.1440@0.0.2560.1410" timestamp="1591220840378" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/sandbox_singlepage$application.coverage" NAME="application Coverage Results" MODIFIED="1592515920727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/sandbox_singlepage$application.coverage" NAME="application Coverage Results" MODIFIED="1592517737138" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
