@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="407d2a06-5db4-4fff-adac-31d0ec76bfbf" name="Default Changelist" comment="3.5km threshold, commented out unnecessary imports">
-      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../production" beforeDir="false" afterPath="$PROJECT_DIR$/../production" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,6 +114,7 @@
       <workItem from="1592590400875" duration="922000" />
       <workItem from="1592591858897" duration="647000" />
       <workItem from="1592863933396" duration="1298000" />
+      <workItem from="1592865301527" duration="392000" />
     </task>
     <task id="LOCAL-00001" summary="3.5km threshold, commented out unnecessary imports">
       <created>1592520191211</created>
@@ -182,15 +182,15 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1342" height="263" key="GridCell.Tab.1.right/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592521581419" />
-    <state x="992" y="232" key="SettingsEditor" timestamp="1592865231711">
+    <state x="992" y="232" key="SettingsEditor" timestamp="1592865649373">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="992" y="232" key="SettingsEditor/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592865231711" />
+    <state x="992" y="232" key="SettingsEditor/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592865649373" />
     <state x="992" y="234" key="SettingsEditor/0.0.2560.1410/-3840.-731.2560.1440@0.0.2560.1410" timestamp="1591220808452" />
-    <state x="1287" y="611" key="Vcs.Push.Dialog.v2" timestamp="1592520204779">
+    <state x="1287" y="611" key="Vcs.Push.Dialog.v2" timestamp="1592865349671">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="1287" y="611" key="Vcs.Push.Dialog.v2/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592520204779" />
+    <state x="1287" y="611" key="Vcs.Push.Dialog.v2/0.0.2560.1400/-3840.-731.2560.1440@0.0.2560.1400" timestamp="1592865349671" />
     <state x="1260" y="340" key="com.intellij.ide.util.TipDialog" timestamp="1592863933460">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
