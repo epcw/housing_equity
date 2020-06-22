@@ -28,6 +28,15 @@ app.title = "Dashboards | EPCW"
 
 df = data_prep.get_df()
 gdf = data_prep.get_gdf()
+from data_prep import grp0
+from data_prep import grp1
+from data_prep import grp2
+from data_prep import grp3
+
+grp0_length = str(grp0.shape)
+grp1_length = str(grp1.shape)
+grp2_length = str(grp2.shape)
+grp3_length = str(grp3.shape)
 
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
