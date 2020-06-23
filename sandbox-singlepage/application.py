@@ -26,8 +26,8 @@ grid = Template()
 app.index_string = grid
 app.title = "Dashboards | EPCW"
 
-df = data_prep.get_df()
-gdf = data_prep.get_gdf()
+df = data_prep.get_df(subset='wallingford')
+gdf = data_prep.get_gdf(subset='wallingford')
 from data_prep import grp0
 from data_prep import grp1
 from data_prep import grp2
