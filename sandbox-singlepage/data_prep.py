@@ -141,6 +141,26 @@ wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
                      list(wallingford_gdf['GEOID_b'].drop_duplicates())
 wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
 
+gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
+gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
+import itertools
+
+pair_data = {
+    'GEOID_a': list(),
+    'GEOID_b': list()
+}
+
+for ga, gb in itertools.product(gid_a + gid_b, gid_a + gid_b):
+    pair_data['GEOID_a'].append(ga)
+    pair_data['GEOID_b'].append(gb)
+
+pair_df = pd.DataFrame.from_dict(pair_data)
+
+pair_df = pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
+pair_df = pair_df[~pair_df['distance'].isnull()]
+
+wallingford_df = pair_df
+
 # TODO: alpha & omega redef
 
 def get_df(subset='all'):
