@@ -135,15 +135,11 @@ del df['GEOID10']
 del df['TRACTCE10']
 #df = df.rename(columns = {'CITYNAME_y':'CITYNAME'})
 
+import itertools
 
 wallingford_gdf = gdf[(gdf['GEOID_a'] == '53033004600') & (gdf['distance'] < 3500)]
-wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
-                     list(wallingford_gdf['GEOID_b'].drop_duplicates())
-wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
-
 gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
 gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
-import itertools
 
 pair_data = {
     'GEOID_a': list(),
@@ -155,11 +151,15 @@ for ga, gb in itertools.product(gid_a + gid_b, gid_a + gid_b):
     pair_data['GEOID_b'].append(gb)
 
 pair_df = pd.DataFrame.from_dict(pair_data)
-
 pair_df = pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
 pair_df = pair_df[~pair_df['distance'].isnull()]
 
-wallingford_df = pair_df
+wallingford_gdf = pair_df
+wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
+                     list(wallingford_gdf['GEOID_b'].drop_duplicates())
+wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
+
+
 
 # TODO: alpha & omega redef
 
