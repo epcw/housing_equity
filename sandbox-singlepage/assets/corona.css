@@ -1,5 +1,6 @@
 .plot-container.plotly  .svg-container {
   height:1000px!important;
+  max-width:92vw!important;
 }
 /*mobile line graph stylings*/
 @media only screen and (max-width:768px) {

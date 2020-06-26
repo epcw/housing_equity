@@ -4,6 +4,12 @@ from geopy import distance
 from sklearn.cluster import KMeans
 
 df = pd.read_csv('data/housing_prepped.csv', dtype={"GEOID": str,"TRACT_NUM": str})
+housing_df_raw = pd.read_csv('data/affordable_housing_units.csv', dtype={"TRACT_NUM": str})
+housing_df_raw = housing_df_raw[(housing_df_raw['COUNTY'] == 'King')]
+housing_df_raw['GEOID'] = '53033' + housing_df_raw['TRACT_NUM']
+housing_df = housing_df_raw[['COUNTY','TRACT_NUM','GEOID']].drop_duplicates()
+housing_data = housing_df_raw.groupby(['GEOID']).sum().reset_index()
+housing_df = housing_df.merge(housing_data, how='left', left_on=['GEOID'], right_on=['GEOID'])
 
 #filter for King County
 df = df[(df['COUNTY'] == 'King')]
@@ -68,6 +74,8 @@ gdf = gdf.rename(columns = {'minority_pop_pct':'minority_pop_pct_2010_a'})
 gdf = gdf.merge(minority10, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'minority_pop_pct':'minority_pop_pct_2010_b'})
 
+
+
 #calculate diff between the two tracts (and take absolute value since sign is meaningless here)
 gdf['minority_pop_pct_delta'] = (gdf.minority_pop_pct_2010_a - gdf.minority_pop_pct_2010_b).abs()
 
@@ -111,7 +119,7 @@ grp3 = grp3[['COUNTY','TRACT_NUM','minority_pop_pct','TWENTY_PCTILE_2010','label
 grp3_length = str(grp3.shape)
 
 #alpha time
-alpha = .5
+alpha = .9
 gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.distance*10e-04)
 
 gdf = gdf[gdf['distance'] < 3500]
