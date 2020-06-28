@@ -4,15 +4,28 @@ from geopy import distance
 from sklearn.cluster import KMeans
 
 df = pd.read_csv('data/housing_prepped.csv', dtype={"GEOID": str,"TRACT_NUM": str})
-housing_df_raw = pd.read_csv('data/affordable_housing_units.csv', dtype={"TRACT_NUM": str})
-housing_df_raw = housing_df_raw[(housing_df_raw['COUNTY'] == 'King')]
-housing_df_raw['GEOID'] = '53033' + housing_df_raw['TRACT_NUM']
-housing_df = housing_df_raw[['COUNTY','TRACT_NUM','GEOID']].drop_duplicates()
-housing_data = housing_df_raw.groupby(['GEOID']).sum().reset_index()
-housing_df = housing_df.merge(housing_data, how='left', left_on=['GEOID'], right_on=['GEOID'])
 
 #filter for King County
 df = df[(df['COUNTY'] == 'King')]
+
+#bring in affordable housing data
+housing_df_raw = pd.read_csv('data/affordable_housing_units.csv', dtype={"TRACT_NUM": str})
+
+#filter for King County
+housing_df_raw = housing_df_raw[(housing_df_raw['COUNTY'] == 'King')]
+
+#create geoid
+housing_df_raw['GEOID'] = '53033' + housing_df_raw['TRACT_NUM']
+housing_df = housing_df_raw[['COUNTY','TRACT_NUM','GEOID']].drop_duplicates()
+
+#Aggregate unit data (rows in original housing_df_raw are counts of units under 100/mo, 200/mo, 300/mo, etc.
+housing_data = housing_df_raw.groupby(['GEOID']).sum().reset_index()
+housing_df = housing_df.merge(housing_data, how='left', left_on=['GEOID'], right_on=['GEOID'])
+housing_df = housing_df[['COUNTY','TRACT_NUM','GEOID','DATA']]
+housing_df = housing_df.rename(columns = {'DATA' : 'sub_600_per_mo_housing_units'})
+
+#merge into main df
+df = df.merge(housing_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
 rdf = pd.read_csv('data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
 
@@ -60,7 +73,7 @@ race_data = racial[['GEOID','COUNTY','TRACT_NUM','pop_white_nonhisp_only','pop_b
 
 df = df.merge(race_data, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 df['minority_pop'] = df['TOT_POP_2010'] - df['pop_white_nonhisp_only']
-df['minority_pop_pct'] = df['pop_white_nonhisp_only'] / df['TOT_POP_2010']
+df['minority_pop_pct'] = df['minority_pop'] / df['TOT_POP_2010']
 
 gdf = gdf.merge(df[['TRACT_NUM','GEOID']], how='left', left_on='TRACTCE_a', right_on='TRACT_NUM')
 gdf = gdf.rename(columns={'GEOID':'GEOID_a'})
@@ -74,10 +87,15 @@ gdf = gdf.rename(columns = {'minority_pop_pct':'minority_pop_pct_2010_a'})
 gdf = gdf.merge(minority10, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'minority_pop_pct':'minority_pop_pct_2010_b'})
 
-
+aff_housing10 = df[['GEOID','sub_600_per_mo_housing_units']]
+gdf = gdf.merge(aff_housing10, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'sub_600_per_mo_housing_units':'affordable_units_a'})
+gdf = gdf.merge(aff_housing10, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'sub_600_per_mo_housing_units':'affordable_units_b'})
 
 #calculate diff between the two tracts (and take absolute value since sign is meaningless here)
 gdf['minority_pop_pct_delta'] = (gdf.minority_pop_pct_2010_a - gdf.minority_pop_pct_2010_b).abs()
+gdf['affordable_units_delta'] = (gdf.affordable_units_a - gdf.affordable_units_b).abs()
 
 #delete unnecessary columns to save memory
 del gdf['TRACT_NUM_x']
@@ -86,10 +104,10 @@ del gdf['GEOID_x']
 del gdf['GEOID_y']
 
 #Kmeans clustering
-Y = df[['GEOID','TWENTY_PCTILE_2010','minority_pop_pct']]
+Y = df[['GEOID','sub_600_per_mo_housing_units','minority_pop_pct']]
 Y = Y[~Y['minority_pop_pct'].isnull()]
-Y = Y[~Y['TWENTY_PCTILE_2010'].isnull()]
-X = Y[['TWENTY_PCTILE_2010','minority_pop_pct']]
+Y = Y[~Y['sub_600_per_mo_housing_units'].isnull()]
+X = Y[['sub_600_per_mo_housing_units','minority_pop_pct']]
 K = 4
 kmeans = KMeans(n_clusters=K, random_state=0).fit(X)
 Y['labels'] = kmeans.labels_
@@ -101,28 +119,28 @@ for i in range(K):
 for i in range(K):
     Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
 #re-merge with df
-df = df.merge(Y, how='left', left_on=['GEOID','minority_pop_pct','TWENTY_PCTILE_2010'], right_on=['GEOID','minority_pop_pct','TWENTY_PCTILE_2010'])
+df = df.merge(Y, how='left', left_on=['GEOID','minority_pop_pct','sub_600_per_mo_housing_units'], right_on=['GEOID','minority_pop_pct','sub_600_per_mo_housing_units'])
 
 grp0 = df[(df['labels'] == 0)]
-grp0 = grp0[['COUNTY','TRACT_NUM','minority_pop_pct','TWENTY_PCTILE_2010','labels','d']]
+grp0 = grp0[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
 grp0_length = str(grp0.shape)
 grp1 = df[(df['labels'] == 1)]
-grp1 = grp1[['COUNTY','TRACT_NUM','minority_pop_pct','TWENTY_PCTILE_2010','labels','d']]
+grp1 = grp1[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
 grp1_length = str(grp1.shape)
 
 grp2 = df[(df['labels'] == 2)]
-grp2 = grp2[['COUNTY','TRACT_NUM','minority_pop_pct','TWENTY_PCTILE_2010','labels','d']]
+grp2 = grp2[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
 grp2_length = str(grp2.shape)
 
 grp3 = df[(df['labels'] == 3)]
-grp3 = grp3[['COUNTY','TRACT_NUM','minority_pop_pct','TWENTY_PCTILE_2010','labels','d']]
+grp3 = grp3[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
 grp3_length = str(grp3.shape)
 
 #alpha time
-alpha = .9
-gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.distance*10e-04)
+alpha = .5
+gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.affordable_units_delta*10e-04)
 
-gdf = gdf[gdf['distance'] < 3500]
+#gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
 
 #create cityname df
 muni_gdf = gp.read_file('data/shapefiles/Municipal_Boundaries/Municipal_Boundaries.shp')
