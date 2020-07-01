@@ -118,9 +118,16 @@ gdf = gdf.rename(columns = {'sub_600_per_mo_housing_units':'affordable_units_a'}
 gdf = gdf.merge(aff_housing10, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'sub_600_per_mo_housing_units':'affordable_units_b'})
 
+lower_quartile_cost10 = df[['GEOID','RENT_25PCTILE']]
+gdf = gdf.merge(lower_quartile_cost10, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'RENT_25PCTILE':'lower_quartile_rent_a'})
+gdf = gdf.merge(lower_quartile_cost10, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'RENT_25PCTILE':'lower_quartile_rent_b'})
+
 #calculate diff between the two tracts (and take absolute value since sign is meaningless here)
 gdf['minority_pop_pct_delta'] = (gdf.minority_pop_pct_2010_a - gdf.minority_pop_pct_2010_b).abs()
 gdf['affordable_units_delta'] = (gdf.affordable_units_a - gdf.affordable_units_b).abs()
+gdf['lower_quartile_rent_delta'] = (gdf.lower_quartile_rent_a - gdf.lower_quartile_rent_b).abs()
 
 #delete unnecessary columns to save memory
 del gdf['TRACT_NUM_x']
@@ -129,11 +136,11 @@ del gdf['GEOID_x']
 del gdf['GEOID_y']
 
 #Kmeans clustering
-Y = df[['GEOID','sub_600_per_mo_housing_units','minority_pop_pct']]
+Y = df[['GEOID','RENT_25PCTILE','minority_pop_pct']]
 Y = Y[~Y['minority_pop_pct'].isnull()]
-Y = Y[~Y['sub_600_per_mo_housing_units'].isnull()]
-X = Y[['sub_600_per_mo_housing_units','minority_pop_pct']]
-K = 4
+Y = Y[~Y['RENT_25PCTILE'].isnull()]
+X = Y[['RENT_25PCTILE','minority_pop_pct']]
+K = 3
 kmeans = KMeans(n_clusters=K, random_state=0).fit(X)
 Y['labels'] = kmeans.labels_
 c0 = kmeans.cluster_centers_[0]
@@ -144,26 +151,27 @@ for i in range(K):
 for i in range(K):
     Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
 #re-merge with df
-df = df.merge(Y, how='left', left_on=['GEOID','minority_pop_pct','sub_600_per_mo_housing_units'], right_on=['GEOID','minority_pop_pct','sub_600_per_mo_housing_units'])
+df = df.merge(Y, how='left', left_on=['GEOID','minority_pop_pct','RENT_25PCTILE'], right_on=['GEOID','minority_pop_pct','RENT_25PCTILE'])
 
 grp0 = df[(df['labels'] == 0)]
-grp0 = grp0[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
+grp0 = grp0[['COUNTY','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
 grp0_length = str(grp0.shape)
 grp1 = df[(df['labels'] == 1)]
-grp1 = grp1[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
+grp1 = grp1[['COUNTY','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
 grp1_length = str(grp1.shape)
 
 grp2 = df[(df['labels'] == 2)]
-grp2 = grp2[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
+grp2 = grp2[['COUNTY','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
 grp2_length = str(grp2.shape)
-
+'''
 grp3 = df[(df['labels'] == 3)]
 grp3 = grp3[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
 grp3_length = str(grp3.shape)
+'''
 
 #alpha time
 alpha = .5
-gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.affordable_units_delta*10e-04)
+gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.lower_quartile_rent_delta*10e-03)
 
 #gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
 
