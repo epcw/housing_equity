@@ -31,12 +31,12 @@ gdf = data_prep.get_gdf(subset='wallingford')
 from data_prep import grp0
 from data_prep import grp1
 from data_prep import grp2
-from data_prep import grp3
+#from data_prep import grp3
 
 grp0_length = str(grp0.shape)
 grp1_length = str(grp1.shape)
 grp2_length = str(grp2.shape)
-grp3_length = str(grp3.shape)
+#grp3_length = str(grp3.shape)
 
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
@@ -159,7 +159,7 @@ node_trace = go.Scatter(
     x=[],
     y=[],
     text=[],
-    mode='markers',
+    mode='markers+text',
     hoverinfo='text',
     marker=dict(
         showscale=True,
@@ -169,7 +169,7 @@ node_trace = go.Scatter(
         size=15,
         colorbar=dict(
             thickness=10,
-            title='network based on Distance & minority population %',
+            title='network based on 25%ile rent cost & minority population %',
             xanchor='left',
             titleside='right'
         ),
@@ -194,6 +194,7 @@ for node in G.nodes():
 node_trace.marker.color = df['labels']
 node_trace.text = node_text
 
+
 fig = go.Figure(data=[edge_trace, node_trace],
              layout=go.Layout(
                 title='',
@@ -203,6 +204,8 @@ fig = go.Figure(data=[edge_trace, node_trace],
                 margin=dict(b=20,l=5,r=5,t=40),
                 xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+
+fig.update_traces(textfont_size=25)
 
 '''
 #PLOT 3
@@ -250,9 +253,9 @@ def serve_layout():
             html.P('Group 1 - size: ' + str(grp1_length), className='description'),
             generate_table(grp1),
             html.P('Group 2 - size: ' + str(grp2_length), className='description'),
-            generate_table(grp2),
-            html.P('Group 3 - size: ' + str(grp3_length), className='description'),
-            generate_table(grp3)
+            generate_table(grp2)#,
+#            html.P('Group 3 - size: ' + str(grp3_length), className='description'),
+#            generate_table(grp3)
         ], className='container')
     ], id='sandbox')
 
