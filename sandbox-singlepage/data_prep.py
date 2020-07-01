@@ -163,6 +163,7 @@ grp1_length = str(grp1.shape)
 grp2 = df[(df['labels'] == 2)]
 grp2 = grp2[['COUNTY','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
 grp2_length = str(grp2.shape)
+
 '''
 grp3 = df[(df['labels'] == 3)]
 grp3 = grp3[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
