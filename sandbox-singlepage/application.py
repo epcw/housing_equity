@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import sklearn
 from sklearn.cluster import KMeans
 import numpy as np
-import data_prep
+import data_prep_tract
 
 app = dash.Dash(__name__)
 # Beanstalk looks for application by default, if this isn't set you will get a WSGI error.
@@ -26,12 +26,12 @@ grid = Template()
 app.index_string = grid
 app.title = "Dashboards | EPCW"
 
-df = data_prep.get_df(subset='wallingford')
-gdf = data_prep.get_gdf(subset='wallingford')
-from data_prep import grp0
-from data_prep import grp1
-from data_prep import grp2
-#from data_prep import grp3
+df = data_prep_tract.get_df(subset='wallingford')
+gdf = data_prep_tract.get_gdf(subset='wallingford')
+from data_prep_tract import grp0
+from data_prep_tract import grp1
+from data_prep_tract import grp2
+#from data_prep_tract import grp3
 
 grp0_length = str(grp0.shape)
 grp1_length = str(grp1.shape)
