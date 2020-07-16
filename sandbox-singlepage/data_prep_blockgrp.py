@@ -33,8 +33,9 @@ rdf = rdf[(rdf['YEAR'] == '2013')]
 
 # TODO: create edges file for census block groups
 
-gdf = pd.read_csv('data/washingtongeo_dist.csv',
-                   dtype={"TRACTCE_a": str,"TRACTCE_b": str})
+gdf = pd.read_csv('data/wa_king_census_block_groups_distances.csv',
+                   dtype={"block_group_geoid_a": str,"block_group_geoid_b": str})
+
 totpop = rdf[(rdf['CENSUS_QUERY'] == 'B01001_001E')]
 totpop = totpop[['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP','DATA','YEAR']]
 totpop = totpop.rename(columns = {'DATA' : 'TOT_POP_2013'})
@@ -76,10 +77,10 @@ df = df.merge(race_data, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM',
 df['minority_pop'] = df['TOT_POP_2013'] - df['pop_white_nonhisp_only']
 df['minority_pop_pct'] = df['minority_pop'] / df['TOT_POP_2013']
 
-gdf = gdf.merge(df[['TRACT_NUM','GEOID']], how='left', left_on='TRACTCE_a', right_on='TRACT_NUM')
-gdf = gdf.rename(columns={'GEOID':'GEOID_a'})
-gdf = gdf.merge(df[['TRACT_NUM','GEOID']], how='left', left_on='TRACTCE_b', right_on='TRACT_NUM')
-gdf = gdf.rename(columns={'GEOID':'GEOID_b'})
+gdf = gdf.merge(df[['GEOID']], how='left', left_on='block_group_geoid_a', right_on='GEOID')
+gdf = gdf.rename(columns={'block_group_geoid_a':'GEOID_a'})
+gdf = gdf.merge(df[['GEOID']], how='left', left_on='block_group_geoid_b', right_on='GEOID')
+gdf = gdf.rename(columns={'block_group_geoid_b':'GEOID_b'})
 
 #merge dataframes to combine the different datasets so that you can calculate it.
 minority10 = df[['GEOID','minority_pop_pct']]
@@ -87,12 +88,6 @@ gdf = gdf.merge(minority10, how = 'inner', left_on = ['GEOID_a'], right_on = ['G
 gdf = gdf.rename(columns = {'minority_pop_pct':'minority_pop_pct_2010_a'})
 gdf = gdf.merge(minority10, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'minority_pop_pct':'minority_pop_pct_2010_b'})
-
-aff_housing10 = df[['GEOID','sub_600_per_mo_housing_units']]
-gdf = gdf.merge(aff_housing10, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'sub_600_per_mo_housing_units':'affordable_units_a'})
-gdf = gdf.merge(aff_housing10, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'sub_600_per_mo_housing_units':'affordable_units_b'})
 
 lower_quartile_cost10 = df[['GEOID','RENT_25PCTILE']]
 gdf = gdf.merge(lower_quartile_cost10, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
@@ -102,21 +97,14 @@ gdf = gdf.rename(columns = {'RENT_25PCTILE':'lower_quartile_rent_b'})
 
 #calculate diff between the two tracts (and take absolute value since sign is meaningless here)
 gdf['minority_pop_pct_delta'] = (gdf.minority_pop_pct_2010_a - gdf.minority_pop_pct_2010_b).abs()
-gdf['affordable_units_delta'] = (gdf.affordable_units_a - gdf.affordable_units_b).abs()
 gdf['lower_quartile_rent_delta'] = (gdf.lower_quartile_rent_a - gdf.lower_quartile_rent_b).abs()
-
-#delete unnecessary columns to save memory
-del gdf['TRACT_NUM_x']
-del gdf['TRACT_NUM_y']
-del gdf['GEOID_x']
-del gdf['GEOID_y']
 
 #Kmeans clustering
 Y = df[['GEOID','RENT_25PCTILE','minority_pop_pct']]
 Y = Y[~Y['minority_pop_pct'].isnull()]
 Y = Y[~Y['RENT_25PCTILE'].isnull()]
 X = Y[['RENT_25PCTILE','minority_pop_pct']]
-K = 3
+K = 4
 kmeans = KMeans(n_clusters=K, random_state=0).fit(X)
 Y['labels'] = kmeans.labels_
 c0 = kmeans.cluster_centers_[0]
@@ -130,21 +118,20 @@ for i in range(K):
 df = df.merge(Y, how='left', left_on=['GEOID','minority_pop_pct','RENT_25PCTILE'], right_on=['GEOID','minority_pop_pct','RENT_25PCTILE'])
 
 grp0 = df[(df['labels'] == 0)]
-grp0 = grp0[['COUNTY','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
+grp0 = grp0[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct','RENT_25PCTILE','labels','d']]
 grp0_length = str(grp0.shape)
 grp1 = df[(df['labels'] == 1)]
-grp1 = grp1[['COUNTY','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
+grp1 = grp1[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct','RENT_25PCTILE','labels','d']]
 grp1_length = str(grp1.shape)
 
 grp2 = df[(df['labels'] == 2)]
-grp2 = grp2[['COUNTY','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
+grp2 = grp2[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct','RENT_25PCTILE','labels','d']]
 grp2_length = str(grp2.shape)
 
-'''
 grp3 = df[(df['labels'] == 3)]
-grp3 = grp3[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
+grp3 = grp3[['COUNTY','BLOCK_GRP','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
 grp3_length = str(grp3.shape)
-'''
+
 
 # TODO: alpha & omega redef
 
@@ -171,11 +158,14 @@ df = df.merge(mt, how = 'inner', left_on = ['GEOID'], right_on = ['GEOID10'])
 del df['OBJECTID_']
 del df['GEOID10']
 del df['TRACTCE10']
+del gdf['GEOID_x']
+del gdf['GEOID_y']
+
 #df = df.rename(columns = {'CITYNAME_y':'CITYNAME'})
 
 import itertools
 
-wallingford_gdf = gdf[(gdf['GEOID_a'] == '53033004600') & (gdf['distance'] < 3500)]
+wallingford_gdf = gdf[(gdf['GEOID_a'] == '530330046001') & (gdf['distance'] < 3.500)]
 gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
 gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
 

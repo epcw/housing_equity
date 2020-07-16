@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 import sklearn
 from sklearn.cluster import KMeans
 import numpy as np
-import data_prep_tract
 
 app = dash.Dash(__name__)
 # Beanstalk looks for application by default, if this isn't set you will get a WSGI error.
@@ -26,17 +25,32 @@ grid = Template()
 app.index_string = grid
 app.title = "Dashboards | EPCW"
 
+#TRACT VERSION
+import data_prep_tract
 df = data_prep_tract.get_df(subset='wallingford')
 gdf = data_prep_tract.get_gdf(subset='wallingford')
 from data_prep_tract import grp0
 from data_prep_tract import grp1
 from data_prep_tract import grp2
 #from data_prep_tract import grp3
+'''
+
+#BLOCK GROUP VERSION
+import data_prep_blockgrp
+df = data_prep_blockgrp.get_df(subset='wallingford')
+gdf = data_prep_blockgrp.get_gdf(subset='wallingford')
+from data_prep_blockgrp import grp0
+from data_prep_blockgrp import grp1
+from data_prep_blockgrp import grp2
+from data_prep_blockgrp import grp3
+grp3_length = str(grp3.shape)
+
+'''
 
 grp0_length = str(grp0.shape)
 grp1_length = str(grp1.shape)
 grp2_length = str(grp2.shape)
-#grp3_length = str(grp3.shape)
+
 
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
