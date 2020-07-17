@@ -2,7 +2,7 @@
     top: 0;
     z-index: 9995;
     width: 100%;
-    background-color: #bb0000 !important;
+    background-color: #660066 !important;
     display:block;
     position:absolute;
 }
@@ -130,7 +130,7 @@ background: none;
 /*mobile menu styling*/
 .topnav {
   overflow: hidden;
-  background-color: #bb0000;
+  background-color: #660066;
   position: relative;
 }
 

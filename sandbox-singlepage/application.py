@@ -25,6 +25,7 @@ grid = Template()
 app.index_string = grid
 app.title = "Dashboards | EPCW"
 
+'''
 #TRACT VERSION
 import data_prep_tract
 df = data_prep_tract.get_df(subset='wallingford')
@@ -44,8 +45,6 @@ from data_prep_blockgrp import grp1
 from data_prep_blockgrp import grp2
 from data_prep_blockgrp import grp3
 grp3_length = str(grp3.shape)
-
-'''
 
 grp0_length = str(grp0.shape)
 grp1_length = str(grp1.shape)
@@ -158,7 +157,7 @@ for n, p in pos.items():
 edge_trace = go.Scatter(
     x=[],
     y=[],
-    line=dict(width=2,color='#000000'),
+    line=dict(width=1,color='#c6c6c6'),
     hoverinfo='text',
     mode='lines'
 )
@@ -180,7 +179,7 @@ node_trace = go.Scatter(
         colorscale='RdBu',
         reversescale=True,
         color=[],
-        size=15,
+        size=40,
         colorbar=dict(
             thickness=10,
             title='network based on 25%ile rent cost & minority population %',
@@ -203,11 +202,11 @@ for node, adjacencies in enumerate(G.adjacency()):
     #node_text.append('# of connections: '+str(len(adjacencies[1])))
 #node_text = df["COUNTY"] + ' ' + df["TRACT_NUM"] + ' - ' +str(len(adjacencies[1])) + ' connections'
 for node in G.nodes():
-    node_text = df["TRACT_NUM"] + ' - ' + df['minority_pop_pct'].round(2).astype('str') + '%' + ' City: ' + df['CITYNAME']
+    node_label = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"]
+    node_text = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop %: ' + df['minority_pop_pct'].round(2).astype('str') + '%<br>' + '25%ile housing: $' + df['RENT_25PCTILE'].round(0).astype('str') + '/month'
 
 node_trace.marker.color = df['labels']
 node_trace.text = node_text
-
 
 fig = go.Figure(data=[edge_trace, node_trace],
              layout=go.Layout(
@@ -256,8 +255,8 @@ def serve_layout():
     return html.Div([
         dcc.Link('Dashboard Home', href='/', id="app_menu"),
         html.Div([
-            html.H1('Testing NetworkX'),
-            html.P('Trying to get this to work', className='description'),
+            html.H1('Wallingford Urban Village Network'),
+            html.P('Pilot network model of census block groups within the urban village of Wallingford (defined as all census block groups within 3.5km of 5303305002).  Edge weights are determined 50% by minority population percentage and 50% by lowest quartile housing cost.', className='description'),
             dcc.Graph(figure=fig,
                       id='housing_networkx'
                       ),

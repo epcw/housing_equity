@@ -129,7 +129,7 @@ grp2 = grp2[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct','RENT_25PCTILE'
 grp2_length = str(grp2.shape)
 
 grp3 = df[(df['labels'] == 3)]
-grp3 = grp3[['COUNTY','BLOCK_GRP','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
+grp3 = grp3[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct','RENT_25PCTILE','labels','d']]
 grp3_length = str(grp3.shape)
 
 
@@ -152,20 +152,14 @@ mt = gp.sjoin(t, m, how='left', op='intersects', lsuffix='', rsuffix='_muni')
 mt[['GEOID10', 'CITYNAME']]
 
 #merge with cityname df
-df = df.merge(mt, how = 'inner', left_on = ['GEOID'], right_on = ['GEOID10'])
+#df = df.merge(mt, how = 'inner', left_on = ['GEOID'], right_on = ['GEOID10']) #DON'T DO THIS UNTIL CITIES ASSIGNED TO BLOCK GROUPS
 
-#delete unnecessary columns to save memory
-del df['OBJECTID_']
-del df['GEOID10']
-del df['TRACTCE10']
-del gdf['GEOID_x']
-del gdf['GEOID_y']
 
 #df = df.rename(columns = {'CITYNAME_y':'CITYNAME'})
 
 import itertools
 
-wallingford_gdf = gdf[(gdf['GEOID_a'] == '530330046001') & (gdf['distance'] < 3.500)]
+wallingford_gdf = gdf[(gdf['GEOID_a'] == '530330050002') & (gdf['distance'] < 3.500)]
 gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
 gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
 
@@ -188,6 +182,12 @@ wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
 wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
 
 
+#delete unnecessary columns to save memory
+#del df['OBJECTID_']
+#del df['GEOID10']
+#del df['TRACTCE10']
+del gdf['GEOID_x']
+del gdf['GEOID_y']
 
 def get_df(subset='all'):
     subsets = {

@@ -2,6 +2,9 @@
   height:1000px!important;
   max-width:92vw!important;
 }
+.plot .textpoint text {
+  font-size:15px!important;
+}
 /*mobile line graph stylings*/
 @media only screen and (max-width:768px) {
   .plot .js-line {
