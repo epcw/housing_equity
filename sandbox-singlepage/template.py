@@ -11,7 +11,7 @@ def Template() :
             <meta name="description" content="The Center for Equitable Policy in a Changing World (EPCW), a non&#x2d;partisan group researching the effects of changes in society &#038; the environment on policy."/>
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <meta property="og:image" content="https://equitableworld.org/wp-content/uploads/2020/06/wordmark-logowide.png"/>
+    <meta property="og:image" content="https://equitableworld.org/wp-content/uploads/2020/07/wordmark-og.png"/>
     <meta property="og:locale" content="en_US"/>
     <meta property="og:type" content="website"/>
     <meta property="og:title" content="Center for Equitable Policy in a Changing World | Pro pluribus"/>
@@ -21,7 +21,7 @@ def Template() :
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Center for Equitable Policy in a Changing World | Pro pluribus"/>
     <meta name="twitter:description" content="The Center for Equitable Policy in a Changing World (EPCW), a non&#x2d;partisan group researching the effects of changes in society &#038; the environment on policy."/>
-    <meta name="twitter:image" content="https://equitableworld.org/wp-content/uploads/2020/06/wordmark-logowide.png"/>
+    <meta name="twitter:image" content="https://equitableworld.org/wp-content/uploads/2020/07/wordmark-og.png"/>
             <link rel='stylesheet' id='chld_thm_cfg_ext1-css' href='https://fonts.googleapis.com/css?family=Barlow&#038;ver=5.4' type='text/css' media='all'/>
             <title>{%title%}</title>
             {%favicon%}

@@ -203,7 +203,7 @@ for node, adjacencies in enumerate(G.adjacency()):
 #node_text = df["COUNTY"] + ' ' + df["TRACT_NUM"] + ' - ' +str(len(adjacencies[1])) + ' connections'
 for node in G.nodes():
     node_label = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"]
-    node_text = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop %: ' + df['minority_pop_pct'].round(2).astype('str') + '%<br>' + '25%ile housing: $' + df['RENT_25PCTILE'].round(0).astype('str') + '/month'
+    node_text = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop %: ' + df['minority_pop_pct'].round(2).astype('str') + '<br>' + '25%ile housing: $' + df['RENT_25PCTILE'].round(0).astype('str') + '/month'
 
 node_trace.marker.color = df['labels']
 node_trace.text = node_text

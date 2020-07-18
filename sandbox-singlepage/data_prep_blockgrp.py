@@ -159,7 +159,7 @@ mt[['GEOID10', 'CITYNAME']]
 
 import itertools
 
-wallingford_gdf = gdf[(gdf['GEOID_a'] == '530330050002') & (gdf['distance'] < 3.500)]
+wallingford_gdf = gdf[(gdf['GEOID_a'] == '530330046002') & (gdf['distance'] < 3.500)]
 gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
 gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
 
