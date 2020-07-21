@@ -172,14 +172,14 @@ node_trace = go.Scatter(
     x=[],
     y=[],
     text=[],
-    mode='markers+text',
+    mode='markers',
     hoverinfo='text',
     marker=dict(
         showscale=True,
         colorscale='RdBu',
         reversescale=True,
         color=[],
-        size=40,
+        size=30,
         colorbar=dict(
             thickness=10,
             title='network based on 25%ile rent cost & minority population %',
@@ -203,7 +203,7 @@ for node, adjacencies in enumerate(G.adjacency()):
 #node_text = df["COUNTY"] + ' ' + df["TRACT_NUM"] + ' - ' +str(len(adjacencies[1])) + ' connections'
 for node in G.nodes():
     node_label = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"]
-    node_text = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop %: ' + df['minority_pop_pct'].round(2).astype('str') + '<br>' + '25%ile housing: $' + df['RENT_25PCTILE'].round(0).astype('str') + '/month'
+    node_text = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop: ' + (df['minority_pop_pct'] * 100).round(2).astype('str') + '% <br>' + '25%ile housing: $' + df['RENT_25PCTILE'].round(0).astype('str') + '/month'
 
 node_trace.marker.color = df['labels']
 node_trace.text = node_text
@@ -256,7 +256,7 @@ def serve_layout():
         dcc.Link('Dashboard Home', href='/', id="app_menu"),
         html.Div([
             html.H1('Wallingford Urban Village Network'),
-            html.P('Pilot network model of census block groups within the urban village of Wallingford (defined as all census block groups within 3.5km of 5303305002).  Edge weights are determined 50% by minority population percentage and 50% by lowest quartile housing cost.', className='description'),
+            html.P('Pilot network model of census block groups within the urban village of Wallingford (defined as all census block groups within 3.5km of 5303305002).  Edge weights are determined 50% by minority population percentage and 50% by lowest quartile housing cost (block groups that are closer together are more similar than those further apart).', className='description'),
             dcc.Graph(figure=fig,
                       id='housing_networkx'
                       ),

@@ -31,8 +31,6 @@ rdf = pd.read_csv('data/king_blockgrp_race.csv', dtype={"GEOID": str, "TRACT_NUM
 #filter for year 2013
 rdf = rdf[(rdf['YEAR'] == '2013')]
 
-# TODO: create edges file for census block groups
-
 gdf = pd.read_csv('data/wa_king_census_block_groups_distances.csv',
                    dtype={"block_group_geoid_a": str,"block_group_geoid_b": str})
 
@@ -159,7 +157,7 @@ mt[['GEOID10', 'CITYNAME']]
 
 import itertools
 
-wallingford_gdf = gdf[(gdf['GEOID_a'] == '530330046002') & (gdf['distance'] < 3.500)]
+wallingford_gdf = gdf[((gdf['GEOID_a'] == '530330046001') & (gdf['distance'] < 3.000)) | ((gdf['GEOID_b'] == '530330046001') & (gdf['distance'] < 3.000))]
 gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
 gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
 
