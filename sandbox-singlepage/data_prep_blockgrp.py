@@ -97,6 +97,7 @@ gdf = gdf.rename(columns = {'RENT_25PCTILE':'lower_quartile_rent_b'})
 gdf['minority_pop_pct_delta'] = (gdf.minority_pop_pct_2010_a - gdf.minority_pop_pct_2010_b).abs()
 gdf['lower_quartile_rent_delta'] = (gdf.lower_quartile_rent_a - gdf.lower_quartile_rent_b).abs()
 
+
 #Kmeans clustering
 Y = df[['GEOID','RENT_25PCTILE','minority_pop_pct']]
 Y = Y[~Y['minority_pop_pct'].isnull()]
@@ -131,10 +132,12 @@ grp3 = grp3[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct','RENT_25PCTILE'
 grp3_length = str(grp3.shape)
 
 
+
+
 # TODO: alpha & omega redef
 
 #alpha time
-alpha = .5
+alpha = .33
 gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.lower_quartile_rent_delta*10e-03)
 
 #gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
