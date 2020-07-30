@@ -1,0 +1,54 @@
+.plot-container.plotly  .svg-container {
+  height:1000px!important;
+  max-width:92vw!important;
+}
+.plot .textpoint text {
+  font-size:15px!important;
+}
+/*mobile line graph stylings*/
+@media only screen and (max-width:768px) {
+  .plot .js-line {
+    stroke-width:5px!important;
+  }
+  .plot-container.plotly  .svg-container {
+    height:1000px!important;
+  }
+}
+
+@media only screen and (max-width:768px) and (min-width:501px) {
+  #y-toggle, #data-dropdown {
+    top:-53px!important;
+  }
+  #y-toggle h4, #data-dropdown h4 {
+    margin-bottom:5px;
+  }
+  #covid_19_title {
+    margin-top:30px;
+  }
+}
+
+@media only screen and (max-width:500px) {
+  #data-dropdown {
+    position:relative!important;
+    right:unset!important;
+    float:unset!important;
+    top:-5px!important;
+}
+  #y-toggle {
+    position:relative!important;
+    margin-bottom: 0px;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    letf:unset;
+    float:unset;
+    margin-bottom:0px;
+  }
+  #y-toggle h4 {
+    margin-right:auto;
+}
+  #covid_19_title {
+    margin-top:-30px;
+  }
+}
