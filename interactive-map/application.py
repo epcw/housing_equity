@@ -47,7 +47,9 @@ def serve_layout():
                     'Polynesian Population',
                     'Latino Population',
                     'Other Race Population',
-                    'Multiracial Population'
+                    'Multiracial Population',
+                    '20th percentile household income',
+                    '80th percentile household income'
                 ]],
                 value='Non-white Population'
             )]),
@@ -88,11 +90,13 @@ def update_graph(data_selection):
             geojson=tracts,
             locations=df['GEOID'],
             featureidkey='properties.GEOID',
-            zmin=-10 if data_selection == 'White Population'
-                else -10,
-            zmax=10 if data_selection == 'White Population'
-                else 10,
-            colorscale="RdYlGn",
+            zmin=-100 if data_selection == '20th percentile household income'
+                else(-100 if data_selection == '80th percentile household income'
+                else -10),
+            zmax=100 if data_selection == '20th percentile household income'
+                else(100 if data_selection == '80th percentile household income'
+                else 10),
+            colorscale='RdYlGn',
             marker_opacity=0.5,
             marker_line_width=0,
             z=df['white_pop_delta' if data_selection == 'White Population'
@@ -103,7 +107,9 @@ def update_graph(data_selection):
                 else('latino_pop_delta' if data_selection == 'Latino Population'
                 else('other_pop_delta' if data_selection == 'Other Race Population'
                 else('multiracial_pop_delta' if data_selection == 'Multiracial Population'
-                else 'minority_pop_delta')))))))])
+                else('twenty_pctile_delta' if data_selection == '20th percentile household income'
+                else('eighty_pctile_delta' if data_selection == '80th percentile household income'
+                else 'minority_pop_delta')))))))))])
         ],
         'layout': go.Layout(
             mapbox_style="carto-positron",
@@ -125,10 +131,10 @@ def update_graph10(data_selection):
             geojson=tracts,
             locations=df['GEOID'],
             featureidkey='properties.GEOID',
-            zmin=0 if data_selection == 'White Population'
-                else 0,
-            zmax=100 if data_selection == 'White Population'
-                else 100,
+            zmin=0,
+            zmax=30000 if data_selection == '20th percentile household income'
+                else(150000 if data_selection == '80th percentile household income'
+                else 100),
             colorscale="tempo",
             marker_opacity=0.5,
             marker_line_width=0,
@@ -140,7 +146,9 @@ def update_graph10(data_selection):
                 else('latino_pct10' if data_selection == 'Latino Population'
                 else('other_pct10' if data_selection == 'Other Race Population'
                 else('multiracial_pct10' if data_selection == 'Multiracial Population'
-                else 'minority_pop_pct10')))))))])
+                else('TWENTY_PCTILE_2010' if data_selection == '20th percentile household income'
+                else('EIGHTY_PCTILE_2010' if data_selection == '80th percentile household income'
+                else 'minority_pop_pct10')))))))))])
         ],
         'layout': go.Layout(
             mapbox_style="carto-positron",
@@ -165,8 +173,9 @@ def update_graph18(data_selection):
             featureidkey='properties.GEOID',
             zmin=0 if data_selection == 'White Population'
                 else 0,
-            zmax=100 if data_selection == 'White Population'
-                else 100,
+            zmax=30000 if data_selection == '20th percentile household income'
+                else(150000 if data_selection == '80th percentile household income'
+                else 100),
             colorscale="tempo",
             marker_opacity=0.5,
             marker_line_width=0,
@@ -178,7 +187,10 @@ def update_graph18(data_selection):
                 else('latino_pct18' if data_selection == 'Latino Population'
                 else('other_pct18' if data_selection == 'Other Race Population'
                 else('multiracial_pct18' if data_selection == 'Multiracial Population'
-                else 'minority_pop_pct18')))))))])
+                else('TWENTY_PCTILE_2018' if data_selection == '20th percentile household income'
+                else('EIGHTY_PCTILE_2018' if data_selection == '80th percentile household income'
+                else('income_gap18' if data_selection == 'Income Gap (diff btw 20th & 80th percentiles)'
+                else 'minority_pop_pct18'))))))))))])
         ],
         'layout': go.Layout(
             mapbox_style="carto-positron",

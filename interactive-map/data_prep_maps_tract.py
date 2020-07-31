@@ -49,6 +49,12 @@ costs_df = costs_df.merge(costs_dfmedcost, how = 'inner', left_on = ['GEOID','CO
 df = df.merge(housing_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 df = df.merge(costs_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
+df['twenty_pctile_delta'] = (df['TWENTY_PCTILE_2018'] - df['TWENTY_PCTILE_2010']) / df['TWENTY_PCTILE_2010'] * 100
+df['eighty_pctile_delta'] = (df['EIGHTY_PCTILE_2018'] - df['EIGHTY_PCTILE_2010']) / df['TWENTY_PCTILE_2010'] * 100
+df['income_gap10'] = (df['EIGHTY_PCTILE_2010'] - df['TWENTY_PCTILE_2010']) / df['TWENTY_PCTILE_2010'] * 100
+df['income_gap18'] = (df['EIGHTY_PCTILE_2018'] - df['TWENTY_PCTILE_2018']) / df['TWENTY_PCTILE_2018'] * 100
+df['income_gap_delta'] = (df['income_gap18'] - df['income_gap10']) / df['income_gap10'] * 100
+
 rdf = pd.read_csv('data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
 
 #filter for King County 2010
@@ -56,7 +62,6 @@ rdf10 = rdf[(rdf['COUNTY'] == 'King') & (rdf['YEAR'] == '2010')]
 
 #filter for King County 2018
 rdf18 = rdf[(rdf['COUNTY'] == 'King') & (rdf['YEAR'] == '2018')]
-
 
 #create GEOID
 rdf10['GEOID'] = '53033' + rdf10['TRACT_NUM']
