@@ -25,9 +25,9 @@ housing_df = housing_df[['COUNTY','TRACT_NUM','GEOID','DATA']]
 housing_df = housing_df.rename(columns = {'DATA' : 'sub_600_per_mo_housing_units'})
 
 #bring in tenancy, cost, and occupancy data and filter for 2010 & 2018
-housing_details_raw = pd.read_csv('data/housing_details.csv', dtype={"TRACT_NUM": str, "GEOID": str}) #NOTE: pre-filtered in SQL for King County
-housing_details10 = housing_df_raw[(housing_details_raw['YEAR'] == 2010)]
-housing_details18 = housing_df_raw[(housing_details_raw['YEAR'] == 2018)]
+housing_details_raw = pd.read_csv('data/housing_details.csv', dtype={"TRACT_NUM": str, "GEOID": str, "YEAR":int}) #NOTE: pre-filtered in SQL for King County
+housing_details10 = housing_details_raw[(housing_details_raw['YEAR'] == 2010)]
+housing_details18 = housing_details_raw[(housing_details_raw['YEAR'] == 2018)]
 
 #sort median_costs_df by census query, creating new column-sorted dfs instead of rows
 costs_10df25 = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25057_001E')]
@@ -62,7 +62,7 @@ costs_18df75 = costs_18df75[['GEOID','RENT_75PCTILE_2018','COUNTY','TRACT_NUM']]
 costs_18dfpct = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25071_001E')]
 costs_18dfpct = costs_18dfpct.rename(columns = {'DATA' : 'RENT_AS_PCT_HOUSEHOLD_INCOME_2018'})
 costs_18dfpct = costs_18dfpct[['GEOID','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','COUNTY','TRACT_NUM']]
-costs_18dfmedcost = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25185_001E')]
+costs_18dfmedcost = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25105_001E')]
 costs_18dfmedcost = costs_18dfmedcost.rename(columns = {'DATA' : 'MEDIAN_MONTHLY_HOUSING_COST_2018'})
 costs_18dfmedcost = costs_18dfmedcost[['GEOID','MEDIAN_MONTHLY_HOUSING_COST_2018','COUNTY','TRACT_NUM']]
 costs_18df = costs_18df25.merge(costs_18df50, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
