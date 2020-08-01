@@ -7,7 +7,7 @@ df = df[(df['COUNTY'] == 'King')]
 
 #bring in affordable housing data
 housing_df_raw = pd.read_csv('data/affordable_housing_units.csv', dtype={"TRACT_NUM": str})
-median_costs_raw = pd.read_csv('data/housing_costs_medians.csv', dtype={"TRACT_NUM": str}) #NOTE: pre-filtered in SQL for King County
+median_costs_raw = pd.read_csv('data/housing_costs_medians.csv', dtype={"TRACT_NUM": str}) #NOTE: pre-filtered in SQL for King County and already has GEOID
 
 #filter for King County
 housing_df_raw = housing_df_raw[(housing_df_raw['COUNTY'] == 'King')]
@@ -24,30 +24,56 @@ housing_df = housing_df.merge(housing_data, how='left', left_on=['GEOID'], right
 housing_df = housing_df[['COUNTY','TRACT_NUM','GEOID','DATA']]
 housing_df = housing_df.rename(columns = {'DATA' : 'sub_600_per_mo_housing_units'})
 
+#bring in tenancy, cost, and occupancy data and filter for 2010 & 2018
+housing_details_raw = pd.read_csv('data/housing_details.csv', dtype={"TRACT_NUM": str, "GEOID": str}) #NOTE: pre-filtered in SQL for King County
+housing_details10 = housing_df_raw[(housing_details_raw['YEAR'] == 2010)]
+housing_details18 = housing_df_raw[(housing_details_raw['YEAR'] == 2018)]
+
 #sort median_costs_df by census query, creating new column-sorted dfs instead of rows
-costs_df25 = median_costs_df[(median_costs_df['CENSUS_QUERY'] == 'B25057_001E')]
-costs_df25 = costs_df25.rename(columns = {'DATA' : 'RENT_25PCTILE'})
-costs_df25 = costs_df25[['GEOID','RENT_25PCTILE','COUNTY','TRACT_NUM']]
-costs_df50 = median_costs_df[(median_costs_df['CENSUS_QUERY'] == 'B25058_001E')]
-costs_df50 = costs_df50.rename(columns = {'DATA' : 'RENT_50PCTILE'})
-costs_df50 = costs_df50[['GEOID','RENT_50PCTILE','COUNTY','TRACT_NUM']]
-costs_df75 = median_costs_df[(median_costs_df['CENSUS_QUERY'] == 'B25059_001E')]
-costs_df75 = costs_df75.rename(columns = {'DATA' : 'RENT_75PCTILE'})
-costs_df75 = costs_df75[['GEOID','RENT_75PCTILE','COUNTY','TRACT_NUM']]
-costs_dfpct = median_costs_df[(median_costs_df['CENSUS_QUERY'] == 'B25071_001E')]
-costs_dfpct = costs_dfpct.rename(columns = {'DATA' : 'RENT_AS_PCT_HOUSEHOLD_INCOME'})
-costs_dfpct = costs_dfpct[['GEOID','RENT_AS_PCT_HOUSEHOLD_INCOME','COUNTY','TRACT_NUM']]
-costs_dfmedcost = median_costs_df[(median_costs_df['CENSUS_QUERY'] == 'B25105_001E')]
-costs_dfmedcost = costs_dfmedcost.rename(columns = {'DATA' : 'MEDIAN_MONTHLY_HOUSING_COST'})
-costs_dfmedcost = costs_dfmedcost[['GEOID','MEDIAN_MONTHLY_HOUSING_COST','COUNTY','TRACT_NUM']]
-costs_df = costs_df25.merge(costs_df50, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-costs_df = costs_df.merge(costs_df75, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-costs_df = costs_df.merge(costs_dfpct, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-costs_df = costs_df.merge(costs_dfmedcost, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_10df25 = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25057_001E')]
+costs_10df25 = costs_10df25.rename(columns = {'DATA' : 'RENT_25PCTILE_2010'})
+costs_10df25 = costs_10df25[['GEOID','RENT_25PCTILE_2010','COUNTY','TRACT_NUM']]
+costs_10df50 = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25058_001E')]
+costs_10df50 = costs_10df50.rename(columns = {'DATA' : 'RENT_50PCTILE_2010'})
+costs_10df50 = costs_10df50[['GEOID','RENT_50PCTILE_2010','COUNTY','TRACT_NUM']]
+costs_10df75 = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25059_001E')]
+costs_10df75 = costs_10df75.rename(columns = {'DATA' : 'RENT_75PCTILE_2010'})
+costs_10df75 = costs_10df75[['GEOID','RENT_75PCTILE_2010','COUNTY','TRACT_NUM']]
+costs_10dfpct = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25071_001E')]
+costs_10dfpct = costs_10dfpct.rename(columns = {'DATA' : 'RENT_AS_PCT_HOUSEHOLD_INCOME_2010'})
+costs_10dfpct = costs_10dfpct[['GEOID','RENT_AS_PCT_HOUSEHOLD_INCOME_2010','COUNTY','TRACT_NUM']]
+costs_10dfmedcost = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25105_001E')]
+costs_10dfmedcost = costs_10dfmedcost.rename(columns = {'DATA' : 'MEDIAN_MONTHLY_HOUSING_COST_2010'})
+costs_10dfmedcost = costs_10dfmedcost[['GEOID','MEDIAN_MONTHLY_HOUSING_COST_2010','COUNTY','TRACT_NUM']]
+costs_10df = costs_10df25.merge(costs_10df50, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_10df = costs_10df.merge(costs_10df75, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_10df = costs_10df.merge(costs_10dfpct, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_10df = costs_10df.merge(costs_10dfmedcost, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+
+costs_18df25 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25057_001E')]
+costs_18df25 = costs_18df25.rename(columns = {'DATA' : 'RENT_25PCTILE_2018'})
+costs_18df25 = costs_18df25[['GEOID','RENT_25PCTILE_2018','COUNTY','TRACT_NUM']]
+costs_18df50 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25058_001E')]
+costs_18df50 = costs_18df50.rename(columns = {'DATA' : 'RENT_50PCTILE_2018'})
+costs_18df50 = costs_18df50[['GEOID','RENT_50PCTILE_2018','COUNTY','TRACT_NUM']]
+costs_18df75 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25059_001E')]
+costs_18df75 = costs_18df75.rename(columns = {'DATA' : 'RENT_75PCTILE_2018'})
+costs_18df75 = costs_18df75[['GEOID','RENT_75PCTILE_2018','COUNTY','TRACT_NUM']]
+costs_18dfpct = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25071_001E')]
+costs_18dfpct = costs_18dfpct.rename(columns = {'DATA' : 'RENT_AS_PCT_HOUSEHOLD_INCOME_2018'})
+costs_18dfpct = costs_18dfpct[['GEOID','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','COUNTY','TRACT_NUM']]
+costs_18dfmedcost = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25185_001E')]
+costs_18dfmedcost = costs_18dfmedcost.rename(columns = {'DATA' : 'MEDIAN_MONTHLY_HOUSING_COST_2018'})
+costs_18dfmedcost = costs_18dfmedcost[['GEOID','MEDIAN_MONTHLY_HOUSING_COST_2018','COUNTY','TRACT_NUM']]
+costs_18df = costs_18df25.merge(costs_18df50, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_18df = costs_18df.merge(costs_18df75, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_18df = costs_18df.merge(costs_18dfpct, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_18df = costs_18df.merge(costs_18dfmedcost, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
 #merge into main df
 df = df.merge(housing_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-df = df.merge(costs_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+df = df.merge(costs_10df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+df = df.merge(costs_18df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
 df['twenty_pctile_delta'] = (df['TWENTY_PCTILE_2018'] - df['TWENTY_PCTILE_2010']) / df['TWENTY_PCTILE_2010'] * 100
 df['eighty_pctile_delta'] = (df['EIGHTY_PCTILE_2018'] - df['EIGHTY_PCTILE_2010']) / df['TWENTY_PCTILE_2010'] * 100
