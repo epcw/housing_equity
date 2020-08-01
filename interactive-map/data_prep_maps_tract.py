@@ -31,6 +31,7 @@ housing_details18 = housing_details_raw[(housing_details_raw['YEAR'] == 2018)]
 
 #sort median_costs_df by census query, creating new column-sorted dfs instead of rows
 costs_10df25 = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25057_001E')]
+costs_10df25['DATA'] = costs_10df25['DATA'].astype(float)
 costs_10df25 = costs_10df25.rename(columns = {'DATA' : 'RENT_25PCTILE_2010'})
 costs_10df25 = costs_10df25[['GEOID','RENT_25PCTILE_2010','COUNTY','TRACT_NUM']]
 costs_10df50 = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25058_001E')]
@@ -40,10 +41,12 @@ costs_10df75 = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25059_0
 costs_10df75 = costs_10df75.rename(columns = {'DATA' : 'RENT_75PCTILE_2010'})
 costs_10df75 = costs_10df75[['GEOID','RENT_75PCTILE_2010','COUNTY','TRACT_NUM']]
 costs_10dfpct = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25071_001E')]
+costs_10dfpct['DATA'] = costs_10dfpct['DATA'].astype(float)
 costs_10dfpct = costs_10dfpct.rename(columns = {'DATA' : 'RENT_AS_PCT_HOUSEHOLD_INCOME_2010'})
 costs_10dfpct = costs_10dfpct[['GEOID','RENT_AS_PCT_HOUSEHOLD_INCOME_2010','COUNTY','TRACT_NUM']]
 costs_10dfmedcost = housing_details10[(housing_details10['CENSUS_QUERY'] == 'B25105_001E')]
 costs_10dfmedcost = costs_10dfmedcost.rename(columns = {'DATA' : 'MEDIAN_MONTHLY_HOUSING_COST_2010'})
+costs_10dfmedcost['MEDIAN_MONTHLY_HOUSING_COST_2010'] = costs_10dfmedcost['MEDIAN_MONTHLY_HOUSING_COST_2010'].astype(float)
 costs_10dfmedcost = costs_10dfmedcost[['GEOID','MEDIAN_MONTHLY_HOUSING_COST_2010','COUNTY','TRACT_NUM']]
 costs_10df = costs_10df25.merge(costs_10df50, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 costs_10df = costs_10df.merge(costs_10df75, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
@@ -51,6 +54,7 @@ costs_10df = costs_10df.merge(costs_10dfpct, how = 'inner', left_on = ['GEOID','
 costs_10df = costs_10df.merge(costs_10dfmedcost, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
 costs_18df25 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25057_001E')]
+costs_18df25['DATA'] = costs_18df25['DATA'].astype(float)
 costs_18df25 = costs_18df25.rename(columns = {'DATA' : 'RENT_25PCTILE_2018'})
 costs_18df25 = costs_18df25[['GEOID','RENT_25PCTILE_2018','COUNTY','TRACT_NUM']]
 costs_18df50 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25058_001E')]
@@ -60,10 +64,12 @@ costs_18df75 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25059_0
 costs_18df75 = costs_18df75.rename(columns = {'DATA' : 'RENT_75PCTILE_2018'})
 costs_18df75 = costs_18df75[['GEOID','RENT_75PCTILE_2018','COUNTY','TRACT_NUM']]
 costs_18dfpct = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25071_001E')]
+costs_18dfpct['DATA'] = costs_18dfpct['DATA'].astype(float)
 costs_18dfpct = costs_18dfpct.rename(columns = {'DATA' : 'RENT_AS_PCT_HOUSEHOLD_INCOME_2018'})
 costs_18dfpct = costs_18dfpct[['GEOID','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','COUNTY','TRACT_NUM']]
 costs_18dfmedcost = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25105_001E')]
 costs_18dfmedcost = costs_18dfmedcost.rename(columns = {'DATA' : 'MEDIAN_MONTHLY_HOUSING_COST_2018'})
+costs_18dfmedcost['MEDIAN_MONTHLY_HOUSING_COST_2018'] = costs_18dfmedcost['MEDIAN_MONTHLY_HOUSING_COST_2018'].astype(float)
 costs_18dfmedcost = costs_18dfmedcost[['GEOID','MEDIAN_MONTHLY_HOUSING_COST_2018','COUNTY','TRACT_NUM']]
 costs_18df = costs_18df25.merge(costs_18df50, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 costs_18df = costs_18df.merge(costs_18df75, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
@@ -80,6 +86,9 @@ df['eighty_pctile_delta'] = (df['EIGHTY_PCTILE_2018'] - df['EIGHTY_PCTILE_2010']
 df['income_gap10'] = (df['EIGHTY_PCTILE_2010'] - df['TWENTY_PCTILE_2010']) / df['TWENTY_PCTILE_2010'] * 100
 df['income_gap18'] = (df['EIGHTY_PCTILE_2018'] - df['TWENTY_PCTILE_2018']) / df['TWENTY_PCTILE_2018'] * 100
 df['income_gap_delta'] = (df['income_gap18'] - df['income_gap10']) / df['income_gap10'] * 100
+df['housing_costs_delta'] = (df['MEDIAN_MONTHLY_HOUSING_COST_2018'] - df['MEDIAN_MONTHLY_HOUSING_COST_2010']) / df['MEDIAN_MONTHLY_HOUSING_COST_2010'] * 100
+df['rent_pct_income_delta'] = (df['RENT_AS_PCT_HOUSEHOLD_INCOME_2018'] - df['RENT_AS_PCT_HOUSEHOLD_INCOME_2010']) / df['RENT_AS_PCT_HOUSEHOLD_INCOME_2010'] * 100
+df['rent_25pctile_delta'] = (df['RENT_25PCTILE_2018'] - df['RENT_25PCTILE_2010']) / df['RENT_25PCTILE_2010'] * 100
 
 rdf = pd.read_csv('data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
 
@@ -205,4 +214,3 @@ def get_df(subset='all'):
         return subsets[subset]
     else:
         raise('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
-

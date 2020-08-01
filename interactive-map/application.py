@@ -49,7 +49,10 @@ def serve_layout():
                     'Other Race Population',
                     'Multiracial Population',
                     '20th percentile household income',
-                    '80th percentile household income'
+                    '80th percentile household income',
+                    'Median monthly housing costs',
+                    '% of household income used for rent',
+                    'Affordable housing: 25th percentile rent'
                 ]],
                 value='Non-white Population'
             )]),
@@ -91,12 +94,18 @@ def update_graph(data_selection):
             locations=df['GEOID'],
             featureidkey='properties.GEOID',
             zmin=-100 if data_selection == '20th percentile household income'
+                else(-50 if data_selection == 'Median monthly housing costs'
                 else(-100 if data_selection == '80th percentile household income'
-                else -10),
+                else -10)),
             zmax=100 if data_selection == '20th percentile household income'
+                else(50 if data_selection == 'Median monthly housing costs'
                 else(100 if data_selection == '80th percentile household income'
-                else 10),
-            colorscale='RdYlGn',
+                else(50 if data_selection == 'Affordable housing: 25th percentile rent'
+                else 10))),
+            colorscale='RdYlGn_r' if data_selection == 'Affordable housing: 25th percentile rent'
+            else('RdYlGn_r' if data_selection == 'Median monthly housing costs'
+            else('RdYlGn_r' if data_selection == '% of household income used for rent'
+            else 'RdYlGn')),
             marker_opacity=0.5,
             marker_line_width=0,
             z=df['white_pop_delta' if data_selection == 'White Population'
@@ -109,7 +118,10 @@ def update_graph(data_selection):
                 else('multiracial_pop_delta' if data_selection == 'Multiracial Population'
                 else('twenty_pctile_delta' if data_selection == '20th percentile household income'
                 else('eighty_pctile_delta' if data_selection == '80th percentile household income'
-                else 'minority_pop_delta')))))))))])
+                else('housing_costs_delta' if data_selection == 'Median monthly housing costs'
+                else('rent_pct_income_delta' if data_selection == '% of household income used for rent'
+                else('rent_25pctile_delta' if data_selection == 'Affordable housing: 25th percentile rent'
+                else 'minority_pop_delta'))))))))))))])
         ],
         'layout': go.Layout(
             mapbox_style="carto-positron",
@@ -134,8 +146,14 @@ def update_graph10(data_selection):
             zmin=0,
             zmax=30000 if data_selection == '20th percentile household income'
                 else(150000 if data_selection == '80th percentile household income'
-                else 100),
-            colorscale="tempo",
+                else(2500 if data_selection == 'Median monthly housing costs'
+                else(1600 if data_selection == 'Affordable housing: 25th percentile rent'
+                else(50 if data_selection == '% of household income used for rent'
+                else 100)))),
+            colorscale='RdYlGn_r' if data_selection == 'Affordable housing: 25th percentile rent'
+            else('RdYlGn_r' if data_selection == 'Median monthly housing costs'
+            else('RdYlGn_r' if data_selection == '% of household income used for rent'
+            else 'tempo')),
             marker_opacity=0.5,
             marker_line_width=0,
             z=df['white_pct10' if data_selection == 'White Population'
@@ -148,7 +166,10 @@ def update_graph10(data_selection):
                 else('multiracial_pct10' if data_selection == 'Multiracial Population'
                 else('TWENTY_PCTILE_2010' if data_selection == '20th percentile household income'
                 else('EIGHTY_PCTILE_2010' if data_selection == '80th percentile household income'
-                else 'minority_pop_pct10')))))))))])
+                else('MEDIAN_MONTHLY_HOUSING_COST_2010' if data_selection == 'Median monthly housing costs'
+                else('RENT_AS_PCT_HOUSEHOLD_INCOME_2010' if data_selection == '% of household income used for rent'
+                else('RENT_25PCTILE_2010' if data_selection == 'Affordable housing: 25th percentile rent'
+                else 'minority_pop_pct10'))))))))))))])
         ],
         'layout': go.Layout(
             mapbox_style="carto-positron",
@@ -175,8 +196,14 @@ def update_graph18(data_selection):
                 else 0,
             zmax=30000 if data_selection == '20th percentile household income'
                 else(150000 if data_selection == '80th percentile household income'
-                else 100),
-            colorscale="tempo",
+                else(2500 if data_selection == 'Median monthly housing costs'
+                else(1600 if data_selection == 'Affordable housing: 25th percentile rent'
+                else(50 if data_selection == '% of household income used for rent'
+                else 100)))),
+            colorscale='RdYlGn_r' if data_selection == 'Affordable housing: 25th percentile rent'
+            else('RdYlGn_r' if data_selection == 'Median monthly housing costs'
+            else('RdYlGn_r' if data_selection == '% of household income used for rent'
+            else 'tempo')),
             marker_opacity=0.5,
             marker_line_width=0,
             z=df['white_pct18' if data_selection == 'White Population'
@@ -189,8 +216,10 @@ def update_graph18(data_selection):
                 else('multiracial_pct18' if data_selection == 'Multiracial Population'
                 else('TWENTY_PCTILE_2018' if data_selection == '20th percentile household income'
                 else('EIGHTY_PCTILE_2018' if data_selection == '80th percentile household income'
-                else('income_gap18' if data_selection == 'Income Gap (diff btw 20th & 80th percentiles)'
-                else 'minority_pop_pct18'))))))))))])
+                else('MEDIAN_MONTHLY_HOUSING_COST_2018' if data_selection == 'Median monthly housing costs'
+                else('RENT_AS_PCT_HOUSEHOLD_INCOME_2018' if data_selection == '% of household income used for rent'
+                else('RENT_25PCTILE_2018' if data_selection == 'Affordable housing: 25th percentile rent'
+                else 'minority_pop_pct18'))))))))))))])
         ],
         'layout': go.Layout(
             mapbox_style="carto-positron",
