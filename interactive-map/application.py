@@ -52,7 +52,14 @@ def serve_layout():
                     '80th percentile household income',
                     'Median monthly housing costs',
                     '% of household income used for rent',
-                    'Affordable housing: 25th percentile rent'
+                    'Affordable housing: 25th percentile rent',
+                    'Housing Vacancy %',
+                    'Median age of housing (all)',
+                    'Median age of housing (owned)',
+                    'Median age of housing (rented)',
+                    'Median tenure in current housing (all)',
+                    'Median tenure in current housing (owned)',
+                    'Median tenure in current housing (rented)'
                 ]],
                 value='Non-white Population'
             )]),
@@ -96,16 +103,29 @@ def update_graph(data_selection):
             zmin=-100 if data_selection == '20th percentile household income'
                 else(-50 if data_selection == 'Median monthly housing costs'
                 else(-100 if data_selection == '80th percentile household income'
-                else -10)),
+                else(-5 if data_selection == 'Median tenure in current housing (all)'
+                else(-5 if data_selection == 'Median tenure in current housing (owned)'
+                else(-5 if data_selection == 'Median tenure in current housing (rented)'
+                else -10))))),
             zmax=100 if data_selection == '20th percentile household income'
                 else(50 if data_selection == 'Median monthly housing costs'
                 else(100 if data_selection == '80th percentile household income'
                 else(50 if data_selection == 'Affordable housing: 25th percentile rent'
-                else 10))),
+                else(5 if data_selection == 'Median tenure in current housing (all)'
+                else(5 if data_selection == 'Median tenure in current housing (owned)'
+                else(5 if data_selection == 'Median tenure in current housing (rented)'
+                else 10)))))),
             colorscale='RdYlGn_r' if data_selection == 'Affordable housing: 25th percentile rent'
             else('RdYlGn_r' if data_selection == 'Median monthly housing costs'
             else('RdYlGn_r' if data_selection == '% of household income used for rent'
-            else 'RdYlGn')),
+            else('RdYlGn_r' if data_selection == 'Housing Vacancy %'
+            else('RdYlGn_r' if data_selection == 'Median age of housing (all)'
+            else('RdYlGn_r' if data_selection == 'Median age of housing (owned)'
+            else('RdYlGn_r' if data_selection == 'Median age of housing (rented)'
+            else('RdYlGn' if data_selection == 'Median tenure in current housing (all)'
+            else('RdYlGn' if data_selection == 'Median tenure in current housing (owned)'
+            else('RdYlGn' if data_selection == 'Median tenure in current housing (rented)'
+            else 'RdYlGn'))))))))),
             marker_opacity=0.5,
             marker_line_width=0,
             z=df['white_pop_delta' if data_selection == 'White Population'
@@ -121,7 +141,14 @@ def update_graph(data_selection):
                 else('housing_costs_delta' if data_selection == 'Median monthly housing costs'
                 else('rent_pct_income_delta' if data_selection == '% of household income used for rent'
                 else('rent_25pctile_delta' if data_selection == 'Affordable housing: 25th percentile rent'
-                else 'minority_pop_delta'))))))))))))])
+                else('vacancy_delta' if data_selection == 'Housing Vacancy %'
+                else('housing_age_delta' if data_selection == 'Median age of housing (all)'
+                else('housing_age_owned_delta' if data_selection == 'Median age of housing (owned)'
+                else('housing_age_rented_delta' if data_selection == 'Median age of housing (rented)'
+                else('housing_tenure_delta' if data_selection == 'Median tenure in current housing (all)'
+                else('housing_tenure_owned_delta' if data_selection == 'Median tenure in current housing (owned)'
+                else('housing_tenure_rented_delta' if data_selection == 'Median tenure in current housing (rented)'
+                else 'minority_pop_delta')))))))))))))))))))])
         ],
         'layout': go.Layout(
             mapbox_style="carto-positron",
@@ -149,11 +176,24 @@ def update_graph10(data_selection):
                 else(2500 if data_selection == 'Median monthly housing costs'
                 else(1600 if data_selection == 'Affordable housing: 25th percentile rent'
                 else(50 if data_selection == '% of household income used for rent'
-                else 100)))),
+                else(60 if data_selection == 'Median age of housing (all)'
+                else(60 if data_selection == 'Median age of housing (owned)'
+                else(60 if data_selection == 'Median age of housing (rented)'
+                else(15 if data_selection == 'Median tenure in current housing (all)'
+                else(15 if data_selection == 'Median tenure in current housing (owned)'
+                else(15 if data_selection == 'Median tenure in current housing (rented)'
+                else 100)))))))))),
             colorscale='RdYlGn_r' if data_selection == 'Affordable housing: 25th percentile rent'
             else('RdYlGn_r' if data_selection == 'Median monthly housing costs'
             else('RdYlGn_r' if data_selection == '% of household income used for rent'
-            else 'tempo')),
+            else('RdYlGn_r' if data_selection == 'Housing Vacancy %'
+            else('RdYlGn_r' if data_selection == 'Median age of housing (all)'
+            else('RdYlGn_r' if data_selection == 'Median age of housing (owned)'
+            else('RdYlGn_r' if data_selection == 'Median age of housing (rented)'
+            else('RdYlGn' if data_selection == 'Median tenure in current housing (all)'
+            else('RdYlGn' if data_selection == 'Median tenure in current housing (owned)'
+            else('RdYlGn' if data_selection == 'Median tenure in current housing (rented)'
+            else 'tempo'))))))))),
             marker_opacity=0.5,
             marker_line_width=0,
             z=df['white_pct10' if data_selection == 'White Population'
@@ -169,7 +209,14 @@ def update_graph10(data_selection):
                 else('MEDIAN_MONTHLY_HOUSING_COST_2010' if data_selection == 'Median monthly housing costs'
                 else('RENT_AS_PCT_HOUSEHOLD_INCOME_2010' if data_selection == '% of household income used for rent'
                 else('RENT_25PCTILE_2010' if data_selection == 'Affordable housing: 25th percentile rent'
-                else 'minority_pop_pct10'))))))))))))])
+                else('vacancy10' if data_selection == 'Housing Vacancy %'
+                else('housing_age10' if data_selection == 'Median age of housing (all)'
+                else('housing_age_owned10' if data_selection == 'Median age of housing (owned)'
+                else('housing_age_rented10' if data_selection == 'Median age of housing (rented)'
+                else('housing_tenure10' if data_selection == 'Median tenure in current housing (all)'
+                else('housing_tenure_owned10' if data_selection == 'Median tenure in current housing (owned)'
+                else('housing_tenure_rented10' if data_selection == 'Median tenure in current housing (rented)'
+                else 'minority_pop_pct10')))))))))))))))))))])
         ],
         'layout': go.Layout(
             mapbox_style="carto-positron",
@@ -199,11 +246,24 @@ def update_graph18(data_selection):
                 else(2500 if data_selection == 'Median monthly housing costs'
                 else(1600 if data_selection == 'Affordable housing: 25th percentile rent'
                 else(50 if data_selection == '% of household income used for rent'
-                else 100)))),
+                else(60 if data_selection == 'Median age of housing (all)'
+                else(60 if data_selection == 'Median age of housing (owned)'
+                else(60 if data_selection == 'Median age of housing (rented)'
+                else(15 if data_selection == 'Median tenure in current housing (all)'
+                else(15 if data_selection == 'Median tenure in current housing (owned)'
+                else(15 if data_selection == 'Median tenure in current housing (rented)'
+                else 100)))))))))),
             colorscale='RdYlGn_r' if data_selection == 'Affordable housing: 25th percentile rent'
             else('RdYlGn_r' if data_selection == 'Median monthly housing costs'
             else('RdYlGn_r' if data_selection == '% of household income used for rent'
-            else 'tempo')),
+            else('RdYlGn_r' if data_selection == 'Housing Vacancy %'
+            else('RdYlGn_r' if data_selection == 'Median age of housing (all)'
+            else('RdYlGn_r' if data_selection == 'Median age of housing (owned)'
+            else('RdYlGn_r' if data_selection == 'Median age of housing (rented)'
+            else('RdYlGn' if data_selection == 'Median tenure in current housing (all)'
+            else('RdYlGn' if data_selection == 'Median tenure in current housing (owned)'
+            else('RdYlGn' if data_selection == 'Median tenure in current housing (rented)'
+            else 'tempo'))))))))),
             marker_opacity=0.5,
             marker_line_width=0,
             z=df['white_pct18' if data_selection == 'White Population'
@@ -219,7 +279,14 @@ def update_graph18(data_selection):
                 else('MEDIAN_MONTHLY_HOUSING_COST_2018' if data_selection == 'Median monthly housing costs'
                 else('RENT_AS_PCT_HOUSEHOLD_INCOME_2018' if data_selection == '% of household income used for rent'
                 else('RENT_25PCTILE_2018' if data_selection == 'Affordable housing: 25th percentile rent'
-                else 'minority_pop_pct18'))))))))))))])
+                else('vacancy18' if data_selection == 'Housing Vacancy %'
+                else('housing_age18' if data_selection == 'Median age of housing (all)'
+                else('housing_age_owned18' if data_selection == 'Median age of housing (owned)'
+                else('housing_age_rented18' if data_selection == 'Median age of housing (rented)'
+                else('housing_tenure18' if data_selection == 'Median tenure in current housing (all)'
+                else('housing_tenure_owned18' if data_selection == 'Median tenure in current housing (owned)'
+                else('housing_tenure_rented18' if data_selection == 'Median tenure in current housing (rented)'
+                else 'minority_pop_pct18')))))))))))))))))))])
         ],
         'layout': go.Layout(
             mapbox_style="carto-positron",
@@ -228,6 +295,7 @@ def update_graph18(data_selection):
             margin={"r": 0, "t": 0, "l": 0, "b": 0}
         )
     }
+
 #this calls the serve_layout function to run on app load.
 app.layout = serve_layout
 
