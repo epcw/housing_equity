@@ -1,3 +1,11 @@
-.idea*
+interactive-map/.idea*
+.ipynb_checkpoints*
 !/.gitignore
-sandbox-singlepage/data/
+sandbox-singlepage/data*
+interactive-map/.idea*
+archive*
+.idea*
+interactive-map/__pycache__*
+sandbox-singlepage/__pycache__*
+interactive-map/data*
+sandbox-singlepage/.ebextensions*
