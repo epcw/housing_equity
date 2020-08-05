@@ -24,6 +24,6 @@ scipy\
 sklearn
 
 ### Repository Structure
-housing_equity - main root folder. Has some example jupyter scripts and the license.
-|-interactive-map - Interactive map app
+housing_equity - main root folder. Has some example jupyter scripts and the license.\
+|-interactive-map - Interactive map app\
 |-sandbox-singlepage - Network model pilot app
