@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import networkx as nx
 from fa2 import ForceAtlas2
+from flask_caching import Cache
 
 app = dash.Dash(__name__)
 # Beanstalk looks for application by default, if this isn't set you will get a WSGI error.
@@ -15,6 +16,13 @@ from template import Template
 grid = Template()
 app.index_string = grid
 app.title = "Dashboards | EPCW"
+
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': 'cache'
+})
+
+TIMEOUT = 60
 
 '''
 #TRACT VERSION
@@ -49,6 +57,7 @@ the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 node_list = list(set(df['GEOID']))
 G = nx.MultiGraph()
 
+#normal version
 forceatlas2 = ForceAtlas2(
                         # Behavior alternatives
                         outboundAttractionDistribution=False,  # Dissuade hubs
@@ -70,15 +79,45 @@ forceatlas2 = ForceAtlas2(
                         # Log
                         verbose=True)
 
+pos = forceatlas2.forceatlas2_networkx_layout(G,pos=None, iterations=1000)
+'''
+
+#CACHE-USING VERSION
+@cache.memoize(timeout=TIMEOUT)
+def query_forceatlas2():
+    forceatlas2 = ForceAtlas2(
+                            # Behavior alternatives
+                            outboundAttractionDistribution=False,  # Dissuade hubs
+                            linLogMode=False,  # NOT IMPLEMENTED
+                            adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
+                            edgeWeightInfluence=5.0,
+
+                            # Performance
+                            jitterTolerance=1.0,  # Tolerance
+                            barnesHutOptimize=True,
+                            barnesHutTheta=1.2,
+                            multiThreaded=False,  # NOT IMPLEMENTED
+
+                            # Tuning
+                            scalingRatio=2,
+                            strongGravityMode=True,
+                            gravity=20.0,
+
+                            # Log
+                            verbose=True)
+    return forceatlas2
+def pos():
+    return query_forceatlas2().forceatlas2_networkx_layout(G,pos=None, iterations=1000)
+'''
+
 for i in node_list:
     G.add_node(i)
 
 for i, row in gdf.iterrows():
     G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega'])])
 
-pos = forceatlas2.forceatlas2_networkx_layout(G,pos=None, iterations=1000)
-for n, p in pos.items():
-    G.nodes[n]['pos'] = p
+for n, p in pos().items():
+    G.nodes[n]['pos()'] = p
 
 #plot this bad boy
 edge_trace = go.Scatter(
@@ -90,8 +129,8 @@ edge_trace = go.Scatter(
 )
 
 for edge in G.edges():
-    x0, y0 = G.nodes[edge[0]]['pos']
-    x1, y1 = G.nodes[edge[1]]['pos']
+    x0, y0 = G.nodes[edge[0]]['pos()']
+    x1, y1 = G.nodes[edge[1]]['pos()']
     edge_trace['x'] += tuple([x0, x1, None])
     edge_trace['y'] += tuple([y0, y1, None])
 
@@ -121,7 +160,7 @@ node_trace = go.Scatter(
 )
 
 for node in G.nodes():
-    x, y = G.nodes[node]['pos']
+    x, y = G.nodes[node]['pos()']
     node_trace['x'] += tuple([x])
     node_trace['y'] += tuple([y])
 

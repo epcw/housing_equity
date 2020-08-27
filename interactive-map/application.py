@@ -4,6 +4,7 @@ import dash_html_components as html
 import json
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
+from flask_caching import Cache
 
 app = dash.Dash(__name__)
 # Beanstalk looks for application by default, if this isn't set you will get a WSGI error.
@@ -15,8 +16,19 @@ grid = Template()
 app.index_string = grid
 app.title = "Dashboards | EPCW"
 
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': 'cache'
+})
+
+TIMEOUT = 60
+
 import data_prep_maps_tract
-df = data_prep_maps_tract.get_df()
+
+@cache.memoize(timeout=TIMEOUT)
+def df():
+    dataframe = data_prep_maps_tract.get_df()
+    return dataframe
 
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
@@ -98,7 +110,7 @@ def update_graph(data_selection):
     return {
         'data': [ go.Choroplethmapbox(
             geojson=tracts,
-            locations=df['GEOID'],
+            locations=df()['GEOID'],
             featureidkey='properties.GEOID',
             zmin=-100 if data_selection == '20th percentile household income'
                 else(-50 if data_selection == 'Median monthly housing costs'
@@ -128,7 +140,7 @@ def update_graph(data_selection):
             else 'RdYlGn'))))))))),
             marker_opacity=0.5,
             marker_line_width=0,
-            z=df['white_pop_delta' if data_selection == 'White Population'
+            z=df()['white_pop_delta' if data_selection == 'White Population'
                 else('black_pop_delta' if data_selection == 'Black Population'
                 else('native_pop_delta' if data_selection == 'Native Population'
                 else('asian_pop_delta' if data_selection == 'Asian Population'
@@ -168,7 +180,7 @@ def update_graph10(data_selection):
     return {
         'data': [ go.Choroplethmapbox(
             geojson=tracts,
-            locations=df['GEOID'],
+            locations=df()['GEOID'],
             featureidkey='properties.GEOID',
             zmin=0,
             zmax=30000 if data_selection == '20th percentile household income'
@@ -196,7 +208,7 @@ def update_graph10(data_selection):
             else 'tempo'))))))))),
             marker_opacity=0.5,
             marker_line_width=0,
-            z=df['white_pct10' if data_selection == 'White Population'
+            z=df()['white_pct10' if data_selection == 'White Population'
                 else('black_pct10' if data_selection == 'Black Population'
                 else('native_pct10' if data_selection == 'Native Population'
                 else('asian_pct10' if data_selection == 'Asian Population'
@@ -237,7 +249,7 @@ def update_graph18(data_selection):
     return {
         'data': [ go.Choroplethmapbox(
             geojson=tracts,
-            locations=df['GEOID'],
+            locations=df()['GEOID'],
             featureidkey='properties.GEOID',
             zmin=0 if data_selection == 'White Population'
                 else 0,
@@ -266,7 +278,7 @@ def update_graph18(data_selection):
             else 'tempo'))))))))),
             marker_opacity=0.5,
             marker_line_width=0,
-            z=df['white_pct18' if data_selection == 'White Population'
+            z=df()['white_pct18' if data_selection == 'White Population'
                 else('black_pct18' if data_selection == 'Black Population'
                 else('native_pct18' if data_selection == 'Native Population'
                 else('asian_pct18' if data_selection == 'Asian Population'

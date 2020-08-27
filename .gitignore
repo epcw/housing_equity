@@ -9,3 +9,5 @@ interactive-map/__pycache__*
 sandbox-singlepage/__pycache__*
 interactive-map/data*
 sandbox-singlepage/.ebextensions*
+sandbox-singlepage/cache*
+interactive-map/cache*
