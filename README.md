@@ -14,6 +14,7 @@ Patrick W. Zimmerman
 
 #### Package requirements (as well as all their dependencies)
 dash\
+Flask-Caching\
 geopandas\
 geopy\
 matplotlib\
@@ -28,6 +29,7 @@ sklearn
 |-- main root folder. License and readme.\
 |-- interactive-map - Interactive map app\
 |   |-- assets - Has CSS and javascript files along with favicon\ 
+|   |-- cache - Cache used by Flask for the dataframe to create temp files (so reloads don't have to completely re-run the pandas script)
 |   |-- data - Your datafiles go here (REMOVED FOR SPACE CONSIDERATIONS - the app expects to find .csv files and a geojson for maps)\
 |-- jupyter-utilities - Has some example jupyter scripts\
 |-- sandbox-singlepage - Network model pilot app
