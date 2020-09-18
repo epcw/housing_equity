@@ -79,8 +79,12 @@ forceatlas2 = ForceAtlas2(
                         # Log
                         verbose=True)
 
-pos = forceatlas2.forceatlas2_networkx_layout(G,pos=None, iterations=1000)
-'''
+for i in node_list:
+    G.add_node(i)
+
+for i, row in gdf.iterrows():
+    G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega'])])
+
 
 #CACHE-USING VERSION
 @cache.memoize(timeout=TIMEOUT)
@@ -108,16 +112,17 @@ def query_forceatlas2():
     return forceatlas2
 def pos():
     return query_forceatlas2().forceatlas2_networkx_layout(G,pos=None, iterations=1000)
+    
+for n, p in pos().items():
+    G.nodes[n]['pos'] = p
 '''
 
-for i in node_list:
-    G.add_node(i)
+#NON-CACHE-USING VERSION
+pos = forceatlas2.forceatlas2_networkx_layout(G,pos=None, iterations=1000)
 
-for i, row in gdf.iterrows():
-    G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega'])])
-
-for n, p in pos().items():
-    G.nodes[n]['pos()'] = p
+for n, p in pos.items():
+    G.nodes[n]['pos'] = p
+'''
 
 #plot this bad boy
 edge_trace = go.Scatter(
@@ -129,8 +134,8 @@ edge_trace = go.Scatter(
 )
 
 for edge in G.edges():
-    x0, y0 = G.nodes[edge[0]]['pos()']
-    x1, y1 = G.nodes[edge[1]]['pos()']
+    x0, y0 = G.nodes[edge[0]]['pos']
+    x1, y1 = G.nodes[edge[1]]['pos']
     edge_trace['x'] += tuple([x0, x1, None])
     edge_trace['y'] += tuple([y0, y1, None])
 
@@ -160,7 +165,7 @@ node_trace = go.Scatter(
 )
 
 for node in G.nodes():
-    x, y = G.nodes[node]['pos()']
+    x, y = G.nodes[node]['pos']
     node_trace['x'] += tuple([x])
     node_trace['y'] += tuple([y])
 
