@@ -134,32 +134,59 @@ race_data = race_data13.merge(race_data18, how = 'inner', left_on = ['GEOID','CO
 df = df.merge(race_data, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP']).drop_duplicates()
 df['minority_pop_2013'] = df['TOT_POP_2013'] - df['pop_white_nonhisp_only_2013']
 df['minority_pop_pct_2013'] = df['minority_pop_2013'] / df['TOT_POP_2013']
+df['minority_pop_2018'] = df['TOT_POP_2018'] - df['pop_white_nonhisp_only_2018']
+df['minority_pop_pct_2018'] = df['minority_pop_2018'] / df['TOT_POP_2018']
 
 gdf = gdf.merge(df[['GEOID']], how='left', left_on='block_group_geoid_a', right_on='GEOID')
 gdf = gdf.rename(columns={'block_group_geoid_a':'GEOID_a'})
 gdf = gdf.merge(df[['GEOID']], how='left', left_on='block_group_geoid_b', right_on='GEOID')
 gdf = gdf.rename(columns={'block_group_geoid_b':'GEOID_b'})
 
-#TODO ADD ALL CHANGES HERE
-
+#TODO ADD AFFORDABLE UNITS, TENANCY, HOUSING AGE
+df['minority_pop_pct_change'] = (df.minority_pop_pct_2018 - df.minority_pop_pct_2013)
+df['rent_25th_pctile_change'] = (df.RENT_25PCTILE_2018 - df.RENT_25PCTILE_2013)
+df['totpop_change'] = (df.TOT_POP_2018 - df.TOT_POP_2013)
+df['rent_pct_income_change'] = (df.RENT_AS_PCT_INCOME_2018 - df.RENT_AS_PCT_INCOME_2013)
 
 #merge dataframes to combine the different datasets so that you can calculate it.
-minority13 = df[['GEOID','minority_pop_pct_2013']]
-gdf = gdf.merge(minority13, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'minority_pop_pct_2013':'minority_pop_pct_2013_a'})
-gdf = gdf.merge(minority13, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'minority_pop_pct_2013':'minority_pop_pct_2013_b'})
+minority = df[['GEOID','minority_pop_pct_change']]
+gdf = gdf.merge(minority, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'minority_pop_pct_change':'minority_pop_pct_change_a'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a']]
+gdf = gdf.merge(minority, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'minority_pop_pct_change':'minority_pop_pct_change_b'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b']]
 
-lower_quartile_cost13 = df[['GEOID','RENT_25PCTILE_2013']]
-gdf = gdf.merge(lower_quartile_cost13, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'RENT_25PCTILE_2013':'lower_quartile_rent_2013_a'})
-gdf = gdf.merge(lower_quartile_cost13, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'RENT_25PCTILE_2013':'lower_quartile_rent_2013_b'})
+lower_quartile_rent = df[['GEOID','rent_25th_pctile_change']]
+gdf = gdf.merge(lower_quartile_rent, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'rent_25th_pctile_change':'rent_25th_pctile_change_a'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a']]
+gdf = gdf.merge(lower_quartile_rent, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'rent_25th_pctile_change':'rent_25th_pctile_change_b'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b']]
+
+totpop = df[['GEOID','totpop_change']]
+gdf = gdf.merge(totpop, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'totpop_change':'totpop_change_a'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a']]
+gdf = gdf.merge(totpop, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'totpop_change':'totpop_change_b'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a','totpop_change_b']]
+
+rent_pct_income = df[['GEOID','rent_pct_income_change']]
+gdf = gdf.merge(rent_pct_income, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'rent_pct_income_change':'rent_pct_income_change_a'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a','totpop_change_b','rent_pct_income_change_a']]
+gdf = gdf.merge(rent_pct_income, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'rent_pct_income_change':'rent_pct_income_change_b'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a','totpop_change_b','rent_pct_income_change_a','rent_pct_income_change_b']]
 
 #calculate diff between the two tracts (and take absolute value since sign is meaningless here)
-gdf['minority_pop_pct_delta'] = (gdf.minority_pop_pct_2010_a - gdf.minority_pop_pct_2010_b).abs()
-gdf['lower_quartile_rent_delta'] = (gdf.lower_quartile_rent_a - gdf.lower_quartile_rent_b).abs()
-
+gdf['minority_pop_pct_change_delta'] = (gdf.minority_pop_pct_change_a - gdf.minority_pop_pct_change_b).abs()
+gdf['rent_25th_pctile_change_delta'] = (gdf.rent_25th_pctile_change_a - gdf.rent_25th_pctile_change_b).abs()
+gdf['totpop_change_delta'] = (gdf.totpop_change_a - gdf.totpop_change_b).abs()
+gdf['rent_pct_income_change_delta'] = (gdf.rent_pct_income_change_a - gdf.rent_pct_income_change_b).abs()
+#TODO add deltas for tenancy, housing age, affordable housing stock
 
 #Kmeans clustering
 Y = df[['GEOID','RENT_25PCTILE','minority_pop_pct']]
