@@ -137,6 +137,29 @@ df['minority_pop_pct_2013'] = df['minority_pop_2013'] / df['TOT_POP_2013']
 df['minority_pop_2018'] = df['TOT_POP_2018'] - df['pop_white_nonhisp_only_2018']
 df['minority_pop_pct_2018'] = df['minority_pop_2018'] / df['TOT_POP_2018']
 
+#bring in affordable housing data
+housing_df_raw = pd.read_csv('data/king_blockgrp_housing-details.csv', dtype={"DATA":float,"YEAR":str,"TRACT_NUM": str, "BLOCK_GRP": str})
+
+#create geoid
+housing_df_raw['GEOID'] = '53033' + housing_df_raw['TRACT_NUM'] + housing_df_raw['BLOCK_GRP']
+
+#Aggregate unit data (rows in original housing_df_raw are counts of units under 100/mo, 200/mo, 300/mo, etc.
+affordable_df_raw = housing_df_raw[(housing_df_raw['CENSUS_QUERY'] == 'B25063_003E') | (housing_df_raw['CENSUS_QUERY'] == 'B25063_004E') | (housing_df_raw['CENSUS_QUERY'] == 'B25063_005E') | (housing_df_raw['CENSUS_QUERY'] == 'B25063_006E') | (housing_df_raw['CENSUS_QUERY'] == 'B25063_007E') | (housing_df_raw['CENSUS_QUERY'] == 'B25063_008E') | (housing_df_raw['CENSUS_QUERY'] == 'B25063_009E') | (housing_df_raw['CENSUS_QUERY'] == 'B25063_010E') | (housing_df_raw['CENSUS_QUERY'] == 'B25063_011E') | (housing_df_raw['CENSUS_QUERY'] == 'B25063_012E') | (housing_df_raw['CENSUS_QUERY'] == 'B25063_013E')]
+affordable_df = affordable_df_raw[['COUNTY','TRACT_NUM','BLOCK_GRP','GEOID','YEAR']]
+
+affordable_data13 = affordable_df_raw[(affordable_df_raw['YEAR'] == '2013')]
+atest = housing_df_raw[(housing_df_raw['CENSUS_QUERY'] == 'B25024_001E') & (housing_df_raw['YEAR'] == '2018')]
+affordable_data13 = affordable_data13.groupby(['GEOID']).sum().reset_index()
+affordable_df = affordable_df.merge(affordable_data13, how='left', left_on=['GEOID'], right_on=['GEOID'])
+affordable_df = affordable_df[['COUNTY','TRACT_NUM','BLOCK_GRP','GEOID','DATA']]
+affordable_df = affordable_df.rename(columns = {'DATA' : 'sub_600_units_2013'})
+#TODO: CHECK THIS AFTER RE-SCRAPING
+affordable_data18 = affordable_df_raw[(affordable_df_raw['YEAR'] == '2018')]
+affordable_data18 = affordable_data18.groupby(['GEOID']).sum().reset_index()
+affordable_df = affordable_df.merge(affordable_data18, how='left', left_on=['GEOID'], right_on=['GEOID']).drop_duplicates()
+affordable_df = affordable_df[['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP','sub_600_units_2013','DATA']]
+affordable_df = affordable_df.rename(columns = {'DATA' : 'sub_600_units_2018'})
+
 gdf = gdf.merge(df[['GEOID']], how='left', left_on='block_group_geoid_a', right_on='GEOID')
 gdf = gdf.rename(columns={'block_group_geoid_a':'GEOID_a'})
 gdf = gdf.merge(df[['GEOID']], how='left', left_on='block_group_geoid_b', right_on='GEOID')
