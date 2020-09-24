@@ -94,7 +94,7 @@ def query_forceatlas2():
                             outboundAttractionDistribution=False,  # Dissuade hubs
                             linLogMode=False,  # NOT IMPLEMENTED
                             adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-                            edgeWeightInfluence=5.0,
+                            edgeWeightInfluence=5.0, #was 5, testing if this can change things
 
                             # Performance
                             jitterTolerance=1.0,  # Tolerance
@@ -105,7 +105,7 @@ def query_forceatlas2():
                             # Tuning
                             scalingRatio=2,
                             strongGravityMode=True,
-                            gravity=20.0,
+                            gravity=20.0, #was 20, still seeing a straight line.
 
                             # Log
                             verbose=True)
@@ -177,7 +177,7 @@ for node, adjacencies in enumerate(G.adjacency()):
 #node_text = df["COUNTY"] + ' ' + df["TRACT_NUM"] + ' - ' +str(len(adjacencies[1])) + ' connections'
 for node in G.nodes():
     node_label = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"]
-    node_text = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop: ' + (df['minority_pop_pct'] * 100).round(2).astype('str') + '% <br>' + '25%ile housing: $' + df['RENT_25PCTILE'].round(0).astype('str') + '/month'
+    node_text = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop: ' + (df['minority_pop_pct_change'] * 100).round(2).astype('str') + '% <br>' + '25%ile housing: $' + df['rent_25th_pctile_change'].round(0).astype('str') + '/month'
 
 df['tract_index'] = df['TRACT_NUM'].astype(int)
 

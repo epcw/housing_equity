@@ -148,28 +148,53 @@ affordable_df_raw = housing_df_raw[(housing_df_raw['CENSUS_QUERY'] == 'B25063_00
 affordable_df = affordable_df_raw[['COUNTY','TRACT_NUM','BLOCK_GRP','GEOID','YEAR']]
 
 affordable_data13 = affordable_df_raw[(affordable_df_raw['YEAR'] == '2013')]
-atest = housing_df_raw[(housing_df_raw['CENSUS_QUERY'] == 'B25024_001E') & (housing_df_raw['YEAR'] == '2018')]
 affordable_data13 = affordable_data13.groupby(['GEOID']).sum().reset_index()
 affordable_df = affordable_df.merge(affordable_data13, how='left', left_on=['GEOID'], right_on=['GEOID'])
 affordable_df = affordable_df[['COUNTY','TRACT_NUM','BLOCK_GRP','GEOID','DATA']]
 affordable_df = affordable_df.rename(columns = {'DATA' : 'sub_600_units_2013'})
-#TODO: CHECK THIS AFTER RE-SCRAPING
 affordable_data18 = affordable_df_raw[(affordable_df_raw['YEAR'] == '2018')]
 affordable_data18 = affordable_data18.groupby(['GEOID']).sum().reset_index()
 affordable_df = affordable_df.merge(affordable_data18, how='left', left_on=['GEOID'], right_on=['GEOID']).drop_duplicates()
 affordable_df = affordable_df[['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP','sub_600_units_2013','DATA']]
 affordable_df = affordable_df.rename(columns = {'DATA' : 'sub_600_units_2018'})
+df = df.merge(affordable_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'])
+df['sub_600_units_per_capita_2013'] = df['sub_600_units_2013']/df['TOT_POP_2013']
+df['sub_600_units_per_capita_2018'] = df['sub_600_units_2018']/df['TOT_POP_2018']
+
+#Tenancy data
+tenancy_df_raw = housing_df_raw[(housing_df_raw['CENSUS_QUERY'] == 'B25039_001E')]
+tenancy13 = tenancy_df_raw[(tenancy_df_raw['YEAR'] == '2013')]
+tenancy13['median_tenancy_2013'] = 2013 - (tenancy13.DATA)
+tenancy13 = tenancy13[['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP','median_tenancy_2013']]
+tenancy18 = tenancy_df_raw[(tenancy_df_raw['YEAR'] == '2018')]
+tenancy18['median_tenancy_2018'] = 2018 - (tenancy18.DATA)
+tenancy18 = tenancy18[['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP','median_tenancy_2018']]
+df = df.merge(tenancy13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'])
+df = df.merge(tenancy18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'])
+
+#housing age data
+housing_age_df_raw = housing_df_raw[(housing_df_raw['CENSUS_QUERY'] == 'B25035_001E')]
+housing_age13 = housing_age_df_raw[(housing_age_df_raw['YEAR'] == '2013')]
+housing_age13['median_housing_age_2013'] = 2013 - (housing_age13.DATA)
+housing_age13 = housing_age13[['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP','median_housing_age_2013']]
+housing_age18 = housing_age_df_raw[(housing_age_df_raw['YEAR'] == '2018')]
+housing_age18['median_housing_age_2018'] = 2018 - (housing_age18.DATA)
+housing_age18 = housing_age18[['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP','median_housing_age_2018']]
+df = df.merge(housing_age13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'])
+df = df.merge(housing_age18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'])
 
 gdf = gdf.merge(df[['GEOID']], how='left', left_on='block_group_geoid_a', right_on='GEOID')
 gdf = gdf.rename(columns={'block_group_geoid_a':'GEOID_a'})
 gdf = gdf.merge(df[['GEOID']], how='left', left_on='block_group_geoid_b', right_on='GEOID')
 gdf = gdf.rename(columns={'block_group_geoid_b':'GEOID_b'})
 
-#TODO ADD AFFORDABLE UNITS, TENANCY, HOUSING AGE
 df['minority_pop_pct_change'] = (df.minority_pop_pct_2018 - df.minority_pop_pct_2013)
 df['rent_25th_pctile_change'] = (df.RENT_25PCTILE_2018 - df.RENT_25PCTILE_2013)
 df['totpop_change'] = (df.TOT_POP_2018 - df.TOT_POP_2013)
 df['rent_pct_income_change'] = (df.RENT_AS_PCT_INCOME_2018 - df.RENT_AS_PCT_INCOME_2013)
+df['affordable_units_per_cap_change'] = (df.sub_600_units_per_capita_2018 - df.sub_600_units_per_capita_2013)
+df['median_tenancy_change'] = (df.median_tenancy_2018 - df.median_tenancy_2013)
+df['median_housing_age_change'] = (df.median_housing_age_2018 - df.median_housing_age_2013)
 
 #merge dataframes to combine the different datasets so that you can calculate it.
 minority = df[['GEOID','minority_pop_pct_change']]
@@ -204,18 +229,51 @@ gdf = gdf.merge(rent_pct_income, how = 'inner', left_on = ['GEOID_b'], right_on 
 gdf = gdf.rename(columns = {'rent_pct_income_change':'rent_pct_income_change_b'})
 gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a','totpop_change_b','rent_pct_income_change_a','rent_pct_income_change_b']]
 
+affordable_units_per_cap = df[['GEOID','affordable_units_per_cap_change']]
+gdf = gdf.merge(affordable_units_per_cap, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'affordable_units_per_cap_change':'affordable_units_per_cap_change_a'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a','totpop_change_b','rent_pct_income_change_a','rent_pct_income_change_b','affordable_units_per_cap_change_a']]
+gdf = gdf.merge(affordable_units_per_cap, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'affordable_units_per_cap_change':'affordable_units_per_cap_change_b'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a','totpop_change_b','rent_pct_income_change_a','rent_pct_income_change_b','affordable_units_per_cap_change_a','affordable_units_per_cap_change_b']]
+
+tenancy = df[['GEOID','median_tenancy_change']]
+gdf = gdf.merge(tenancy, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'median_tenancy_change':'median_tenancy_change_a'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a','totpop_change_b','rent_pct_income_change_a','rent_pct_income_change_b','affordable_units_per_cap_change_a','affordable_units_per_cap_change_b','median_tenancy_change_a']]
+gdf = gdf.merge(tenancy, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'median_tenancy_change':'median_tenancy_change_b'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a','totpop_change_b','rent_pct_income_change_a','rent_pct_income_change_b','affordable_units_per_cap_change_a','affordable_units_per_cap_change_b','median_tenancy_change_a','median_tenancy_change_b']]
+
+housing_age = df[['GEOID','median_housing_age_change']]
+gdf = gdf.merge(housing_age, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'median_housing_age_change':'median_housing_age_change_a'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a','totpop_change_b','rent_pct_income_change_a','rent_pct_income_change_b','affordable_units_per_cap_change_a','affordable_units_per_cap_change_b','median_tenancy_change_a','median_tenancy_change_b','median_housing_age_change_a']]
+gdf = gdf.merge(housing_age, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
+gdf = gdf.rename(columns = {'median_housing_age_change':'median_housing_age_change_b'})
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','totpop_change_a','totpop_change_b','rent_pct_income_change_a','rent_pct_income_change_b','affordable_units_per_cap_change_a','affordable_units_per_cap_change_b','median_tenancy_change_a','median_tenancy_change_b','median_housing_age_change_a','median_housing_age_change_b']]
+
 #calculate diff between the two tracts (and take absolute value since sign is meaningless here)
 gdf['minority_pop_pct_change_delta'] = (gdf.minority_pop_pct_change_a - gdf.minority_pop_pct_change_b).abs()
+gdf['minority_pop_pct_change_delta'] = gdf['minority_pop_pct_change_delta'].fillna(0) #deals with nan in dataframe, which was breaking the network
 gdf['rent_25th_pctile_change_delta'] = (gdf.rent_25th_pctile_change_a - gdf.rent_25th_pctile_change_b).abs()
+gdf['rent_25th_pctile_change_delta'] = gdf['rent_25th_pctile_change_delta'].fillna(0)
 gdf['totpop_change_delta'] = (gdf.totpop_change_a - gdf.totpop_change_b).abs()
+gdf['totpop_change_delta'] = gdf['totpop_change_delta'].fillna(0)
 gdf['rent_pct_income_change_delta'] = (gdf.rent_pct_income_change_a - gdf.rent_pct_income_change_b).abs()
-#TODO add deltas for tenancy, housing age, affordable housing stock
+gdf['rent_pct_income_change_delta'] = gdf['rent_pct_income_change_delta'].fillna(0)
+gdf['affordable_units_per_cap_change_delta'] = (gdf.affordable_units_per_cap_change_a - gdf.affordable_units_per_cap_change_b).abs()
+gdf['affordable_units_per_cap_change_delta'] = gdf['affordable_units_per_cap_change_delta'].fillna(0)
+gdf['median_tenancy_change_delta'] = (gdf.median_tenancy_change_a - gdf.median_tenancy_change_b).abs()
+gdf['median_tenancy_change_delta'] = gdf['median_tenancy_change_delta'].fillna(0)
+gdf['median_housing_age_change_delta'] = (gdf.median_housing_age_change_a - gdf.median_housing_age_change_b).abs()
+gdf['median_housing_age_change_delta'] = gdf['median_housing_age_change_delta'].fillna(0)
 
 #Kmeans clustering
-Y = df[['GEOID','RENT_25PCTILE','minority_pop_pct']]
-Y = Y[~Y['minority_pop_pct'].isnull()]
-Y = Y[~Y['RENT_25PCTILE'].isnull()]
-X = Y[['RENT_25PCTILE','minority_pop_pct']]
+Y = df[['GEOID','rent_25th_pctile_change','minority_pop_pct_change']]
+Y = Y[~Y['minority_pop_pct_change'].isnull()]
+Y = Y[~Y['rent_25th_pctile_change'].isnull()]
+X = Y[['rent_25th_pctile_change','minority_pop_pct_change']]
 K = 4
 kmeans = KMeans(n_clusters=K, random_state=0).fit(X)
 Y['labels'] = kmeans.labels_
@@ -227,31 +285,35 @@ for i in range(K):
 for i in range(K):
     Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
 #re-merge with df
-df = df.merge(Y, how='left', left_on=['GEOID','minority_pop_pct','RENT_25PCTILE'], right_on=['GEOID','minority_pop_pct','RENT_25PCTILE'])
+df = df.merge(Y, how='left', left_on=['GEOID','minority_pop_pct_change','rent_25th_pctile_change'], right_on=['GEOID','minority_pop_pct_change','rent_25th_pctile_change'])
 
 grp0 = df[(df['labels'] == 0)]
-grp0 = grp0[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct','RENT_25PCTILE','labels','d']]
+grp0 = grp0[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
 grp0_length = str(grp0.shape)
 grp1 = df[(df['labels'] == 1)]
-grp1 = grp1[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct','RENT_25PCTILE','labels','d']]
+grp1 = grp1[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
 grp1_length = str(grp1.shape)
 
 grp2 = df[(df['labels'] == 2)]
-grp2 = grp2[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct','RENT_25PCTILE','labels','d']]
+grp2 = grp2[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
 grp2_length = str(grp2.shape)
 
 grp3 = df[(df['labels'] == 3)]
-grp3 = grp3[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct','RENT_25PCTILE','labels','d']]
+grp3 = grp3[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
 grp3_length = str(grp3.shape)
 
+# TODO: REAL WEIGHTS TO ACCOUNT FOR SCALE OF MEASUREMENTS. MAYBE Z-SCORE EVERYTHING
+#weight the edges
+alpha = 1/7
+bravo = 1/7
+charlie = 1/7
+delta = 1/7
+echo = 1/7
+foxtrot = 1/7
+golf = 1/7
 
-
-
-# TODO: alpha & omega redef
-
-#alpha time
-alpha = .33
-gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.lower_quartile_rent_delta*10e-03)
+gdf['omega'] = ((alpha * gdf.minority_pop_pct_change_delta) + (bravo * gdf.rent_25th_pctile_change_delta) + (charlie * gdf.totpop_change_delta) + (delta * gdf.rent_pct_income_change_delta) + (echo * gdf.affordable_units_per_cap_change_delta) + (foxtrot * gdf.median_tenancy_change_delta) + (golf * gdf.median_housing_age_change_delta))
+gdf['omega'] = gdf['omega'] / gdf['omega'].max() #normalize so edges don't go nuts
 
 #gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
 
@@ -300,8 +362,8 @@ wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
 #del df['OBJECTID_']
 #del df['GEOID10']
 #del df['TRACTCE10']
-del gdf['GEOID_x']
-del gdf['GEOID_y']
+#del gdf['GEOID_x']
+#del gdf['GEOID_y']
 
 def get_df(subset='all'):
     subsets = {
