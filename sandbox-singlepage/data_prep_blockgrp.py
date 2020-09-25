@@ -3,6 +3,9 @@ import geopandas as gp
 from geopy import distance
 from sklearn.cluster import KMeans
 from scipy.stats import zscore
+
+# TODO: Make a variable that points to 'Dropbox/EPCW/Projects/hoursing_equity/sandbox-singlepage/data' and replace all data file references with abosolute paths.
+
 df_rent = pd.read_csv('data/king_blockgrp_rent.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
 
 #filter for 2013
