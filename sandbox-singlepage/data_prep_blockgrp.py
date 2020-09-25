@@ -304,13 +304,13 @@ grp3_length = str(grp3.shape)
 
 # TODO: REAL WEIGHTS TO ACCOUNT FOR SCALE OF MEASUREMENTS. MAYBE Z-SCORE EVERYTHING
 #weight the edges
-alpha = 1/7
-bravo = 1/7
-charlie = 1/7
-delta = 1/7
-echo = 1/7
-foxtrot = 1/7
-golf = 1/7
+alpha = 1/7.0
+bravo = 1/7.0
+charlie = 1/7.0
+delta = 1/7.0
+echo = 1/7.0
+foxtrot = 1/7.0
+golf = 1/7.0
 
 gdf['omega'] = ((alpha * gdf.minority_pop_pct_change_delta) + (bravo * gdf.rent_25th_pctile_change_delta) + (charlie * gdf.totpop_change_delta) + (delta * gdf.rent_pct_income_change_delta) + (echo * gdf.affordable_units_per_cap_change_delta) + (foxtrot * gdf.median_tenancy_change_delta) + (golf * gdf.median_housing_age_change_delta))
 gdf['omega'] = gdf['omega'] / gdf['omega'].max() #normalize so edges don't go nuts
