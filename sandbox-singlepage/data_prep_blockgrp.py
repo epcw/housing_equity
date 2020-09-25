@@ -2,7 +2,7 @@ import pandas as pd
 import geopandas as gp
 from geopy import distance
 from sklearn.cluster import KMeans
-
+from scipy.stats import zscore
 df_rent = pd.read_csv('data/king_blockgrp_rent.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
 
 #filter for 2013
@@ -177,9 +177,12 @@ housing_age_df_raw = housing_df_raw[(housing_df_raw['CENSUS_QUERY'] == 'B25035_0
 housing_age13 = housing_age_df_raw[(housing_age_df_raw['YEAR'] == '2013')]
 housing_age13['median_housing_age_2013'] = 2013 - (housing_age13.DATA)
 housing_age13 = housing_age13[['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP','median_housing_age_2013']]
+housing_age13.loc[housing_age13.median_housing_age_2013 > 100, 'median_housing_age_2013'] = None #corrects for the census having "2018" as an answer to some of these
 housing_age18 = housing_age_df_raw[(housing_age_df_raw['YEAR'] == '2018')]
 housing_age18['median_housing_age_2018'] = 2018 - (housing_age18.DATA)
 housing_age18 = housing_age18[['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP','median_housing_age_2018']]
+housing_age18.loc[housing_age18.median_housing_age_2018 > 100, 'median_housing_age_2018'] = None #corrects for the census having "2018" as an answer to some of these
+
 df = df.merge(housing_age13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'])
 df = df.merge(housing_age18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'])
 
@@ -195,6 +198,15 @@ df['rent_pct_income_change'] = (df.RENT_AS_PCT_INCOME_2018 - df.RENT_AS_PCT_INCO
 df['affordable_units_per_cap_change'] = (df.sub_600_units_per_capita_2018 - df.sub_600_units_per_capita_2013)
 df['median_tenancy_change'] = (df.median_tenancy_2018 - df.median_tenancy_2013)
 df['median_housing_age_change'] = (df.median_housing_age_2018 - df.median_housing_age_2013)
+
+#CONVERT ALL CHANGES TO Z-SCORE SO YOU CAN COMPARE THEM
+df['minority_pop_pct_change'] = (df.minority_pop_pct_change - df.minority_pop_pct_change.mean())/df.minority_pop_pct_change.std()
+df['rent_25th_pctile_change'] = (df.rent_25th_pctile_change - df.rent_25th_pctile_change.mean())/df.rent_25th_pctile_change.std()
+df['totpop_change'] = (df.totpop_change - df.totpop_change.mean())/df.totpop_change.std()
+df['rent_pct_income_change'] = (df.rent_pct_income_change - df.rent_pct_income_change.mean())/df.rent_pct_income_change.std()
+df['affordable_units_per_cap_change'] = (df.affordable_units_per_cap_change - df.affordable_units_per_cap_change.mean())/df.affordable_units_per_cap_change.std()
+df['median_tenancy_change'] = (df.median_tenancy_change - df.median_tenancy_change.mean())/df.median_tenancy_change.std()
+df['median_housing_age_change'] = (df.median_housing_age_change - df.median_housing_age_change.mean())/df.median_housing_age_change.std()
 
 #merge dataframes to combine the different datasets so that you can calculate it.
 minority = df[['GEOID','minority_pop_pct_change']]
@@ -302,7 +314,7 @@ grp3 = df[(df['labels'] == 3)]
 grp3 = grp3[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
 grp3_length = str(grp3.shape)
 
-# TODO: REAL WEIGHTS TO ACCOUNT FOR SCALE OF MEASUREMENTS. MAYBE Z-SCORE EVERYTHING
+# TODO: REAL WEIGHTS TO ACCOUNT FOR SCALE OF MEASUREMENTS.
 #weight the edges
 alpha = 1/7.0
 bravo = 1/7.0
@@ -312,7 +324,7 @@ echo = 1/7.0
 foxtrot = 1/7.0
 golf = 1/7.0
 
-gdf['omega'] = ((alpha * gdf.minority_pop_pct_change_delta) + (bravo * gdf.rent_25th_pctile_change_delta) + (charlie * gdf.totpop_change_delta) + (delta * gdf.rent_pct_income_change_delta) + (echo * gdf.affordable_units_per_cap_change_delta) + (foxtrot * gdf.median_tenancy_change_delta) + (golf * gdf.median_housing_age_change_delta))
+gdf['omega'] = (-(alpha * gdf.minority_pop_pct_change_delta) + (bravo * gdf.rent_25th_pctile_change_delta) + (charlie * gdf.totpop_change_delta) + (delta * gdf.rent_pct_income_change_delta) + -(echo * gdf.affordable_units_per_cap_change_delta) + -(foxtrot * gdf.median_tenancy_change_delta) + (golf * gdf.median_housing_age_change_delta))
 gdf['omega'] = gdf['omega'] / gdf['omega'].max() #normalize so edges don't go nuts
 
 #gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
