@@ -94,7 +94,7 @@ def query_forceatlas2():
                             outboundAttractionDistribution=False,  # Dissuade hubs
                             linLogMode=False,  # NOT IMPLEMENTED
                             adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-                            edgeWeightInfluence=5.0, #was 5, testing if this can change things
+                            edgeWeightInfluence=20.0, #was 5, testing if this can change things
 
                             # Performance
                             jitterTolerance=1.0,  # Tolerance
@@ -105,7 +105,7 @@ def query_forceatlas2():
                             # Tuning
                             scalingRatio=2,
                             strongGravityMode=True,
-                            gravity=20.0, #was 20, still seeing a straight line.
+                            gravity=10.0, #was 20, still seeing a straight line.
 
                             # Log
                             verbose=True)

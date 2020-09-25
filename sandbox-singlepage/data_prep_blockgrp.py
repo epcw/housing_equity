@@ -336,7 +336,7 @@ gdf['omega'] = (
         -(foxtrot * gdf.median_tenancy_change_delta) + \
         (golf * gdf.median_housing_age_change_delta)
 )
-gdf['omega'] = gdf['omega'] / gdf['omega'].max() #normalize so edges don't go nuts
+#gdf['omega'] = gdf['omega'] / gdf['omega'].max() #normalize so edges don't go nuts
 
 #gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
 
