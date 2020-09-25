@@ -317,7 +317,9 @@ grp3 = df[(df['labels'] == 3)]
 grp3 = grp3[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
 grp3_length = str(grp3.shape)
 
-# TODO: REAL WEIGHTS TO ACCOUNT FOR SCALE OF MEASUREMENTS.
+#TODO: REAL WEIGHTS TO ACCOUNT FOR SCALE OF MEASUREMENTS.
+#TODO: figure out how to account for things that didn't change because already an edge case by 2013.
+
 #weight the edges
 alpha = 1/6.0
 bravo = 1/6.0
@@ -336,6 +338,10 @@ gdf['omega'] = (
         -(foxtrot * gdf.median_tenancy_change_delta) + \
         (golf * gdf.median_housing_age_change_delta)
 )
+
+#gdf.loc[gdf.omega < 0, 'omega'] = None #corrects for the census having "2018" as an answer to some of these
+gdf = gdf[(gdf['omega'] >= -0.5)]
+
 #gdf['omega'] = gdf['omega'] / gdf['omega'].max() #normalize so edges don't go nuts
 
 #gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
