@@ -211,6 +211,15 @@ df['affordable_units_per_cap_change'] = (df.affordable_units_per_cap_change - df
 df['median_tenancy_change'] = (df.median_tenancy_change - df.median_tenancy_change.mean())/df.median_tenancy_change.std()
 df['median_housing_age_change'] = (df.median_housing_age_change - df.median_housing_age_change.mean())/df.median_housing_age_change.std()
 
+#CONVERT 2018 numbers to z-score for comparison
+df['minority_pop_pct_2018z'] = (df.minority_pop_pct_2018 - df.minority_pop_pct_2018.mean())/df.minority_pop_pct_2018.std()
+df['rent_25th_pctile_2018z'] = (df.RENT_25PCTILE_2018 - df.RENT_25PCTILE_2018.mean())/df.RENT_25PCTILE_2018.std()
+df['totpop_2018z'] = (df.TOT_POP_2018 - df.TOT_POP_2018.mean())/df.TOT_POP_2018.std()
+df['rent_pct_income_2018z'] = (df.RENT_AS_PCT_INCOME_2018 - df.RENT_AS_PCT_INCOME_2018.mean())/df.RENT_AS_PCT_INCOME_2018.std()
+df['affordable_units_per_cap_2018z'] = (df.sub_600_units_per_capita_2018 - df.sub_600_units_per_capita_2018.mean())/df.sub_600_units_per_capita_2018.std()
+df['median_tenancy_2018z'] = (df.median_tenancy_2018 - df.median_tenancy_2018.mean())/df.median_tenancy_2018.std()
+df['median_housing_age_2018z'] = (df.median_housing_age_2018 - df.median_housing_age_2018.mean())/df.median_housing_age_2018.std()
+
 #merge dataframes to combine the different datasets so that you can calculate it.
 minority = df[['GEOID','minority_pop_pct_change']]
 gdf = gdf.merge(minority, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
