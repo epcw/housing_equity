@@ -142,7 +142,7 @@ for edge in G.edges():
 node_trace = go.Scatter(
     x=[],
     y=[],
-    mode='markers',
+    mode='markers', #make markers+text to show labels
     text=[],
     hoverinfo='text',
     marker=dict(
@@ -176,14 +176,14 @@ for node, adjacencies in enumerate(G.adjacency()):
     #node_text.append('# of connections: '+str(len(adjacencies[1])))
 #node_text = df["COUNTY"] + ' ' + df["TRACT_NUM"] + ' - ' +str(len(adjacencies[1])) + ' connections'
 for node in G.nodes():
-    node_label = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"]
-    node_text = 'Tract: ' + df["TRACT_NUM"] + ', block group: ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop: ' + (df['minority_pop_pct_change'] * 100).round(2).astype('str') + '% <br>' + '25%ile housing: $' + df['rent_25th_pctile_change'].round(0).astype('str') + '/month'
+    node_label = df["TRACT_NUM"] + ' block group ' + df["BLOCK_GRP"]
+    node_text = df["TRACT_NUM"] + ', block group ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop change: ' + (df['minority_pop_pct_change']).round(2).astype('str') + '% <br>' + '25%ile housing: ' + df['rent_25th_pctile_change'].round(2).astype('str') + '%'
 
 df['tract_index'] = df['TRACT_NUM'].astype(int)
 
 node_trace.marker.color = df['tract_index']
 node_trace.text = node_text
-
+#node_trace.name = node_label.astype('str')
 
 fig = go.Figure(data=[edge_trace, node_trace],
              layout=go.Layout(
@@ -216,8 +216,8 @@ def serve_layout():
         dcc.Link('Dashboard Home', href='/', id="app_menu"),
         html.Div([
             html.H1('Wallingford Urban Village Network'),
-            html.P('Pilot network model of census block groups within the urban village of Wallingford (defined as all census block groups within 3km of 5303305002).  Edge weights are determined 50% by minority population percentage and 50% by lowest quartile housing cost (block groups that are closer together are more similar than those further apart). Census tracts (which may contain 1 or several block groups) are noted by color.', className='description'),
-            html.P('Edge weights are determined 33% by minority population percentage and 67% by lowest quartile housing cost (block groups that are closer together are more similar than those further apart).', className='description'),
+            html.P('Pilot network model of census block groups within the urban village of Wallingford (defined as all census block groups within 3km of 5303305002). Block groups that are closer together are more similar than those further apart. Census tracts (which may contain 1 or several block groups) are noted by color.', className='description'),
+            html.P('Edge weights are determined by minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income (block groups that are closer together are more similar than those further apart).', className='description'),
             html.P('Census tracts (which may contain 1 or several block groups) are noted by color.', className='description'),
             dcc.Graph(figure=fig,
                       id='housing_networkx'
