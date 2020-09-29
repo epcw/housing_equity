@@ -211,6 +211,15 @@ df['affordable_units_per_cap_change'] = (df.affordable_units_per_cap_change - df
 df['median_tenancy_change'] = (df.median_tenancy_change - df.median_tenancy_change.mean())/df.median_tenancy_change.std()
 df['median_housing_age_change'] = (df.median_housing_age_change - df.median_housing_age_change.mean())/df.median_housing_age_change.std()
 
+#CONVERT 2013 numbers to z-score for comparison
+df['minority_pop_pct_2013z'] = (df.minority_pop_pct_2013 - df.minority_pop_pct_2013.mean())/df.minority_pop_pct_2013.std()
+df['rent_25th_pctile_2013z'] = (df.RENT_25PCTILE_2013 - df.RENT_25PCTILE_2013.mean())/df.RENT_25PCTILE_2013.std()
+df['totpop_2013z'] = (df.TOT_POP_2013 - df.TOT_POP_2013.mean())/df.TOT_POP_2013.std()
+df['rent_pct_income_2013z'] = (df.RENT_AS_PCT_INCOME_2013 - df.RENT_AS_PCT_INCOME_2013.mean())/df.RENT_AS_PCT_INCOME_2013.std()
+df['affordable_units_per_cap_2013z'] = (df.sub_600_units_per_capita_2013 - df.sub_600_units_per_capita_2013.mean())/df.sub_600_units_per_capita_2013.std()
+df['median_tenancy_2013z'] = (df.median_tenancy_2013 - df.median_tenancy_2013.mean())/df.median_tenancy_2013.std()
+df['median_housing_age_2013z'] = (df.median_housing_age_2013 - df.median_housing_age_2013.mean())/df.median_housing_age_2013.std()
+
 #CONVERT 2018 numbers to z-score for comparison
 df['minority_pop_pct_2018z'] = (df.minority_pop_pct_2018 - df.minority_pop_pct_2018.mean())/df.minority_pop_pct_2018.std()
 df['rent_25th_pctile_2018z'] = (df.RENT_25PCTILE_2018 - df.RENT_25PCTILE_2018.mean())/df.RENT_25PCTILE_2018.std()
@@ -221,91 +230,137 @@ df['median_tenancy_2018z'] = (df.median_tenancy_2018 - df.median_tenancy_2018.me
 df['median_housing_age_2018z'] = (df.median_housing_age_2018 - df.median_housing_age_2018.mean())/df.median_housing_age_2018.std()
 
 #merge dataframes to combine the different datasets so that you can calculate it.
-minority = df[['GEOID','minority_pop_pct_change','minority_pop_pct_2018z']]
+minority = df[['GEOID','minority_pop_pct_change','minority_pop_pct_2013z','minority_pop_pct_2018z']]
 gdf = gdf.merge(minority, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'minority_pop_pct_change':'minority_pop_pct_change_a'})
+gdf = gdf.rename(columns = {'minority_pop_pct_2013z':'minority_pop_pct_2013z_a'})
 gdf = gdf.rename(columns = {'minority_pop_pct_2018z':'minority_pop_pct_2018z_a'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_2018z_a']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_2013z_a','minority_pop_pct_2018z_a']]
 gdf = gdf.merge(minority, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'minority_pop_pct_change':'minority_pop_pct_change_b'})
+gdf = gdf.rename(columns = {'minority_pop_pct_2013z':'minority_pop_pct_2013z_b'})
 gdf = gdf.rename(columns = {'minority_pop_pct_2018z':'minority_pop_pct_2018z_b'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b']]
 
-lower_quartile_rent = df[['GEOID','rent_25th_pctile_change','rent_25th_pctile_2018z']]
+lower_quartile_rent = df[['GEOID','rent_25th_pctile_change','rent_25th_pctile_2013z','rent_25th_pctile_2018z']]
 gdf = gdf.merge(lower_quartile_rent, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'rent_25th_pctile_change':'rent_25th_pctile_change_a'})
+gdf = gdf.rename(columns = {'rent_25th_pctile_2013z':'rent_25th_pctile_2013z_a'})
 gdf = gdf.rename(columns = {'rent_25th_pctile_2018z':'rent_25th_pctile_2018z_a'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a']]
 gdf = gdf.merge(lower_quartile_rent, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'rent_25th_pctile_change':'rent_25th_pctile_change_b'})
+gdf = gdf.rename(columns = {'rent_25th_pctile_2013z':'rent_25th_pctile_2013z_b'})
 gdf = gdf.rename(columns = {'rent_25th_pctile_2018z':'rent_25th_pctile_2018z_b'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b']]
 
-totpop = df[['GEOID','totpop_change','totpop_2018z']]
+totpop = df[['GEOID','totpop_change','totpop_2013z','totpop_2018z']]
 gdf = gdf.merge(totpop, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'totpop_change':'totpop_change_a'})
+gdf = gdf.rename(columns = {'totpop_2013z':'totpop_2013z_a'})
 gdf = gdf.rename(columns = {'totpop_2018z':'totpop_2018z_a'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2018z_a']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a']]
 gdf = gdf.merge(totpop, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'totpop_change':'totpop_change_b'})
+gdf = gdf.rename(columns = {'totpop_2013z':'totpop_2013z_b'})
 gdf = gdf.rename(columns = {'totpop_2018z':'totpop_2018z_b'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2018z_a','totpop_change_b','totpop_2018z_b']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b']]
 
-rent_pct_income = df[['GEOID','rent_pct_income_change','rent_pct_income_2018z']]
+rent_pct_income = df[['GEOID','rent_pct_income_change','rent_pct_income_2013z','rent_pct_income_2018z']]
 gdf = gdf.merge(rent_pct_income, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'rent_pct_income_change':'rent_pct_income_change_a'})
+gdf = gdf.rename(columns = {'rent_pct_income_2013z':'rent_pct_income_2013z_a'})
 gdf = gdf.rename(columns = {'rent_pct_income_2018z':'rent_pct_income_2018z_a'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2018z_a','totpop_change_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2018z_a']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a']]
 gdf = gdf.merge(rent_pct_income, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'rent_pct_income_change':'rent_pct_income_change_b'})
+gdf = gdf.rename(columns = {'rent_pct_income_2013z':'rent_pct_income_2013z_b'})
 gdf = gdf.rename(columns = {'rent_pct_income_2018z':'rent_pct_income_2018z_b'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2018z_a','totpop_change_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2018z_b']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b']]
 
-affordable_units_per_cap = df[['GEOID','affordable_units_per_cap_change','affordable_units_per_cap_2018z']]
+affordable_units_per_cap = df[['GEOID','affordable_units_per_cap_change','affordable_units_per_cap_2013z','affordable_units_per_cap_2018z']]
 gdf = gdf.merge(affordable_units_per_cap, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'affordable_units_per_cap_change':'affordable_units_per_cap_change_a'})
+gdf = gdf.rename(columns = {'affordable_units_per_cap_2013z':'affordable_units_per_cap_2013z_a'})
 gdf = gdf.rename(columns = {'affordable_units_per_cap_2018z':'affordable_units_per_cap_2018z_a'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2018z_a','totpop_change_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2018z_a']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2013z_a','affordable_units_per_cap_2018z_a']]
 gdf = gdf.merge(affordable_units_per_cap, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'affordable_units_per_cap_change':'affordable_units_per_cap_change_b'})
+gdf = gdf.rename(columns = {'affordable_units_per_cap_2013z':'affordable_units_per_cap_2013z_b'})
 gdf = gdf.rename(columns = {'affordable_units_per_cap_2018z':'affordable_units_per_cap_2018z_b'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2018z_a','totpop_change_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2018z_b']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2013z_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2013z_b','affordable_units_per_cap_2018z_b']]
 
-tenancy = df[['GEOID','median_tenancy_change','median_tenancy_2018z']]
+tenancy = df[['GEOID','median_tenancy_change','median_tenancy_2013z','median_tenancy_2018z']]
 gdf = gdf.merge(tenancy, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'median_tenancy_change':'median_tenancy_change_a'})
+gdf = gdf.rename(columns = {'median_tenancy_2013z':'median_tenancy_2013z_a'})
 gdf = gdf.rename(columns = {'median_tenancy_2018z':'median_tenancy_2018z_a'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2018z_a','totpop_change_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2018z_a']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2013z_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2013z_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2013z_a','median_tenancy_2018z_a']]
 gdf = gdf.merge(tenancy, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'median_tenancy_change':'median_tenancy_change_b'})
+gdf = gdf.rename(columns = {'median_tenancy_2013z':'median_tenancy_2013z_b'})
 gdf = gdf.rename(columns = {'median_tenancy_2018z':'median_tenancy_2018z_b'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2018z_a','totpop_change_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2018z_a','median_tenancy_change_b','median_tenancy_2018z_b']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2013z_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2013z_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2013z_a','median_tenancy_2018z_a','median_tenancy_change_b','median_tenancy_2013z_b','median_tenancy_2018z_b']]
 
-housing_age = df[['GEOID','median_housing_age_change','median_housing_age_2018z']]
+housing_age = df[['GEOID','median_housing_age_change','median_housing_age_2013z','median_housing_age_2018z']]
 gdf = gdf.merge(housing_age, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'median_housing_age_change':'median_housing_age_change_a'})
+gdf = gdf.rename(columns = {'median_housing_age_2013z':'median_housing_age_2013z_a'})
 gdf = gdf.rename(columns = {'median_housing_age_2018z':'median_housing_age_2018z_a'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2018z_a','totpop_change_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2018z_a','median_tenancy_change_b','median_tenancy_2018z_b','median_housing_age_change_a','median_housing_age_2018z_a']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2013z_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2013z_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2013z_a','median_tenancy_2018z_a','median_tenancy_change_b','median_tenancy_2013z_b','median_tenancy_2018z_b','median_housing_age_change_a','median_housing_age_2013z_a','median_housing_age_2018z_a']]
 gdf = gdf.merge(housing_age, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
 gdf = gdf.rename(columns = {'median_housing_age_change':'median_housing_age_change_b'})
+gdf = gdf.rename(columns = {'median_housing_age_2013z':'median_housing_age_2013z_b'})
 gdf = gdf.rename(columns = {'median_housing_age_2018z':'median_housing_age_2018z_b'})
-gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2018z_a','totpop_change_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2018z_a','median_tenancy_change_b','median_tenancy_2018z_b','median_housing_age_change_a','median_housing_age_2018z_a','median_housing_age_change_b','median_housing_age_2018z_b']]
+gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2013z_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2013z_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2013z_a','median_tenancy_2018z_a','median_tenancy_change_b','median_tenancy_2013z_b','median_tenancy_2018z_b','median_housing_age_change_a','median_housing_age_2013z_a','median_housing_age_2018z_a','median_housing_age_change_b','median_housing_age_2013z_b','median_housing_age_2018z_b']]
 
-#calculate diff between the two tracts (and take absolute value since sign is meaningless here)
-gdf['minority_pop_pct_change_delta'] = ((gdf.minority_pop_pct_change_a + gdf.minority_pop_pct_2018z_a) - (gdf.minority_pop_pct_change_b + gdf.minority_pop_pct_2018z_b)).abs()
+#calculate diff between the two tracts (and take absolute value since sign is meaningless here) - Delta taking into account starting point (2013) and change.
+gdf['minority_pop_pct_change_delta'] = ((gdf.minority_pop_pct_change_a + gdf.minority_pop_pct_2013z_a) - (gdf.minority_pop_pct_change_b + gdf.minority_pop_pct_2013z_b)).abs()
 gdf['minority_pop_pct_change_delta'] = gdf['minority_pop_pct_change_delta'].fillna(0) #deals with nan in dataframe, which was breaking the network
-gdf['rent_25th_pctile_change_delta'] = ((gdf.rent_25th_pctile_change_a + gdf.rent_25th_pctile_2018z_a) - (gdf.rent_25th_pctile_change_b + gdf.rent_25th_pctile_2018z_b)).abs()
+gdf['rent_25th_pctile_change_delta'] = ((gdf.rent_25th_pctile_change_a + gdf.rent_25th_pctile_2013z_a) - (gdf.rent_25th_pctile_change_b + gdf.rent_25th_pctile_2013z_b)).abs()
 gdf['rent_25th_pctile_change_delta'] = gdf['rent_25th_pctile_change_delta'].fillna(0)
-gdf['totpop_change_delta'] = ((gdf.totpop_change_a + gdf.totpop_2018z_a) - (gdf.totpop_change_b + gdf.totpop_2018z_b)).abs()
+gdf['totpop_change_delta'] = ((gdf.totpop_change_a + gdf.totpop_2013z_a) - (gdf.totpop_change_b + gdf.totpop_2013z_b)).abs()
 gdf['totpop_change_delta'] = gdf['totpop_change_delta'].fillna(0)
-gdf['rent_pct_income_change_delta'] = ((gdf.rent_pct_income_change_a + gdf.rent_pct_income_2018z_a) - (gdf.rent_pct_income_change_b + gdf.rent_pct_income_2018z_b)).abs()
+gdf['rent_pct_income_change_delta'] = ((gdf.rent_pct_income_change_a + gdf.rent_pct_income_2013z_a) - (gdf.rent_pct_income_change_b + gdf.rent_pct_income_2013z_b)).abs()
 gdf['rent_pct_income_change_delta'] = gdf['rent_pct_income_change_delta'].fillna(0)
-gdf['affordable_units_per_cap_change_delta'] = ((gdf.affordable_units_per_cap_change_a + gdf.affordable_units_per_cap_2018z_a) - (gdf.affordable_units_per_cap_change_b + gdf.affordable_units_per_cap_2018z_b)).abs()
+gdf['affordable_units_per_cap_change_delta'] = ((gdf.affordable_units_per_cap_change_a + gdf.affordable_units_per_cap_2013z_a) - (gdf.affordable_units_per_cap_change_b + gdf.affordable_units_per_cap_2013z_b)).abs()
 gdf['affordable_units_per_cap_change_delta'] = gdf['affordable_units_per_cap_change_delta'].fillna(0)
-gdf['median_tenancy_change_delta'] = ((gdf.median_tenancy_change_a + gdf.median_tenancy_2018z_a) - (gdf.median_tenancy_change_b + gdf.median_tenancy_2018z_b)).abs()
+gdf['median_tenancy_change_delta'] = ((gdf.median_tenancy_change_a + gdf.median_tenancy_2013z_a) - (gdf.median_tenancy_change_b + gdf.median_tenancy_2013z_b)).abs()
 gdf['median_tenancy_change_delta'] = gdf['median_tenancy_change_delta'].fillna(0)
-gdf['median_housing_age_change_delta'] = ((gdf.median_housing_age_change_a + gdf.median_housing_age_2018z_a) - (gdf.median_housing_age_change_b + gdf.median_housing_age_2018z_b)).abs()
+gdf['median_housing_age_change_delta'] = ((gdf.median_housing_age_change_a + gdf.median_housing_age_2013z_a) - (gdf.median_housing_age_change_b + gdf.median_housing_age_2013z_b)).abs()
 gdf['median_housing_age_change_delta'] = gdf['median_housing_age_change_delta'].fillna(0)
+
+#Delta in 2013 (without taking into account change)
+gdf['minority_pop_pct_change_delta_2013'] = ((gdf.minority_pop_pct_2013z_a) - (gdf.minority_pop_pct_2013z_b)).abs()
+gdf['minority_pop_pct_change_delta_2013'] = gdf['minority_pop_pct_change_delta_2013'].fillna(0) #deals with nan in dataframe, which was breaking the network
+gdf['rent_25th_pctile_change_delta_2013'] = ((gdf.rent_25th_pctile_2013z_a) - (gdf.rent_25th_pctile_2013z_b)).abs()
+gdf['rent_25th_pctile_change_delta_2013'] = gdf['rent_25th_pctile_change_delta_2013'].fillna(0)
+gdf['totpop_change_delta_2013'] = ((gdf.totpop_2013z_a) - (gdf.totpop_2013z_b)).abs()
+gdf['totpop_change_delta_2013'] = gdf['totpop_change_delta_2013'].fillna(0)
+gdf['rent_pct_income_change_delta_2013'] = ((gdf.rent_pct_income_2013z_a) - (gdf.rent_pct_income_2013z_b)).abs()
+gdf['rent_pct_income_change_delta_2013'] = gdf['rent_pct_income_change_delta_2013'].fillna(0)
+gdf['affordable_units_per_cap_change_delta_2013'] = ((gdf.affordable_units_per_cap_2013z_a) - (gdf.affordable_units_per_cap_2013z_b)).abs()
+gdf['affordable_units_per_cap_change_delta_2013'] = gdf['affordable_units_per_cap_change_delta_2013'].fillna(0)
+gdf['median_tenancy_change_delta_2013'] = ((gdf.median_tenancy_2013z_a) - (gdf.median_tenancy_2013z_b)).abs()
+gdf['median_tenancy_change_delta_2013'] = gdf['median_tenancy_change_delta_2013'].fillna(0)
+gdf['median_housing_age_change_delta_2013'] = ((gdf.median_housing_age_2013z_a) - (gdf.median_housing_age_2013z_b)).abs()
+gdf['median_housing_age_change_delta_2013'] = gdf['median_housing_age_change_delta_2013'].fillna(0)
+
+#Delta in 2018 (without taking into account change)
+gdf['minority_pop_pct_change_delta_2018'] = ((gdf.minority_pop_pct_2018z_a) - (gdf.minority_pop_pct_2018z_b)).abs()
+gdf['minority_pop_pct_change_delta_2018'] = gdf['minority_pop_pct_change_delta_2018'].fillna(0) #deals with nan in dataframe, which was breaking the network
+gdf['rent_25th_pctile_change_delta_2018'] = ((gdf.rent_25th_pctile_2018z_a) - (gdf.rent_25th_pctile_2018z_b)).abs()
+gdf['rent_25th_pctile_change_delta_2018'] = gdf['rent_25th_pctile_change_delta_2018'].fillna(0)
+gdf['totpop_change_delta_2018'] = ((gdf.totpop_2018z_a) - (gdf.totpop_2018z_b)).abs()
+gdf['totpop_change_delta_2018'] = gdf['totpop_change_delta_2018'].fillna(0)
+gdf['rent_pct_income_change_delta_2018'] = ((gdf.rent_pct_income_2018z_a) - (gdf.rent_pct_income_2018z_b)).abs()
+gdf['rent_pct_income_change_delta_2018'] = gdf['rent_pct_income_change_delta_2018'].fillna(0)
+gdf['affordable_units_per_cap_change_delta_2018'] = ((gdf.affordable_units_per_cap_2018z_a) - (gdf.affordable_units_per_cap_2018z_b)).abs()
+gdf['affordable_units_per_cap_change_delta_2018'] = gdf['affordable_units_per_cap_change_delta_2018'].fillna(0)
+gdf['median_tenancy_change_delta_2018'] = ((gdf.median_tenancy_2018z_a) - (gdf.median_tenancy_2018z_b)).abs()
+gdf['median_tenancy_change_delta_2018'] = gdf['median_tenancy_change_delta_2018'].fillna(0)
+gdf['median_housing_age_change_delta_2018'] = ((gdf.median_housing_age_2018z_a) - (gdf.median_housing_age_2018z_b)).abs()
+gdf['median_housing_age_change_delta_2018'] = gdf['median_housing_age_change_delta_2018'].fillna(0)
 
 #Kmeans clustering
 Y = df[['GEOID','rent_25th_pctile_change','minority_pop_pct_change']]
@@ -352,6 +407,9 @@ echo = 1/6.0
 foxtrot = 1/6.0
 golf = 0
 
+threshold = -0.5
+
+#2013 + change version
 gdf['omega'] = (
         -(alpha * gdf.minority_pop_pct_change_delta) + \
         (bravo * gdf.rent_25th_pctile_change_delta) + \
@@ -363,7 +421,32 @@ gdf['omega'] = (
 )
 
 #gdf.loc[gdf.omega < 0, 'omega'] = None #corrects for the census having "2018" as an answer to some of these
-gdf = gdf[(gdf['omega'] >= -0.5)]
+gdf = gdf[(gdf['omega'] >= threshold)]
+
+#2013 only version
+gdf['omega13'] = (
+        -(alpha * gdf.minority_pop_pct_change_delta_2013) + \
+        (bravo * gdf.rent_25th_pctile_change_delta_2013) + \
+        (charlie * gdf.totpop_change_delta_2013) + \
+        (delta * gdf.rent_pct_income_change_delta_2013) + \
+        -(echo * gdf.affordable_units_per_cap_change_delta_2013) + \
+        -(foxtrot * gdf.median_tenancy_change_delta_2013) + \
+        (golf * gdf.median_housing_age_change_delta_2013)
+)
+gdf = gdf[(gdf['omega13'] >= threshold)]
+
+#2018 only version
+gdf['omega18'] = (
+        -(alpha * gdf.minority_pop_pct_change_delta_2018) + \
+        (bravo * gdf.rent_25th_pctile_change_delta_2018) + \
+        (charlie * gdf.totpop_change_delta_2018) + \
+        (delta * gdf.rent_pct_income_change_delta_2018) + \
+        -(echo * gdf.affordable_units_per_cap_change_delta_2018) + \
+        -(foxtrot * gdf.median_tenancy_change_delta_2018) + \
+        (golf * gdf.median_housing_age_change_delta_2018)
+)
+gdf = gdf[(gdf['omega18'] >= threshold)]
+
 
 #gdf['omega'] = gdf['omega'] / gdf['omega'].max() #normalize so edges don't go nuts
 
