@@ -142,7 +142,7 @@ for edge in G.edges():
 node_trace = go.Scatter(
     x=[],
     y=[],
-    mode='markers', #make markers+text to show labels
+    mode='markers+text', #make markers+text to show labels
     text=[],
     hoverinfo='text',
     marker=dict(
@@ -182,8 +182,8 @@ for node in G.nodes():
 df['tract_index'] = df['TRACT_NUM'].astype(int)
 
 node_trace.marker.color = df['tract_index']
-node_trace.text = node_text
-#node_trace.name = node_label.astype('str')
+#node_trace.text = node_text
+node_trace.text = node_label
 
 fig = go.Figure(data=[edge_trace, node_trace],
              layout=go.Layout(
