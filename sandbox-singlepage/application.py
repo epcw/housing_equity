@@ -198,6 +198,11 @@ fig = go.Figure(data=[edge_trace, node_trace],
 
 fig.update_traces(textfont_size=25)
 
+#fig2 = go.Figure(go.Scatter
+#    (
+#    x=df[df['GEOID'] == i][''],
+#    y=df[gdf['GEOID_a'] == i][gdf['']
+#)
 #TODO: set up a scatterplot version of this to show change in pressure from 2013-8
 
 #generate a table if you want this.  Else just comment out  56 rows because states+territories for this dataset If you really need to style this, can add some classes.

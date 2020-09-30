@@ -314,20 +314,22 @@ gdf = gdf.rename(columns = {'median_housing_age_2013z':'median_housing_age_2013z
 gdf = gdf.rename(columns = {'median_housing_age_2018z':'median_housing_age_2018z_b'})
 gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2013z_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2013z_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2013z_a','median_tenancy_2018z_a','median_tenancy_change_b','median_tenancy_2013z_b','median_tenancy_2018z_b','median_housing_age_change_a','median_housing_age_2013z_a','median_housing_age_2018z_a','median_housing_age_change_b','median_housing_age_2013z_b','median_housing_age_2018z_b']]
 
+omicron = 2/3 #this is the vectored weighting factor of starting point (omicron) vs change (1-omicron)
+
 #calculate diff between the two tracts (and take absolute value since sign is meaningless here) - Delta taking into account starting point (2013) and change.
-gdf['minority_pop_pct_change_delta'] = ((gdf.minority_pop_pct_change_a + gdf.minority_pop_pct_2013z_a) - (gdf.minority_pop_pct_change_b + gdf.minority_pop_pct_2013z_b)).abs()
+gdf['minority_pop_pct_change_delta'] = ((((1-omicron) * gdf.minority_pop_pct_change_a) + (omicron * gdf.minority_pop_pct_2013z_a)) - (((1-omicron) * gdf.minority_pop_pct_change_b) + (omicron * gdf.minority_pop_pct_2013z_b))).abs()
 gdf['minority_pop_pct_change_delta'] = gdf['minority_pop_pct_change_delta'].fillna(0) #deals with nan in dataframe, which was breaking the network
-gdf['rent_25th_pctile_change_delta'] = ((gdf.rent_25th_pctile_change_a + gdf.rent_25th_pctile_2013z_a) - (gdf.rent_25th_pctile_change_b + gdf.rent_25th_pctile_2013z_b)).abs()
+gdf['rent_25th_pctile_change_delta'] = ((((1-omicron) * gdf.rent_25th_pctile_change_a) + (omicron * gdf.rent_25th_pctile_2013z_a)) - (((1-omicron) * gdf.rent_25th_pctile_change_b) + (omicron * gdf.rent_25th_pctile_2013z_b))).abs()
 gdf['rent_25th_pctile_change_delta'] = gdf['rent_25th_pctile_change_delta'].fillna(0)
-gdf['totpop_change_delta'] = ((gdf.totpop_change_a + gdf.totpop_2013z_a) - (gdf.totpop_change_b + gdf.totpop_2013z_b)).abs()
+gdf['totpop_change_delta'] = ((((1-omicron) * gdf.totpop_change_a) + (omicron * gdf.totpop_2013z_a)) - (((1-omicron) * gdf.totpop_change_b) + (omicron * gdf.totpop_2013z_b))).abs()
 gdf['totpop_change_delta'] = gdf['totpop_change_delta'].fillna(0)
-gdf['rent_pct_income_change_delta'] = ((gdf.rent_pct_income_change_a + gdf.rent_pct_income_2013z_a) - (gdf.rent_pct_income_change_b + gdf.rent_pct_income_2013z_b)).abs()
+gdf['rent_pct_income_change_delta'] = ((((1-omicron) * gdf.rent_pct_income_change_a) + (omicron * gdf.rent_pct_income_2013z_a)) - (((1-omicron) * gdf.rent_pct_income_change_b) + (omicron * gdf.rent_pct_income_2013z_b))).abs()
 gdf['rent_pct_income_change_delta'] = gdf['rent_pct_income_change_delta'].fillna(0)
-gdf['affordable_units_per_cap_change_delta'] = ((gdf.affordable_units_per_cap_change_a + gdf.affordable_units_per_cap_2013z_a) - (gdf.affordable_units_per_cap_change_b + gdf.affordable_units_per_cap_2013z_b)).abs()
+gdf['affordable_units_per_cap_change_delta'] = ((((1-omicron) * gdf.affordable_units_per_cap_change_a) + (omicron * gdf.affordable_units_per_cap_2013z_a)) - (((1-omicron) * gdf.affordable_units_per_cap_change_b) + (omicron * gdf.affordable_units_per_cap_2013z_b))).abs()
 gdf['affordable_units_per_cap_change_delta'] = gdf['affordable_units_per_cap_change_delta'].fillna(0)
-gdf['median_tenancy_change_delta'] = ((gdf.median_tenancy_change_a + gdf.median_tenancy_2013z_a) - (gdf.median_tenancy_change_b + gdf.median_tenancy_2013z_b)).abs()
+gdf['median_tenancy_change_delta'] = ((((1-omicron) * gdf.median_tenancy_change_a) + (omicron * gdf.median_tenancy_2013z_a)) - (((1-omicron) * gdf.median_tenancy_change_b) + (omicron * gdf.median_tenancy_2013z_b))).abs()
 gdf['median_tenancy_change_delta'] = gdf['median_tenancy_change_delta'].fillna(0)
-gdf['median_housing_age_change_delta'] = ((gdf.median_housing_age_change_a + gdf.median_housing_age_2013z_a) - (gdf.median_housing_age_change_b + gdf.median_housing_age_2013z_b)).abs()
+gdf['median_housing_age_change_delta'] = ((((1-omicron) * gdf.median_housing_age_change_a) + (omicron * gdf.median_housing_age_2013z_a)) - (((1-omicron) * gdf.median_housing_age_change_b) + (omicron * gdf.median_housing_age_2013z_b))).abs()
 gdf['median_housing_age_change_delta'] = gdf['median_housing_age_change_delta'].fillna(0)
 
 #Delta in 2013 (without taking into account change)
@@ -346,22 +348,20 @@ gdf['median_tenancy_change_delta_2013'] = gdf['median_tenancy_change_delta_2013'
 gdf['median_housing_age_change_delta_2013'] = ((gdf.median_housing_age_2013z_a) - (gdf.median_housing_age_2013z_b)).abs()
 gdf['median_housing_age_change_delta_2013'] = gdf['median_housing_age_change_delta_2013'].fillna(0)
 
-omicron = 1/2 #this is the vectored weighting factor of starting point (omicron) vs change (1-omicron)
-
 #Delta in 2018 (without taking into account change)
-gdf['minority_pop_pct_change_delta_2018'] = ((omicron * gdf.minority_pop_pct_2018z_a) - ((1 - omicron) * gdf.minority_pop_pct_2018z_b)).abs()
+gdf['minority_pop_pct_change_delta_2018'] = (gdf.minority_pop_pct_2018z_a) - (gdf.minority_pop_pct_2018z_b).abs()
 gdf['minority_pop_pct_change_delta_2018'] = gdf['minority_pop_pct_change_delta_2018'].fillna(0) #deals with nan in dataframe, which was breaking the network
-gdf['rent_25th_pctile_change_delta_2018'] = ((omicron * gdf.rent_25th_pctile_2018z_a) - ((1 - omicron) * gdf.rent_25th_pctile_2018z_b)).abs()
+gdf['rent_25th_pctile_change_delta_2018'] = (gdf.rent_25th_pctile_2018z_a) - (gdf.rent_25th_pctile_2018z_b).abs()
 gdf['rent_25th_pctile_change_delta_2018'] = gdf['rent_25th_pctile_change_delta_2018'].fillna(0)
-gdf['totpop_change_delta_2018'] = ((omicron * gdf.totpop_2018z_a) - ((1 - omicron) * gdf.totpop_2018z_b)).abs()
+gdf['totpop_change_delta_2018'] = (gdf.totpop_2018z_a) - (gdf.totpop_2018z_b).abs()
 gdf['totpop_change_delta_2018'] = gdf['totpop_change_delta_2018'].fillna(0)
-gdf['rent_pct_income_change_delta_2018'] = ((omicron * gdf.rent_pct_income_2018z_a) - ((1 - omicron) * gdf.rent_pct_income_2018z_b)).abs()
+gdf['rent_pct_income_change_delta_2018'] = (gdf.rent_pct_income_2018z_a) - (gdf.rent_pct_income_2018z_b).abs()
 gdf['rent_pct_income_change_delta_2018'] = gdf['rent_pct_income_change_delta_2018'].fillna(0)
-gdf['affordable_units_per_cap_change_delta_2018'] = ((omicron * gdf.affordable_units_per_cap_2018z_a) - ((1 - omicron) * gdf.affordable_units_per_cap_2018z_b)).abs()
+gdf['affordable_units_per_cap_change_delta_2018'] = (gdf.affordable_units_per_cap_2018z_a) - (gdf.affordable_units_per_cap_2018z_b).abs()
 gdf['affordable_units_per_cap_change_delta_2018'] = gdf['affordable_units_per_cap_change_delta_2018'].fillna(0)
-gdf['median_tenancy_change_delta_2018'] = ((omicron * gdf.median_tenancy_2018z_a) - ((1 - omicron) * gdf.median_tenancy_2018z_b)).abs()
+gdf['median_tenancy_change_delta_2018'] = (gdf.median_tenancy_2018z_a) - (gdf.median_tenancy_2018z_b).abs()
 gdf['median_tenancy_change_delta_2018'] = gdf['median_tenancy_change_delta_2018'].fillna(0)
-gdf['median_housing_age_change_delta_2018'] = ((omicron * gdf.median_housing_age_2018z_a) - ((1 - omicron) * gdf.median_housing_age_2018z_b)).abs()
+gdf['median_housing_age_change_delta_2018'] = (gdf.median_housing_age_2018z_a) - (gdf.median_housing_age_2018z_b).abs()
 gdf['median_housing_age_change_delta_2018'] = gdf['median_housing_age_change_delta_2018'].fillna(0)
 
 #Kmeans clustering
