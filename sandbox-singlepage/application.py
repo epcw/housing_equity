@@ -57,7 +57,8 @@ the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 node_list = list(set(df['GEOID']))
 G = nx.MultiGraph()
 
-#normal version
+'''
+#normal version (no cache)
 forceatlas2 = ForceAtlas2(
                         # Behavior alternatives
                         outboundAttractionDistribution=False,  # Dissuade hubs
@@ -78,7 +79,7 @@ forceatlas2 = ForceAtlas2(
 
                         # Log
                         verbose=True)
-
+'''
 for i in node_list:
     G.add_node(i)
 
@@ -196,6 +197,8 @@ fig = go.Figure(data=[edge_trace, node_trace],
                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
 
 fig.update_traces(textfont_size=25)
+
+#TODO: set up a scatterplot version of this to show change in pressure from 2013-8
 
 #generate a table if you want this.  Else just comment out  56 rows because states+territories for this dataset If you really need to style this, can add some classes.
 def generate_table(dataframe, max_rows=398):
