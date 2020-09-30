@@ -346,20 +346,22 @@ gdf['median_tenancy_change_delta_2013'] = gdf['median_tenancy_change_delta_2013'
 gdf['median_housing_age_change_delta_2013'] = ((gdf.median_housing_age_2013z_a) - (gdf.median_housing_age_2013z_b)).abs()
 gdf['median_housing_age_change_delta_2013'] = gdf['median_housing_age_change_delta_2013'].fillna(0)
 
+omicron = 1/2 #this is the vectored weighting factor of starting point (omicron) vs change (1-omicron)
+
 #Delta in 2018 (without taking into account change)
-gdf['minority_pop_pct_change_delta_2018'] = ((gdf.minority_pop_pct_2018z_a) - (gdf.minority_pop_pct_2018z_b)).abs()
+gdf['minority_pop_pct_change_delta_2018'] = ((omicron * gdf.minority_pop_pct_2018z_a) - ((1 - omicron) * gdf.minority_pop_pct_2018z_b)).abs()
 gdf['minority_pop_pct_change_delta_2018'] = gdf['minority_pop_pct_change_delta_2018'].fillna(0) #deals with nan in dataframe, which was breaking the network
-gdf['rent_25th_pctile_change_delta_2018'] = ((gdf.rent_25th_pctile_2018z_a) - (gdf.rent_25th_pctile_2018z_b)).abs()
+gdf['rent_25th_pctile_change_delta_2018'] = ((omicron * gdf.rent_25th_pctile_2018z_a) - ((1 - omicron) * gdf.rent_25th_pctile_2018z_b)).abs()
 gdf['rent_25th_pctile_change_delta_2018'] = gdf['rent_25th_pctile_change_delta_2018'].fillna(0)
-gdf['totpop_change_delta_2018'] = ((gdf.totpop_2018z_a) - (gdf.totpop_2018z_b)).abs()
+gdf['totpop_change_delta_2018'] = ((omicron * gdf.totpop_2018z_a) - ((1 - omicron) * gdf.totpop_2018z_b)).abs()
 gdf['totpop_change_delta_2018'] = gdf['totpop_change_delta_2018'].fillna(0)
-gdf['rent_pct_income_change_delta_2018'] = ((gdf.rent_pct_income_2018z_a) - (gdf.rent_pct_income_2018z_b)).abs()
+gdf['rent_pct_income_change_delta_2018'] = ((omicron * gdf.rent_pct_income_2018z_a) - ((1 - omicron) * gdf.rent_pct_income_2018z_b)).abs()
 gdf['rent_pct_income_change_delta_2018'] = gdf['rent_pct_income_change_delta_2018'].fillna(0)
-gdf['affordable_units_per_cap_change_delta_2018'] = ((gdf.affordable_units_per_cap_2018z_a) - (gdf.affordable_units_per_cap_2018z_b)).abs()
+gdf['affordable_units_per_cap_change_delta_2018'] = ((omicron * gdf.affordable_units_per_cap_2018z_a) - ((1 - omicron) * gdf.affordable_units_per_cap_2018z_b)).abs()
 gdf['affordable_units_per_cap_change_delta_2018'] = gdf['affordable_units_per_cap_change_delta_2018'].fillna(0)
-gdf['median_tenancy_change_delta_2018'] = ((gdf.median_tenancy_2018z_a) - (gdf.median_tenancy_2018z_b)).abs()
+gdf['median_tenancy_change_delta_2018'] = ((omicron * gdf.median_tenancy_2018z_a) - ((1 - omicron) * gdf.median_tenancy_2018z_b)).abs()
 gdf['median_tenancy_change_delta_2018'] = gdf['median_tenancy_change_delta_2018'].fillna(0)
-gdf['median_housing_age_change_delta_2018'] = ((gdf.median_housing_age_2018z_a) - (gdf.median_housing_age_2018z_b)).abs()
+gdf['median_housing_age_change_delta_2018'] = ((omicron * gdf.median_housing_age_2018z_a) - ((1 - omicron) * gdf.median_housing_age_2018z_b)).abs()
 gdf['median_housing_age_change_delta_2018'] = gdf['median_housing_age_change_delta_2018'].fillna(0)
 
 #Kmeans clustering
