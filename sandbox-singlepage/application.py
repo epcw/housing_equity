@@ -55,7 +55,7 @@ the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 
 #PLOT
 node_list = list(set(df['GEOID']))
-G = nx.MultiGraph()
+G = nx.Graph()
 
 '''
 #normal version (no cache)
@@ -111,9 +111,10 @@ def query_forceatlas2():
                             # Log
                             verbose=True)
     return forceatlas2
+
 def pos():
     return query_forceatlas2().forceatlas2_networkx_layout(G,pos=None, iterations=1000)
-    
+
 for n, p in pos().items():
     G.nodes[n]['pos'] = p
 '''
@@ -197,12 +198,16 @@ fig = go.Figure(data=[edge_trace, node_trace],
                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
 
 fig.update_traces(textfont_size=25)
-
-#fig2 = go.Figure(go.Scatter
-#    (
-#    x=df[df['GEOID'] == i][''],
-#    y=df[gdf['GEOID_a'] == i][gdf['']
-#)
+'''
+fig2 = go.Figure(go.Scatter (
+    x=gdf[gdf['GEOID_a'] == i],
+     y=gdf[gdf['GEOID_a'] == i][gdf['omega_bar']],
+    mode='lines+markers',
+    opacity=1,
+    marker={'size':4},
+    line={'width': 2},
+    name=i))
+'''
 #TODO: set up a scatterplot version of this to show change in pressure from 2013-8
 
 #generate a table if you want this.  Else just comment out  56 rows because states+territories for this dataset If you really need to style this, can add some classes.
@@ -229,6 +234,9 @@ def serve_layout():
             html.P('Census tracts (which may contain 1 or several block groups) are noted by color.', className='description'),
             dcc.Graph(figure=fig,
                       id='housing_networkx'
+                      ),
+            dcc.Graph(figure=fig2,
+                      id='housing_bar'
                       ),
 #             html.H1('Groupings'),
 #             html.P('Group 0 - size: ' + str(grp0_length), className='description'),

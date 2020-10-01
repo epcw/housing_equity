@@ -397,8 +397,7 @@ grp3 = df[(df['labels'] == 3)]
 grp3 = grp3[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
 grp3_length = str(grp3.shape)
 
-#TODO: REAL WEIGHTS TO ACCOUNT FOR SCALE OF MEASUREMENTS.
-#TODO: figure out how to account for things that didn't change because already an edge case by 2013.
+#TODO: WEIGHTS
 
 #weight the edges
 alpha = 1/6.0
@@ -449,6 +448,22 @@ gdf['omega18'] = (
 )
 gdf = gdf[(gdf['omega18'] >= threshold)]
 
+#tester for bar graph of just geoid_a
+gdf['omega_bar'] = (
+        -(alpha * (((1-omicron) * gdf.minority_pop_pct_change_a) + (omicron * gdf.minority_pop_pct_2013z_a))) + \
+        (bravo * (((1-omicron) * gdf.rent_25th_pctile_change_a) + (omicron * gdf.rent_25th_pctile_2013z_a))) + \
+        (charlie * (((1-omicron) * gdf.totpop_change_a) + (omicron * gdf.totpop_2013z_a))) + \
+        (delta * (((1-omicron) * gdf.rent_pct_income_change_a) + (omicron * gdf.rent_pct_income_2013z_a))) + \
+        -(echo * (((1-omicron) * gdf.affordable_units_per_cap_change_a) + (omicron * gdf.affordable_units_per_cap_2013z_a))) + \
+        -(foxtrot * (((1-omicron) * gdf.median_tenancy_change_a) + (omicron * gdf.median_tenancy_2013z_a))) + \
+        (golf * (((1-omicron) * gdf.median_housing_age_change_a) + (omicron * gdf.median_housing_age_2013z_a)))
+)
+gdf['omega_bar'] = gdf['omega_bar'].fillna(0) #deals with nan in dataframe, which was breaking the network
+gdf = gdf[(gdf['omega_bar'] >= threshold)]
+
+
+#gdf.loc[gdf.omega < 0, 'omega'] = None #corrects for the census having "2018" as an answer to some of these
+gdf = gdf[(gdf['omega'] >= threshold)]
 
 #gdf['omega'] = gdf['omega'] / gdf['omega'].max() #normalize so edges don't go nuts
 
