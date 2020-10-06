@@ -256,3 +256,5 @@ app.layout = serve_layout
 if __name__ == '__main__':
     # Beanstalk expects it to be running on 8080.
     application.run(debug=True, port=8080)
+
+#TODO: create comment-option version of this, dashbase.py, and application.wsgi to run this on an ec2 machine
