@@ -1,4 +1,4 @@
-import dash
+#import dash #comment out for production deployment
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
@@ -7,9 +7,9 @@ import networkx as nx
 from fa2 import ForceAtlas2
 from flask_caching import Cache
 
-app = dash.Dash(__name__)
-# Beanstalk looks for application by default, if this isn't set you will get a WSGI error.
-application = app.server
+from dashbase import app, application #production version
+#app = dash.Dash(__name__) #local
+#application = app.server #local
 
 #this pulls in the header HTML from header.py
 from template import Template
@@ -254,7 +254,7 @@ def serve_layout():
 app.layout = serve_layout
 
 if __name__ == '__main__':
-    # Beanstalk expects it to be running on 8080.
-    application.run(debug=True, port=8080)
+     application.run(host='0.0.0.0',port=00)    # production version
+#    application.run(debug=True, port=8080) #local version
 
-#TODO: create comment-option version of this, dashbase.py, and application.wsgi to run this on an ec2 machine
+#TODO: create comment-option version of this, dashbase.py, and application.wsgi to run this on an production machine
