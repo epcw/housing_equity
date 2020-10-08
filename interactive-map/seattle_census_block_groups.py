@@ -1,10 +1,13 @@
 import pandas as pd
 import geopandas as gp
 
+ROOTDIR = '/home/ubuntu/housing_equity/interactive-map/' #production
+#ROOTDIR = '' #local
+
 path = '../shapefiles/WACensusBlocks2010/tl_2019_53_tabblock10.shp'
 gdf = gp.read_file(path)
 
-tracts_df = pd.read_csv('data/seattle_census_tracts.csv', dtype={'TRACT': str})
+tracts_df = pd.read_csv(ROOTDIR + 'data/seattle_census_tracts.csv', dtype={'TRACT': str})
 
 state = '53'   # WA = 53
 county = '033' # King = 033
@@ -20,4 +23,4 @@ seattle_gdf['BLOCKGROUP'] = seattle_gdf['BLOCKCE10'].str.slice(0,1)
 
 result_df = seattle_gdf[['TRACTCE10', 'BLOCKGROUP']].drop_duplicates()
 
-result_df.to_csv('data/seattle_census_tract_and_blockgroup.csv', index=False)
+result_df.to_csv(ROOTDIR + 'data/seattle_census_tract_and_blockgroup.csv', index=False)

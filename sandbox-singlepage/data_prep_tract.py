@@ -3,14 +3,18 @@ import geopandas as gp
 from geopy import distance
 from sklearn.cluster import KMeans
 
-df = pd.read_csv('data/housing_prepped.csv', dtype={"GEOID": str,"TRACT_NUM": str})
+#set root directory for data files
+ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
+#ROOTDIR = '' #local
+
+df = pd.read_csv(ROOTDIR + 'data/housing_prepped.csv', dtype={"GEOID": str,"TRACT_NUM": str})
 
 #filter for King County
 df = df[(df['COUNTY'] == 'King')]
 
 #bring in affordable housing data
-housing_df_raw = pd.read_csv('data/affordable_housing_units.csv', dtype={"TRACT_NUM": str})
-median_costs_raw = pd.read_csv('data/housing_costs_medians.csv', dtype={"TRACT_NUM": str}) #NOTE: pre-filtered in SQL for King County
+housing_df_raw = pd.read_csv(ROOTDIR + 'data/affordable_housing_units.csv', dtype={"TRACT_NUM": str})
+median_costs_raw = pd.read_csv(ROOTDIR + 'data/housing_costs_medians.csv', dtype={"TRACT_NUM": str}) #NOTE: pre-filtered in SQL for King County
 
 #filter for King County
 housing_df_raw = housing_df_raw[(housing_df_raw['COUNTY'] == 'King')]
@@ -52,7 +56,7 @@ costs_df = costs_df.merge(costs_dfmedcost, how = 'inner', left_on = ['GEOID','CO
 df = df.merge(housing_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 df = df.merge(costs_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
-rdf = pd.read_csv('data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
+rdf = pd.read_csv(ROOTDIR + 'data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
 
 #filter for King County 2010
 rdf = rdf[(rdf['COUNTY'] == 'King') & (rdf['YEAR'] == '2010')]
@@ -60,7 +64,7 @@ rdf = rdf[(rdf['COUNTY'] == 'King') & (rdf['YEAR'] == '2010')]
 #create GEOID
 rdf['GEOID'] = '53033' + rdf['TRACT_NUM']
 
-gdf = pd.read_csv('data/washingtongeo_dist.csv',
+gdf = pd.read_csv(ROOTDIR + 'data/washingtongeo_dist.csv',
                    dtype={"TRACTCE_a": str,"TRACTCE_b": str})
 
 white = rdf[(rdf['CENSUS_QUERY'] == 'B03002_003E')]
@@ -179,8 +183,8 @@ gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.lower_qua
 #gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
 
 #create cityname df
-muni_gdf = gp.read_file('data/shapefiles/Municipal_Boundaries/Municipal_Boundaries.shp')
-tract_gdf = gp.read_file('data/shapefiles/KingCountyTracts/kc_tract_10.shp')
+muni_gdf = gp.read_file(ROOTDIR + 'data/shapefiles/Municipal_Boundaries/Municipal_Boundaries.shp')
+tract_gdf = gp.read_file(ROOTDIR + 'data/shapefiles/KingCountyTracts/kc_tract_10.shp')
 t = tract_gdf[['OBJECTID', 'STATEFP10', 'COUNTYFP10', 'TRACTCE10', 'GEOID10', 'geometry']]
 m = muni_gdf[['OBJECTID', 'CITYNAME', 'geometry']]
 m = m.to_crs(epsg=2926)

@@ -11,7 +11,7 @@ Data crunching: Python [Pandas](https://pandas.pydata.org/) with some pre-work i
 ### Principal researchers
 Richard W. Sharp\
 Patrick W. Zimmerman
-
+cd 
 #### Package requirements (as well as all their dependencies)
 dash\
 Flask-Caching\
@@ -22,7 +22,9 @@ networkx\
 numpy\
 pandas\
 scipy\
-sklearn
+sklearn\
+fa2\
+rtree (usually this needs to be installed with 'sudo apt-get install python3-rtree')
 
 ### Repository Structure
 .\
@@ -35,4 +37,4 @@ sklearn
 |-- sandbox-singlepage - Network model pilot app
 |   |-- assets - Has CSS and javascript files along with favicon\
 |   |-- data - Your datafiles go here (REMOVED FOR SPACE CONSIDERATIONS - the app expects to find .csv files and a geojson for maps)\
-|   |   |-- shapefiles - Exactly what it says on the tin.  These are also used by interactive-maps, but removed to save space\
+|   |   |-- shapefiles - Exactly what it says on the tin.  These are also used by interactive-maps, but removed to save space

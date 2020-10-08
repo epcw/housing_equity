@@ -1,14 +1,17 @@
 import pandas as pd
 import re
+#set root directory for data files
+ROOTDIR = '/home/ubuntu/housing_equity/interactive-map/' #production
+#ROOTDIR = '' #local
 
-df = pd.read_csv('data/housing_prepped.csv', dtype={"GEOID": str,"TRACT_NUM": str})
+df = pd.read_csv(ROOTDIR + 'data/housing_prepped.csv', dtype={"GEOID": str,"TRACT_NUM": str})
 
 #filter for King County
 df = df[(df['COUNTY'] == 'King')]
 
 #bring in affordable housing data
-housing_df_raw = pd.read_csv('data/affordable_housing_units.csv', dtype={"TRACT_NUM": str})
-median_costs_raw = pd.read_csv('data/housing_costs_medians.csv', dtype={"TRACT_NUM": str}) #NOTE: pre-filtered in SQL for King County and already has GEOID
+housing_df_raw = pd.read_csv(ROOTDIR + 'data/affordable_housing_units.csv', dtype={"TRACT_NUM": str})
+median_costs_raw = pd.read_csv(ROOTDIR + 'data/housing_costs_medians.csv', dtype={"TRACT_NUM": str}) #NOTE: pre-filtered in SQL for King County and already has GEOID
 
 #filter for King County
 housing_df_raw = housing_df_raw[(housing_df_raw['COUNTY'] == 'King')]
@@ -26,7 +29,7 @@ housing_df = housing_df[['COUNTY','TRACT_NUM','GEOID','DATA']]
 housing_df = housing_df.rename(columns = {'DATA' : 'sub_600_per_mo_housing_units'})
 
 #bring in tenancy, cost, and occupancy data and filter for 2010 & 2018
-housing_details_raw = pd.read_csv('data/housing_details.csv', dtype={"TRACT_NUM": str, "GEOID": str, "YEAR":int}) #NOTE: pre-filtered in SQL for King County
+housing_details_raw = pd.read_csv(ROOTDIR + 'data/housing_details.csv', dtype={"TRACT_NUM": str, "GEOID": str, "YEAR":int}) #NOTE: pre-filtered in SQL for King County
 housing_details_raw['DATA'] = housing_details_raw['DATA'].astype(str).map(lambda x: x.rstrip('+-'))
 housing_details_raw['DATA'] = housing_details_raw['DATA'].astype(float)
 housing_details10 = housing_details_raw[(housing_details_raw['YEAR'] == 2010)]
@@ -221,7 +224,7 @@ df['housing_tenure_delta'] = df['housing_tenure18'] - df['housing_tenure10']
 df['housing_tenure_owned_delta'] = df['housing_tenure_owned18'] - df['housing_tenure_owned10']
 df['housing_tenure_rented_delta'] = df['housing_tenure_rented18'] - df['housing_tenure_rented10']
 
-rdf = pd.read_csv('data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
+rdf = pd.read_csv(ROOTDIR + 'data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
 
 #filter for King County 2010
 rdf10 = rdf[(rdf['COUNTY'] == 'King') & (rdf['YEAR'] == '2010')]

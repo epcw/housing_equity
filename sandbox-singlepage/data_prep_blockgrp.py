@@ -4,9 +4,11 @@ from geopy import distance
 from sklearn.cluster import KMeans
 from scipy.stats import zscore
 
-# TODO: Make a variable that points to 'Dropbox/EPCW/Projects/hoursing_equity/sandbox-singlepage/data' and replace all data file references with abosolute paths.
+#set root directory for data files
+ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
+#ROOTDIR = '' #local
 
-df_rent = pd.read_csv('data/king_blockgrp_rent.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
+df_rent = pd.read_csv(ROOTDIR + 'data/king_blockgrp_rent.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
 
 #filter for 2013
 df_rent = df_rent[(df_rent['YEAR'] == '2013') | (df_rent['YEAR'] == '2018')]
@@ -49,12 +51,12 @@ df18 = df18.merge(costs_df75_18, how = 'inner', left_on = ['GEOID','COUNTY','TRA
 df = df13 = df13.merge(df18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP']).drop_duplicates()
 
 #load in race data
-rdf = pd.read_csv('data/king_blockgrp_race.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
+rdf = pd.read_csv(ROOTDIR + 'data/king_blockgrp_race.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
 
 #filter for year 2013
 rdf = rdf[(rdf['YEAR'] == '2013') | (rdf['YEAR'] == '2018') ]
 
-gdf = pd.read_csv('data/wa_king_census_block_groups_distances.csv',
+gdf = pd.read_csv(ROOTDIR + 'data/wa_king_census_block_groups_distances.csv',
                    dtype={"block_group_geoid_a": str,"block_group_geoid_b": str})
 
 rdf13 = rdf[(rdf['YEAR'] == '2013')]
@@ -141,7 +143,7 @@ df['minority_pop_2018'] = df['TOT_POP_2018'] - df['pop_white_nonhisp_only_2018']
 df['minority_pop_pct_2018'] = df['minority_pop_2018'] / df['TOT_POP_2018']
 
 #bring in affordable housing data
-housing_df_raw = pd.read_csv('data/king_blockgrp_housing-details.csv', dtype={"DATA":float,"YEAR":str,"TRACT_NUM": str, "BLOCK_GRP": str})
+housing_df_raw = pd.read_csv(ROOTDIR + 'data/king_blockgrp_housing-details.csv', dtype={"DATA":float,"YEAR":str,"TRACT_NUM": str, "BLOCK_GRP": str})
 
 #create geoid
 housing_df_raw['GEOID'] = '53033' + housing_df_raw['TRACT_NUM'] + housing_df_raw['BLOCK_GRP']
@@ -470,8 +472,8 @@ gdf = gdf[(gdf['omega'] >= threshold)]
 #gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
 
 #create cityname df
-muni_gdf = gp.read_file('data/shapefiles/Municipal_Boundaries/Municipal_Boundaries.shp')
-tract_gdf = gp.read_file('data/shapefiles/KingCountyTracts/kc_tract_10.shp')
+muni_gdf = gp.read_file(ROOTDIR + 'data/shapefiles/Municipal_Boundaries/Municipal_Boundaries.shp')
+tract_gdf = gp.read_file(ROOTDIR + 'data/shapefiles/KingCountyTracts/kc_tract_10.shp')
 t = tract_gdf[['OBJECTID', 'STATEFP10', 'COUNTYFP10', 'TRACTCE10', 'GEOID10', 'geometry']]
 m = muni_gdf[['OBJECTID', 'CITYNAME', 'geometry']]
 m = m.to_crs(epsg=2926)
