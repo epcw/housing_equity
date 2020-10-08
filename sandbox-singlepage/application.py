@@ -235,9 +235,9 @@ def serve_layout():
             dcc.Graph(figure=fig,
                       id='housing_networkx'
                       ),
-            dcc.Graph(figure=fig2,
-                      id='housing_bar'
-                      ),
+#            dcc.Graph(figure=fig2,
+#                      id='housing_bar'
+#                      ),
 #             html.H1('Groupings'),
 #             html.P('Group 0 - size: ' + str(grp0_length), className='description'),
 #            generate_table(grp0),
