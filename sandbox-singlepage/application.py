@@ -254,7 +254,7 @@ def serve_layout():
 app.layout = serve_layout
 
 if __name__ == '__main__':
-     application.run(host='0.0.0.0',port=00)    # production version
+     application.run(host='0.0.0.0',port=80)    # production version
 #    application.run(debug=True, port=8080) #local version
 
 #TODO: create comment-option version of this, dashbase.py, and application.wsgi to run this on an production machine
