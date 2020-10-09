@@ -1,4 +1,4 @@
-#import dash #comment out for production deployment
+import dash #comment out for production deployment
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
@@ -7,9 +7,9 @@ import networkx as nx
 from fa2 import ForceAtlas2
 from flask_caching import Cache
 
-from dashbase import app, application #production version
-#app = dash.Dash(__name__) #local
-#application = app.server #local
+#from dashbase import app, application #production version
+app = dash.Dash(__name__) #local
+application = app.server #local
 
 #this pulls in the header HTML from header.py
 from template import Template
@@ -56,7 +56,7 @@ the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 #PLOT
 node_list = list(set(df['GEOID']))
 G = nx.Graph()
-
+#G=nx.random_geometric_graph(1422,radius=-0.5)
 '''
 #normal version (no cache)
 forceatlas2 = ForceAtlas2(
@@ -254,5 +254,5 @@ def serve_layout():
 app.layout = serve_layout
 
 if __name__ == '__main__':
-     application.run(host='0.0.0.0',port=80)    # production version
-#    application.run(debug=True, port=8080) #local version
+#    application.run(host='0.0.0.0',port=80)    # production version
+    application.run(debug=True, port=8080) #local version

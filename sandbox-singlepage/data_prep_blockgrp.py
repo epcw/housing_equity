@@ -5,8 +5,8 @@ from sklearn.cluster import KMeans
 from scipy.stats import zscore
 
 #set root directory for data files
-ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
-#ROOTDIR = '' #local
+#ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
+ROOTDIR = '' #local
 
 df_rent = pd.read_csv(ROOTDIR + 'data/king_blockgrp_rent.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
 
