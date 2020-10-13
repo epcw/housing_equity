@@ -84,7 +84,6 @@ app.layout = html.Div([
     ), style={'width': '49%', 'padding': '0px 20px 20px 20px'})
 ])
 
-
 @app.callback(
     dash.dependencies.Output('crossfilter-indicator-scatter', 'figure'),
     [dash.dependencies.Input('crossfilter-xaxis-column', 'value'),
@@ -112,7 +111,6 @@ def update_graph(xaxis_column_name, yaxis_column_name,
 
     return fig
 
-
 def create_time_series(dff, axis_type, title):
 
     fig = px.scatter(dff, x='Year', y='Value')
@@ -131,7 +129,6 @@ def create_time_series(dff, axis_type, title):
 
     return fig
 
-
 @app.callback(
     dash.dependencies.Output('x-time-series', 'figure'),
     [dash.dependencies.Input('crossfilter-indicator-scatter', 'clickData'),
@@ -144,12 +141,12 @@ def update_y_timeseries(clickData, xaxis_column_name, axis_type):
     title = '<b>{}</b><br>{}'.format(country_name, xaxis_column_name)
     return create_time_series(dff, axis_type, title)
 
-
 @app.callback(
     dash.dependencies.Output('y-time-series', 'figure'),
     [dash.dependencies.Input('crossfilter-indicator-scatter', 'clickData'),
      dash.dependencies.Input('crossfilter-yaxis-column', 'value'),
      dash.dependencies.Input('crossfilter-yaxis-type', 'value')])
+
 def update_x_timeseries(clickData, yaxis_column_name, axis_type):
     dff = df[df['Country Name'] == clickData['points'][0]['customdata']]
     dff = dff[dff['Indicator Name'] == yaxis_column_name]

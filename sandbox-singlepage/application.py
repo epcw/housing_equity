@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 import networkx as nx
 from fa2 import ForceAtlas2
 from flask_caching import Cache
+import plotly.express as px
 
 #from dashbase import app, application #production version
 app = dash.Dash(__name__) #local
@@ -147,6 +148,7 @@ node_trace = go.Scatter(
     mode='markers+text', #make markers+text to show labels
     text=[],
     hoverinfo='text',
+    customdata=df['GEOID'],
     marker=dict(
         showscale=False,
         colorscale='Edge',
@@ -198,32 +200,18 @@ fig = go.Figure(data=[edge_trace, node_trace],
                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
 
 fig.update_traces(textfont_size=25)
-'''
-fig2 = go.Figure(go.Scatter (
-    x=gdf[gdf['GEOID_a'] == i],
-     y=gdf[gdf['GEOID_a'] == i][gdf['omega_bar']],
-    mode='lines+markers',
-    opacity=1,
-    marker={'size':4},
-    line={'width': 2},
-    name=i))
-'''
+
+gdff = gdf[['GEOID_a','omega_bar']].drop_duplicates()
+gdff['GEOID'] = gdff['GEOID_a'].astype(str)
+gdff = gdff.sort_values('omega_bar')
+
+fig2 = px.scatter(gdff, x="GEOID_a", y="omega_bar",color='GEOID_a')
+
 #TODO: set up a scatterplot version of this to show change in pressure from 2013-8
 
-#generate a table if you want this.  Else just comment out  56 rows because states+territories for this dataset If you really need to style this, can add some classes.
-def generate_table(dataframe, max_rows=398):
-    return html.Table([
-        html.Thead(
-            html.Tr([html.Th(col) for col in dataframe.columns])
-        ),
-        html.Tbody([
-            html.Tr([
-                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
-            ]) for i in range(min(len(dataframe), max_rows))
-        ])
-    ])
 
 #here we make the graph a function called serve_layout(), which then allows us to have it run every time the page is loaded (unlike the normal which would just be app.layer = GRAPH CONTENT, which would run every time the app was started on the server (aka, once))
+
 def serve_layout():
     return html.Div([
         dcc.Link('Dashboard Home', href='/', id="app_menu"),
@@ -235,12 +223,12 @@ def serve_layout():
             dcc.Graph(figure=fig,
                       id='housing_networkx'
                       ),
-#            dcc.Graph(figure=fig2,
-#                      id='housing_bar'
-#                      ),
-#             html.H1('Groupings'),
-#             html.P('Group 0 - size: ' + str(grp0_length), className='description'),
-#            generate_table(grp0),
+            dcc.Graph(figure=fig2,
+                      id='housing_bar'
+                      ),
+             html.H1('Groupings'),
+             html.P('Census Block Groups', className='description'),
+             generate_table(gdff),
 #            html.P('Group 1 - size: ' + str(grp1_length), className='description'),
 #            generate_table(grp1),
 #            html.P('Group 2 - size: ' + str(grp2_length), className='description'),
@@ -249,6 +237,25 @@ def serve_layout():
 #            generate_table(grp3)
         ], className='container')
     ], id='sandbox')
+
+def generate_table(dataframe, max_rows=1422):
+    return html.Table([
+        html.Thead(
+            html.Tr([html.Th(col) for col in dataframe.columns])
+        ),
+        html.Tbody([
+            html.Tr([
+                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
+            ]) for i in range(min(len(dataframe), max_rows))
+        ])
+    ])
+
+#@app.callback(
+#    dash.dependencies.Output(component_id='data_table', component_property='children'),
+#    [dash.dependencies.Input(component_id='housing_networkx', component_property='customdata')])
+#def update_table(customdata):
+    #node_name = clickData['nodes'][0]['customdata']
+#    dff = df[(df['GEOID'] == 'customdata')]
 
 #this calls the serve_layout function to run on app load.
 app.layout = serve_layout
