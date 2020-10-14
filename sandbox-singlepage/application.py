@@ -201,11 +201,44 @@ fig = go.Figure(data=[edge_trace, node_trace],
 
 fig.update_traces(textfont_size=25)
 
-gdff = gdf[['GEOID_a','omega_bar']].drop_duplicates()
+#gdff = gdf[['GEOID_a','omega_bar']].drop_duplicates()
+gdff = gdf.loc[:, gdf.columns.str.endswith('_a')]
+gdfz = gdf[['GEOID_a','omega_bar']]
+gdff = gdff.merge(gdfz, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID_a'])
 gdff['GEOID'] = gdff['GEOID_a'].astype(str)
 gdff = gdff.sort_values('omega_bar')
 
-fig2 = px.scatter(gdff, x="GEOID_a", y="omega_bar",color='GEOID_a')
+fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOID')
+fig2.update_traces(marker=dict(size=20))
+
+gdfcombo = gdf.loc[:, gdf.columns.str.endswith('_a')]
+gdfcombo['GEOID'] = gdfcombo['GEOID_a'].astype(str)
+alpha = 1/6.0
+bravo = 1/6.0
+charlie = 1/6.0
+delta = 1/6.0
+echo = 1/6.0
+foxtrot = 1/6.0
+
+gdfcombo['omega_13'] = (
+        -(alpha * gdfcombo.minority_pop_pct_2013z_a) + \
+        (bravo * gdfcombo.rent_25th_pctile_2013z_a) + \
+        (charlie * gdfcombo.totpop_2013z_a) + \
+        (delta * gdfcombo.rent_pct_income_2013z_a) + \
+        -(echo * gdfcombo.affordable_units_per_cap_2013z_a) + \
+        -(foxtrot * gdfcombo.median_tenancy_2013z_a) 
+)
+
+gdfcombo['omega_18'] = (
+        -(alpha * gdfcombo.minority_pop_pct_2018z_a) + \
+        (bravo * gdfcombo.rent_25th_pctile_2018z_a) + \
+        (charlie * gdfcombo.totpop_2018z_a) + \
+        (delta * gdfcombo.rent_pct_income_2018z_a) + \
+        -(echo * gdfcombo.affordable_units_per_cap_2018z_a) + \
+        -(foxtrot * gdfcombo.median_tenancy_2018z_a) 
+)
+
+fig3 = px.scatter(gdfcombo, x="omega_13", y="omega_18",color='GEOID')
 
 #TODO: set up a scatterplot version of this to show change in pressure from 2013-8
 
@@ -225,6 +258,9 @@ def serve_layout():
                       ),
             dcc.Graph(figure=fig2,
                       id='housing_bar'
+                      ),
+            dcc.Graph(figure=fig3,
+                      id='displacement_scatter'
                       ),
              html.H1('Groupings'),
              html.P('Census Block Groups', className='description'),
