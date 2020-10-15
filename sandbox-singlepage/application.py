@@ -213,7 +213,7 @@ fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOI
 fig2.update_traces(marker=dict(size=20),
                    textposition="top center")
 
-gdfcombo = gdf.loc[:, gdf.columns.str.endswith('_a')]
+gdfcombo = gdf.loc[:, gdf.columns.str.endswith('_a')].drop_duplicates()
 gdfcombo['GEOID'] = gdfcombo['GEOID_a'].astype(str)
 alpha = 1/6.0
 bravo = 1/6.0
@@ -257,7 +257,7 @@ for i in range(K):
     Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
 
 #re-merge with gdfcombo
-gdfcombo = gdfcombo.merge(Y, how='left', left_on=['GEOID','omega_13','omega_18'], right_on=['GEOID','omega_13','omega_18'])
+gdfcombo = gdfcombo.merge(Y, how='left', left_on=['GEOID','omega_13','omega_18'], right_on=['GEOID','omega_13','omega_18']).drop_duplicates
 
 grp0 = gdfcombo[(gdfcombo['labels'] == 0)].drop_duplicates()
 grp0 = grp0[['GEOID','omega_13','omega_18','labels']]
