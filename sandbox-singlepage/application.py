@@ -7,6 +7,7 @@ import networkx as nx
 from fa2 import ForceAtlas2
 from flask_caching import Cache
 import plotly.express as px
+from sklearn.cluster import KMeans
 
 #from dashbase import app, application #production version
 app = dash.Dash(__name__) #local
@@ -41,15 +42,15 @@ import data_prep_blockgrp
 df = data_prep_blockgrp.get_df(subset='wallingford')
 gdf = data_prep_blockgrp.get_gdf(subset='wallingford')
 
-from data_prep_blockgrp import grp0
-from data_prep_blockgrp import grp1
-from data_prep_blockgrp import grp2
-from data_prep_blockgrp import grp3
-grp3_length = str(grp3.shape)
+#from data_prep_blockgrp import grp0
+#from data_prep_blockgrp import grp1
+#from data_prep_blockgrp import grp2
+#from data_prep_blockgrp import grp3
+#grp3_length = str(grp3.shape)
 
-grp0_length = str(grp0.shape)
-grp1_length = str(grp1.shape)
-grp2_length = str(grp2.shape)
+#grp0_length = str(grp0.shape)
+#grp1_length = str(grp1.shape)
+#grp2_length = str(grp2.shape)
 
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
@@ -208,7 +209,7 @@ gdff = gdff.merge(gdfz, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID
 gdff['GEOID'] = gdff['GEOID_a'].astype(str)
 gdff = gdff.sort_values('omega_bar')
 
-fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOID')
+fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOID',textposition="top center")
 fig2.update_traces(marker=dict(size=20))
 
 gdfcombo = gdf.loc[:, gdf.columns.str.endswith('_a')]
@@ -238,7 +239,41 @@ gdfcombo['omega_18'] = (
         -(foxtrot * gdfcombo.median_tenancy_2018z_a) 
 )
 
-fig3 = px.scatter(gdfcombo, x="omega_13", y="omega_18",color='GEOID'
+#Kmeans clustering
+Y = gdfcombo[['GEOID','omega_13','omega_18']]
+Y = Y[~Y['omega_13'].isnull()]
+Y = Y[~Y['omega_18'].isnull()]
+X = Y[['omega_13','omega_18']]
+K = 4
+kmeans = KMeans(n_clusters=K, random_state=0).fit(X)
+Y['labels'] = kmeans.labels_
+c0 = kmeans.cluster_centers_[0]
+c1 = kmeans.cluster_centers_[1]
+c = pd.DataFrame(kmeans.transform(X), columns=['center_{}'.format(i) for i in range(K)])
+for i in range(K):
+    Y['center_{}'.format(i)] = c['center_{}'.format(i)]
+for i in range(K):
+    Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
+
+#re-merge with gdfcombo
+gdfcombo = gdfcombo.merge(Y, how='left', left_on=['GEOID','omega_13','omega_18'], right_on=['GEOID','omega_13','omega_18'])
+
+grp0 = gdfcombo[(gdfcombo['labels'] == 0)].drop_duplicates()
+grp0 = grp0[['GEOID','omega_13','omega_18','labels']]
+grp0_length = str(grp0.shape)
+grp1 = gdfcombo[(gdfcombo['labels'] == 1)].drop_duplicates()
+grp1 = grp1[['GEOID','omega_13','omega_18','labels']]
+grp1_length = str(grp1.shape)
+
+grp2 = gdfcombo[(gdfcombo['labels'] == 2)].drop_duplicates()
+grp2 = grp2[['GEOID','omega_13','omega_18','labels']]
+grp2_length = str(grp2.shape)
+
+grp3 = gdfcombo[(gdfcombo['labels'] == 3)].drop_duplicates()
+grp3 = grp3[['GEOID','omega_13','omega_18','labels']]
+grp3_length = str(grp3.shape)
+
+fig3 = px.scatter(gdfcombo, x="omega_13", y="omega_18",color='labels',text='GEOID',textposition="top center"
 )
 fig3.update_yaxes(
     range=[-1, 1]
@@ -292,13 +327,14 @@ def serve_layout():
                       ),
              html.H1('Groupings'),
              html.P('Census Block Groups', className='description'),
-             generate_table(gdff),
-#            html.P('Group 1 - size: ' + str(grp1_length), className='description'),
-#            generate_table(grp1),
-#            html.P('Group 2 - size: ' + str(grp2_length), className='description'),
-#            generate_table(grp2)#,
-#            html.P('Group 3 - size: ' + str(grp3_length), className='description'),
-#            generate_table(grp3)
+            html.P('Group 0 - size: ' + str(grp0_length), className='description'),
+            generate_table(grp0),
+            html.P('Group 1 - size: ' + str(grp1_length), className='description'),
+            generate_table(grp1),
+            html.P('Group 2 - size: ' + str(grp2_length), className='description'),
+            generate_table(grp2),
+            html.P('Group 3 - size: ' + str(grp3_length), className='description'),
+            generate_table(grp3)
         ], className='container')
     ], id='sandbox')
 

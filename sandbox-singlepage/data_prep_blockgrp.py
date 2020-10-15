@@ -1,8 +1,6 @@
 import pandas as pd
 import geopandas as gp
 from geopy import distance
-from sklearn.cluster import KMeans
-from scipy.stats import zscore
 
 #set root directory for data files
 #ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
@@ -366,40 +364,6 @@ gdf['median_tenancy_change_delta_2018'] = gdf['median_tenancy_change_delta_2018'
 gdf['median_housing_age_change_delta_2018'] = (gdf.median_housing_age_2018z_a) - (gdf.median_housing_age_2018z_b).abs()
 gdf['median_housing_age_change_delta_2018'] = gdf['median_housing_age_change_delta_2018'].fillna(0)
 
-#Kmeans clustering
-Y = df[['GEOID','rent_25th_pctile_change','minority_pop_pct_change']]
-Y = Y[~Y['minority_pop_pct_change'].isnull()]
-Y = Y[~Y['rent_25th_pctile_change'].isnull()]
-X = Y[['rent_25th_pctile_change','minority_pop_pct_change']]
-K = 4
-kmeans = KMeans(n_clusters=K, random_state=0).fit(X)
-Y['labels'] = kmeans.labels_
-c0 = kmeans.cluster_centers_[0]
-c1 = kmeans.cluster_centers_[1]
-c = pd.DataFrame(kmeans.transform(X), columns=['center_{}'.format(i) for i in range(K)])
-for i in range(K):
-    Y['center_{}'.format(i)] = c['center_{}'.format(i)]
-for i in range(K):
-    Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
-#re-merge with df
-df = df.merge(Y, how='left', left_on=['GEOID','minority_pop_pct_change','rent_25th_pctile_change'], right_on=['GEOID','minority_pop_pct_change','rent_25th_pctile_change'])
-
-grp0 = df[(df['labels'] == 0)]
-grp0 = grp0[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
-grp0_length = str(grp0.shape)
-grp1 = df[(df['labels'] == 1)]
-grp1 = grp1[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
-grp1_length = str(grp1.shape)
-
-grp2 = df[(df['labels'] == 2)]
-grp2 = grp2[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
-grp2_length = str(grp2.shape)
-
-grp3 = df[(df['labels'] == 3)]
-grp3 = grp3[['COUNTY','TRACT_NUM','BLOCK_GRP','minority_pop_pct_change','rent_25th_pctile_change','labels','d']]
-grp3_length = str(grp3.shape)
-
-#TODO: WEIGHTS
 
 #weight the edges
 alpha = 1/6.0
