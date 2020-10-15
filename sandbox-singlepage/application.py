@@ -238,10 +238,36 @@ gdfcombo['omega_18'] = (
         -(foxtrot * gdfcombo.median_tenancy_2018z_a) 
 )
 
-fig3 = px.scatter(gdfcombo, x="omega_13", y="omega_18",color='GEOID')
+fig3 = px.scatter(gdfcombo, x="omega_13", y="omega_18",color='GEOID'
+)
+fig3.update_yaxes(
+    range=[-1, 1]
+  )
+fig3.update_xaxes(
+    range=[-1, 1]
+  )
+#can set axis ratios, as well
+#fig.update_yaxes(
+#    scaleanchor = "x",
+#    scaleratio = 1,
+#  )
+#
+fig3.update_traces(marker=dict(size=20))
+fig3.add_shape(
+        # Line Diagonal so you can see movement btw 2013 and 2018
+            type="line",
+            x0=0,
+            y0=0,
+            x1=6,
+            y1=6,
+            line=dict(
+                color="MediumPurple",
+                width=4,
+                dash="dash",
+            )
+)
 
-#TODO: set up a scatterplot version of this to show change in pressure from 2013-8
-
+#TODO: map showing displacement pressure
 
 #here we make the graph a function called serve_layout(), which then allows us to have it run every time the page is loaded (unlike the normal which would just be app.layer = GRAPH CONTENT, which would run every time the app was started on the server (aka, once))
 
@@ -259,6 +285,8 @@ def serve_layout():
             dcc.Graph(figure=fig2,
                       id='housing_bar'
                       ),
+            html.H1('Change in displacement pressure'),
+            html.P('This scatterplot compares displacement pressure (omega) in each census block group.  Block groups exactly along the dashed line had no change in pressure from 2013-18. Block groups above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018', className='description'),
             dcc.Graph(figure=fig3,
                       id='displacement_scatter'
                       ),
