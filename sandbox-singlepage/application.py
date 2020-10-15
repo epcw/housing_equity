@@ -209,8 +209,9 @@ gdff = gdff.merge(gdfz, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID
 gdff['GEOID'] = gdff['GEOID_a'].astype(str)
 gdff = gdff.sort_values('omega_bar')
 
-fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOID',textposition="top center")
-fig2.update_traces(marker=dict(size=20))
+fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOID')
+fig2.update_traces(marker=dict(size=20),
+                   textposition="top center")
 
 gdfcombo = gdf.loc[:, gdf.columns.str.endswith('_a')]
 gdfcombo['GEOID'] = gdfcombo['GEOID_a'].astype(str)
@@ -273,7 +274,7 @@ grp3 = gdfcombo[(gdfcombo['labels'] == 3)].drop_duplicates()
 grp3 = grp3[['GEOID','omega_13','omega_18','labels']]
 grp3_length = str(grp3.shape)
 
-fig3 = px.scatter(gdfcombo, x="omega_13", y="omega_18",color='labels',text='GEOID',textposition="top center"
+fig3 = px.scatter(gdfcombo, x="omega_13", y="omega_18",color='labels',text='GEOID'
 )
 fig3.update_yaxes(
     range=[-1, 1]
@@ -281,6 +282,7 @@ fig3.update_yaxes(
 fig3.update_xaxes(
     range=[-1, 1]
   )
+fig3.update_traces(textposition="top center")
 #can set axis ratios, as well
 #fig.update_yaxes(
 #    scaleanchor = "x",
