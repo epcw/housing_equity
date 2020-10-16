@@ -39,29 +39,39 @@ from data_prep_tract import grp2
 
 #BLOCK GROUP VERSION
 import data_prep_blockgrp
+df_all = data_prep_blockgrp.get_df()
+gdf_all = data_prep_blockgrp.get_gdf()
 df = data_prep_blockgrp.get_df(subset='wallingford')
 gdf = data_prep_blockgrp.get_gdf(subset='wallingford')
+df_rb = data_prep_blockgrp.get_df(subset='rainier_beach')
+gdf_rb = data_prep_blockgrp.get_gdf(subset='rainier_beach')
+df_rb['GEOID_long'] = df_rb['GEOID']
+df_rb['GEOID'] = df_rb['GEOID'].str.replace("53033", "")
+gdf_rb['GEOID_long_a'] = gdf_rb['GEOID_a']
+gdf_rb['GEOID_long_b'] = gdf_rb['GEOID_b']
+gdf_rb['GEOID_a'] = gdf_rb['GEOID_a'].str.replace("53033", "")
+gdf_rb['GEOID_b'] = gdf_rb['GEOID_b'].str.replace("53033", "")
 df['GEOID_long'] = df['GEOID']
 df['GEOID'] = df['GEOID'].str.replace("53033", "")
 gdf['GEOID_long_a'] = gdf['GEOID_a']
 gdf['GEOID_long_b'] = gdf['GEOID_b']
 gdf['GEOID_a'] = gdf['GEOID_a'].str.replace("53033", "")
 gdf['GEOID_b'] = gdf['GEOID_b'].str.replace("53033", "")
+df_all['GEOID_long'] = df_all['GEOID']
+df_all['GEOID'] = df_all['GEOID'].str.replace("53033", "")
+gdf_all['GEOID_long_a'] = gdf_all['GEOID_a']
+gdf_all['GEOID_long_b'] = gdf_all['GEOID_b']
+gdf_all['GEOID_a'] = gdf_all['GEOID_a'].str.replace("53033", "")
+gdf_all['GEOID_b'] = gdf_all['GEOID_b'].str.replace("53033", "")
+
+df = df.append(df_rb)
+gdf = gdf.append(gdf_rb)
 
 from data_prep_blockgrp import block_grp_geoids
 
-#from data_prep_blockgrp import grp0
-#from data_prep_blockgrp import grp1
-#from data_prep_blockgrp import grp2
-#from data_prep_blockgrp import grp3
-#grp3_length = str(grp3.shape)
-
-#grp0_length = str(grp0.shape)
-#grp1_length = str(grp1.shape)
-#grp2_length = str(grp2.shape)
-
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
+pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
 #PLOT
 node_list = list(set(df['GEOID']))
@@ -190,10 +200,13 @@ for node, adjacencies in enumerate(G.adjacency()):
     #node_text.append('# of connections: '+str(len(adjacencies[1])))
 #node_text = df["COUNTY"] + ' ' + df["TRACT_NUM"] + ' - ' +str(len(adjacencies[1])) + ' connections'
 for node in G.nodes():
-    node_label = df["TRACT_NUM"] + ' block group ' + df["BLOCK_GRP"]
+    node_label = df['neighborhood'] + '<br>' + df["TRACT_NUM"] + ' block group ' + df["BLOCK_GRP"]
     node_text = df["TRACT_NUM"] + ', block group ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop change: ' + (df['minority_pop_pct_change']).round(2).astype('str') + '% <br>' + '25%ile housing: ' + df['rent_25th_pctile_change'].round(2).astype('str') + '%'
 
 df['tract_index'] = df['TRACT_NUM'].astype(int)
+df['neighborhood_index'] = ''
+df.loc[df.neighborhood =='wallingford','neighborhood_index'] = '1'
+df.loc[df.neighborhood == 'rainier_beach','neighborhood_index'] = '2'
 
 node_trace.marker.color = df['tract_index']
 #node_trace.text = node_text
@@ -322,20 +335,20 @@ fig3.add_shape(
 fig4 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_change'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig4.update_layout(mapbox_style="open-street-map",
-            mapbox_zoom=12,
-            mapbox_center=the_bounty)
+            mapbox_zoom=10.5,
+            mapbox_center=pikes_place)
 
 fig5 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_13'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig5.update_layout(mapbox_style="open-street-map",
-            mapbox_zoom=12,
-            mapbox_center=the_bounty)
+            mapbox_zoom=10.5,
+            mapbox_center=pikes_place)
 
 fig6 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_18'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig6.update_layout(mapbox_style="open-street-map",
-            mapbox_zoom=12,
-            mapbox_center=the_bounty)
+            mapbox_zoom=10.5,
+            mapbox_center=pikes_place)
 
 #here we make the graph a function called serve_layout(), which then allows us to have it run every time the page is loaded (unlike the normal which would just be app.layer = GRAPH CONTENT, which would run every time the app was started on the server (aka, once))
 

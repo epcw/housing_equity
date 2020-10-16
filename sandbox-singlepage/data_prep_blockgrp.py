@@ -458,40 +458,58 @@ mt[['GEOID10', 'CITYNAME']]
 #df = df.rename(columns = {'CITYNAME_y':'CITYNAME'})
 
 import itertools
+#create rainier_beach_df & rainier_beach_gdf
+rainier_beach_gdf = gdf[((gdf['GEOID_a'] == '530330117001') & (gdf['distance'] < 2.000)) | ((gdf['GEOID_b'] == '530330117001') & (gdf['distance'] < 2.000))]
+rainier_beach_gid_a = list(rainier_beach_gdf['GEOID_a'].drop_duplicates())
+rainier_beach_gid_b = list(rainier_beach_gdf['GEOID_b'].drop_duplicates())
 
-wallingford_gdf = gdf[((gdf['GEOID_a'] == '530330046001') & (gdf['distance'] < 3.000)) | ((gdf['GEOID_b'] == '530330046001') & (gdf['distance'] < 3.000))]
-gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
-gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
-
-pair_data = {
+rainier_beach_pair_data = {
     'GEOID_a': list(),
     'GEOID_b': list()
 }
 
-for ga, gb in itertools.product(gid_a + gid_b, gid_a + gid_b):
-    pair_data['GEOID_a'].append(ga)
-    pair_data['GEOID_b'].append(gb)
+for ga, gb in itertools.product(rainier_beach_gid_a + rainier_beach_gid_b, rainier_beach_gid_a + rainier_beach_gid_b):
+    rainier_beach_pair_data['GEOID_a'].append(ga)
+    rainier_beach_pair_data['GEOID_b'].append(gb)
 
-pair_df = pd.DataFrame.from_dict(pair_data)
-pair_df = pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
-pair_df = pair_df[~pair_df['distance'].isnull()]
+rainier_beach_pair_df = pd.DataFrame.from_dict(rainier_beach_pair_data)
+rainier_beach_pair_df = rainier_beach_pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
+rainier_beach_pair_df = rainier_beach_pair_df[~rainier_beach_pair_df['distance'].isnull()]
 
-wallingford_gdf = pair_df
+rainier_beach_gdf = rainier_beach_pair_df
+rainier_beach_geoids = list(rainier_beach_gdf['GEOID_a'].drop_duplicates()) + \
+                     list(rainier_beach_gdf['GEOID_b'].drop_duplicates())
+rainier_beach_df = df[df['GEOID'].isin(rainier_beach_geoids)]
+rainier_beach_df['neighborhood'] = 'rainier_beach'
+
+#create wallingford_df & wallingford_gdf
+wallingford_gdf = gdf[((gdf['GEOID_a'] == '530330046001') & (gdf['distance'] < 3.000)) | ((gdf['GEOID_b'] == '530330046001') & (gdf['distance'] < 3.000))]
+wallingford_gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
+wallingford_gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
+
+wallingford_pair_data = {
+    'GEOID_a': list(),
+    'GEOID_b': list()
+}
+
+for ga, gb in itertools.product(wallingford_gid_a + wallingford_gid_b, wallingford_gid_a + wallingford_gid_b):
+    wallingford_pair_data['GEOID_a'].append(ga)
+    wallingford_pair_data['GEOID_b'].append(gb)
+
+wallingford_pair_df = pd.DataFrame.from_dict(wallingford_pair_data)
+wallingford_pair_df = wallingford_pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
+wallingford_pair_df = wallingford_pair_df[~wallingford_pair_df['distance'].isnull()]
+
+wallingford_gdf = wallingford_pair_df
 wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
                      list(wallingford_gdf['GEOID_b'].drop_duplicates())
 wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
-
-
-#delete unnecessary columns to save memory
-#del df['OBJECTID_']
-#del df['GEOID10']
-#del df['TRACTCE10']
-#del gdf['GEOID_x']
-#del gdf['GEOID_y']
+wallingford_df['neighborhood'] = 'wallingford'
 
 def get_df(subset='all'):
     subsets = {
         'all': df,
+        'rainier_beach': rainier_beach_df,
         'wallingford': wallingford_df
     }
 
@@ -504,6 +522,7 @@ def get_df(subset='all'):
 def get_gdf(subset='all'):
     subsets = {
         'all': gdf,
+        'rainier_beach': rainier_beach_gdf,
         'wallingford': wallingford_gdf
     }
 
