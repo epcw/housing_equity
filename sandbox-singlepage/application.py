@@ -240,6 +240,7 @@ gdfcombo['omega_18'] = (
         -(foxtrot * gdfcombo.median_tenancy_2018z_a) 
 )
 
+gdfcombo = gdfcombo[['GEOID','omega_13','omega_18']].drop_duplicates()
 #Kmeans clustering
 Y = gdfcombo[['GEOID','omega_13','omega_18']]
 Y = Y[~Y['omega_13'].isnull()]
