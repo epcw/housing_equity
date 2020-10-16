@@ -1,10 +1,16 @@
 import pandas as pd
 import geopandas as gp
 from geopy import distance
+import json
 
 #set root directory for data files
 #ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
 ROOTDIR = '' #local
+
+#read in shapefile (needs to be in GeoJSON format)
+#with open('/home/ubuntu/dash/data/washingtongeo.json','r') as GeoJSON:
+with open(ROOTDIR + 'data/wa_king_census_block_groups.geojson','r') as GeoJSON:
+    block_grp_geoids = json.load(GeoJSON)
 
 df_rent = pd.read_csv(ROOTDIR + 'data/king_blockgrp_rent.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
 

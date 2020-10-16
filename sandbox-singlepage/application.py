@@ -41,9 +41,15 @@ from data_prep_tract import grp2
 import data_prep_blockgrp
 df = data_prep_blockgrp.get_df(subset='wallingford')
 gdf = data_prep_blockgrp.get_gdf(subset='wallingford')
+df['GEOID_long'] = df['GEOID']
 df['GEOID'] = df['GEOID'].str.replace("53033", "")
+gdf['GEOID_long_a'] = gdf['GEOID_a']
+gdf['GEOID_long_b'] = gdf['GEOID_b']
 gdf['GEOID_a'] = gdf['GEOID_a'].str.replace("53033", "")
 gdf['GEOID_b'] = gdf['GEOID_b'].str.replace("53033", "")
+
+from data_prep_blockgrp import block_grp_geoids
+
 #from data_prep_blockgrp import grp0
 #from data_prep_blockgrp import grp1
 #from data_prep_blockgrp import grp2
@@ -121,6 +127,7 @@ def pos():
 
 for n, p in pos().items():
     G.nodes[n]['pos'] = p
+
 '''
 
 #NON-CACHE-USING VERSION
@@ -206,8 +213,8 @@ fig.update_traces(textfont_size=25)
 
 #gdff = gdf[['GEOID_a','omega_bar']].drop_duplicates()
 gdff = gdf.loc[:, gdf.columns.str.endswith('_a')]
-gdfz = gdf[['GEOID_a','omega_bar']]
-gdff = gdff.merge(gdfz, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID_a']).drop_duplicates()
+gdfz = gdf[['GEOID_a','GEOID_long_a','omega_bar']]
+gdff = gdff.merge(gdfz, how = 'inner', left_on = ['GEOID_a','GEOID_long_a'], right_on = ['GEOID_a','GEOID_long_a']).drop_duplicates()
 gdff['GEOID'] = gdff['GEOID_a'].astype(str)
 gdff = gdff.sort_values('omega_bar')
 
@@ -242,7 +249,7 @@ gdfcombo['omega_18'] = (
         -(foxtrot * gdfcombo.median_tenancy_2018z_a) 
 )
 
-gdfcombo = gdfcombo[['GEOID','omega_13','omega_18']].drop_duplicates()
+gdfcombo = gdfcombo[['GEOID','GEOID_long_a','omega_13','omega_18']].drop_duplicates()
 #Kmeans clustering
 Y = gdfcombo[['GEOID','omega_13','omega_18']]
 Y = Y[~Y['omega_13'].isnull()]
@@ -307,6 +314,11 @@ fig3.add_shape(
             )
 )
 
+fig4 = px.choropleth_mapbox(gdfcombo,geojson=block_grp_geoids,locations=gdfcombo['GEOID_long_a'],featureidkey='properties.block_group_geoid',color=gdfcombo['omega_18'],
+            opacity=0.7,color_continuous_scale='RdYlGn_r')
+fig4.update_layout(mapbox_style="open-street-map",
+            mapbox_zoom=12,
+            mapbox_center=the_bounty)
 #TODO: map showing displacement pressure
 
 #here we make the graph a function called serve_layout(), which then allows us to have it run every time the page is loaded (unlike the normal which would just be app.layer = GRAPH CONTENT, which would run every time the app was started on the server (aka, once))
@@ -330,6 +342,9 @@ def serve_layout():
             dcc.Graph(figure=fig3,
                       id='displacement_scatter'
                       ),
+            dcc.Graph(figure=fig4,
+                id='block_grp_map'
+            ),
              html.H1('Groupings'),
              html.P('Census Block Groups', className='description'),
             html.P('Group 0 - size: ' + str(grp0_length), className='description'),
