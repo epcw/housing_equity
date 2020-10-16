@@ -209,7 +209,7 @@ gdff = gdff.merge(gdfz, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID
 gdff['GEOID'] = gdff['GEOID_a'].astype(str)
 gdff = gdff.sort_values('omega_bar')
 
-fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOID')
+fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOID',text='GEOID')
 fig2.update_traces(marker=dict(size=20),
                    textposition="top center")
 
@@ -283,7 +283,7 @@ fig3.update_yaxes(
 fig3.update_xaxes(
     range=[-1, 1]
   )
-fig3.update_traces(textposition="top center")
+fig3.update_traces(textposition="middle right")
 #can set axis ratios, as well
 #fig.update_yaxes(
 #    scaleanchor = "x",
@@ -294,10 +294,10 @@ fig3.update_traces(marker=dict(size=20))
 fig3.add_shape(
         # Line Diagonal so you can see movement btw 2013 and 2018
             type="line",
-            x0=0,
-            y0=0,
-            x1=6,
-            y1=6,
+            x0=-1,
+            y0=-1,
+            x1=1,
+            y1=1,
             line=dict(
                 color="MediumPurple",
                 width=4,
