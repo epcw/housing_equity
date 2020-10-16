@@ -205,13 +205,13 @@ fig.update_traces(textfont_size=25)
 #gdff = gdf[['GEOID_a','omega_bar']].drop_duplicates()
 gdff = gdf.loc[:, gdf.columns.str.endswith('_a')]
 gdfz = gdf[['GEOID_a','omega_bar']]
-gdff = gdff.merge(gdfz, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID_a'])
+gdff = gdff.merge(gdfz, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID_a']).drop_duplicates()
 gdff['GEOID'] = gdff['GEOID_a'].astype(str)
 gdff = gdff.sort_values('omega_bar')
 
 fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOID',text='GEOID')
 fig2.update_traces(marker=dict(size=20),
-                   textposition="top center")
+                   textposition="middle right")
 
 gdfcombo = gdf.loc[:, gdf.columns.str.endswith('_a')]
 gdfcombo['GEOID'] = gdfcombo['GEOID_a'].astype(str)
