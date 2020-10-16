@@ -1,7 +1,8 @@
 interactive-map/.idea*
 .ipynb_checkpoints*
 !/.gitignore
-sandbox-singlepage/data*
+sandbox-singlepage/data/*.csv
+sandbox-singelpage/data/shapefiles*
 interactive-map/.idea*
 archive*
 .idea*
