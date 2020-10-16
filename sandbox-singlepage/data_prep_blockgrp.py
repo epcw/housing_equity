@@ -458,8 +458,57 @@ mt[['GEOID10', 'CITYNAME']]
 #df = df.rename(columns = {'CITYNAME_y':'CITYNAME'})
 
 import itertools
+
+#create mtbaker_station_df & mtbaker_station_gdf
+mtbaker_station_gdf = gdf[((gdf['GEOID_a'] == '530330100011') & (gdf['distance'] < 1.500)) | ((gdf['GEOID_b'] == '530330100011') & (gdf['distance'] < 1.500))]
+mtbaker_station_gid_a = list(mtbaker_station_gdf['GEOID_a'].drop_duplicates())
+mtbaker_station_gid_b = list(mtbaker_station_gdf['GEOID_b'].drop_duplicates())
+
+mtbaker_station_pair_data = {
+    'GEOID_a': list(),
+    'GEOID_b': list()
+}
+
+for ga, gb in itertools.product(mtbaker_station_gid_a + mtbaker_station_gid_b, mtbaker_station_gid_a + mtbaker_station_gid_b):
+    mtbaker_station_pair_data['GEOID_a'].append(ga)
+    mtbaker_station_pair_data['GEOID_b'].append(gb)
+
+mtbaker_station_pair_df = pd.DataFrame.from_dict(mtbaker_station_pair_data)
+mtbaker_station_pair_df = mtbaker_station_pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
+mtbaker_station_pair_df = mtbaker_station_pair_df[~mtbaker_station_pair_df['distance'].isnull()]
+
+mtbaker_station_gdf = mtbaker_station_pair_df
+mtbaker_station_geoids = list(mtbaker_station_gdf['GEOID_a'].drop_duplicates()) + \
+                     list(mtbaker_station_gdf['GEOID_b'].drop_duplicates())
+mtbaker_station_df = df[df['GEOID'].isin(mtbaker_station_geoids)]
+mtbaker_station_df['neighborhood'] = 'mtbaker_station'
+
+#create othello_station_df & othello_station_gdf
+othello_station_gdf = gdf[((gdf['GEOID_a'] == '530330110012') & (gdf['distance'] < 1.500)) | ((gdf['GEOID_b'] == '530330110012') & (gdf['distance'] < 1.500))]
+othello_station_gid_a = list(othello_station_gdf['GEOID_a'].drop_duplicates())
+othello_station_gid_b = list(othello_station_gdf['GEOID_b'].drop_duplicates())
+
+othello_station_pair_data = {
+    'GEOID_a': list(),
+    'GEOID_b': list()
+}
+
+for ga, gb in itertools.product(othello_station_gid_a + othello_station_gid_b, othello_station_gid_a + othello_station_gid_b):
+    othello_station_pair_data['GEOID_a'].append(ga)
+    othello_station_pair_data['GEOID_b'].append(gb)
+
+othello_station_pair_df = pd.DataFrame.from_dict(othello_station_pair_data)
+othello_station_pair_df = othello_station_pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
+othello_station_pair_df = othello_station_pair_df[~othello_station_pair_df['distance'].isnull()]
+
+othello_station_gdf = othello_station_pair_df
+othello_station_geoids = list(othello_station_gdf['GEOID_a'].drop_duplicates()) + \
+                     list(othello_station_gdf['GEOID_b'].drop_duplicates())
+othello_station_df = df[df['GEOID'].isin(othello_station_geoids)]
+othello_station_df['neighborhood'] = 'othello_station'
+
 #create rainier_beach_df & rainier_beach_gdf
-rainier_beach_gdf = gdf[((gdf['GEOID_a'] == '530330117001') & (gdf['distance'] < 2.000)) | ((gdf['GEOID_b'] == '530330117001') & (gdf['distance'] < 2.000))]
+rainier_beach_gdf = gdf[((gdf['GEOID_a'] == '530330117001') & (gdf['distance'] < 2)) | ((gdf['GEOID_b'] == '530330117001') & (gdf['distance'] < 2))]
 rainier_beach_gid_a = list(rainier_beach_gdf['GEOID_a'].drop_duplicates())
 rainier_beach_gid_b = list(rainier_beach_gdf['GEOID_b'].drop_duplicates())
 
@@ -509,6 +558,8 @@ wallingford_df['neighborhood'] = 'wallingford'
 def get_df(subset='all'):
     subsets = {
         'all': df,
+        'mtbaker_station': mtbaker_station_df,
+        'othello_station': othello_station_df,
         'rainier_beach': rainier_beach_df,
         'wallingford': wallingford_df
     }
@@ -522,6 +573,8 @@ def get_df(subset='all'):
 def get_gdf(subset='all'):
     subsets = {
         'all': gdf,
+        'mtbaker_station': mtbaker_station_gdf,
+        'othello_station': othello_station_gdf,
         'rainier_beach': rainier_beach_gdf,
         'wallingford': wallingford_gdf
     }

@@ -45,12 +45,28 @@ df = data_prep_blockgrp.get_df(subset='wallingford')
 gdf = data_prep_blockgrp.get_gdf(subset='wallingford')
 df_rb = data_prep_blockgrp.get_df(subset='rainier_beach')
 gdf_rb = data_prep_blockgrp.get_gdf(subset='rainier_beach')
+df_mtbaker = data_prep_blockgrp.get_df(subset='mtbaker_station')
+gdf_mtbaker = data_prep_blockgrp.get_gdf(subset='mtbaker_station')
+df_othello = data_prep_blockgrp.get_df(subset='othello_station')
+gdf_othello = data_prep_blockgrp.get_gdf(subset='othello_station')
 df_rb['GEOID_long'] = df_rb['GEOID']
 df_rb['GEOID'] = df_rb['GEOID'].str.replace("53033", "")
 gdf_rb['GEOID_long_a'] = gdf_rb['GEOID_a']
 gdf_rb['GEOID_long_b'] = gdf_rb['GEOID_b']
 gdf_rb['GEOID_a'] = gdf_rb['GEOID_a'].str.replace("53033", "")
 gdf_rb['GEOID_b'] = gdf_rb['GEOID_b'].str.replace("53033", "")
+df_mtbaker['GEOID_long'] = df_mtbaker['GEOID']
+df_mtbaker['GEOID'] = df_mtbaker['GEOID'].str.replace("53033", "")
+gdf_mtbaker['GEOID_long_a'] = gdf_mtbaker['GEOID_a']
+gdf_mtbaker['GEOID_long_b'] = gdf_mtbaker['GEOID_b']
+gdf_mtbaker['GEOID_a'] = gdf_mtbaker['GEOID_a'].str.replace("53033", "")
+gdf_mtbaker['GEOID_b'] = gdf_mtbaker['GEOID_b'].str.replace("53033", "")
+df_othello['GEOID_long'] = df_othello['GEOID']
+df_othello['GEOID'] = df_othello['GEOID'].str.replace("53033", "")
+gdf_othello['GEOID_long_a'] = gdf_othello['GEOID_a']
+gdf_othello['GEOID_long_b'] = gdf_othello['GEOID_b']
+gdf_othello['GEOID_a'] = gdf_othello['GEOID_a'].str.replace("53033", "")
+gdf_othello['GEOID_b'] = gdf_othello['GEOID_b'].str.replace("53033", "")
 df['GEOID_long'] = df['GEOID']
 df['GEOID'] = df['GEOID'].str.replace("53033", "")
 gdf['GEOID_long_a'] = gdf['GEOID_a']
@@ -65,7 +81,12 @@ gdf_all['GEOID_a'] = gdf_all['GEOID_a'].str.replace("53033", "")
 gdf_all['GEOID_b'] = gdf_all['GEOID_b'].str.replace("53033", "")
 
 df = df.append(df_rb)
+df = df.append(df_mtbaker)
+df = df.append(df_othello)
+
 gdf = gdf.append(gdf_rb)
+gdf = gdf.append(gdf_mtbaker)
+gdf = gdf.append(gdf_othello)
 
 from data_prep_blockgrp import block_grp_geoids
 
@@ -262,7 +283,8 @@ dfcombo['omega_18'] = (
         -(foxtrot * dfcombo.median_tenancy_2018z.fillna(0))
 )
 dfcombo['omega_change'] = dfcombo.omega_18 - dfcombo.omega_13
-dfcombo = dfcombo[['GEOID','GEOID_long','omega_13','omega_18','omega_change']].drop_duplicates()
+dfcombo = dfcombo.drop_duplicates()
+#dfcombo = dfcombo[['GEOID','GEOID_long','omega_13','omega_18','omega_change']].drop_duplicates()
 #Kmeans clustering
 Y = dfcombo[['GEOID','omega_13','omega_18']]
 Y = Y[~Y['omega_13'].isnull()]
@@ -283,22 +305,22 @@ for i in range(K):
 dfcombo = dfcombo.merge(Y, how='left', left_on=['GEOID','omega_13','omega_18'], right_on=['GEOID','omega_13','omega_18'])
 
 grp0 = dfcombo[(dfcombo['labels'] == 0)].drop_duplicates()
-grp0 = grp0[['GEOID','omega_13','omega_18','omega_change','labels']]
+grp0 = grp0[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_INCOME_2013','RENT_AS_PCT_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','median_tenancy_2013','median_tenancy_2018','labels']]
 grp0_length = str(grp0.shape)
 grp0 = grp0.sort_values('omega_change')
 
 grp1 = dfcombo[(dfcombo['labels'] == 1)].drop_duplicates()
-grp1 = grp1[['GEOID','omega_13','omega_18','omega_change','labels']]
+grp1 = grp1[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_INCOME_2013','RENT_AS_PCT_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','median_tenancy_2013','median_tenancy_2018','labels']]
 grp1 = grp1.sort_values('omega_change')
 grp1_length = str(grp1.shape)
 
 grp2 = dfcombo[(dfcombo['labels'] == 2)].drop_duplicates()
-grp2 = grp2[['GEOID','omega_13','omega_18','omega_change','labels']]
+grp2 = grp2[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_INCOME_2013','RENT_AS_PCT_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','median_tenancy_2013','median_tenancy_2018','labels']]
 grp2_length = str(grp2.shape)
 grp2 = grp2.sort_values('omega_change')
 
 grp3 = dfcombo[(dfcombo['labels'] == 3)].drop_duplicates()
-grp3 = grp3[['GEOID','omega_13','omega_18','omega_change','labels']]
+grp3 = grp3[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_INCOME_2013','RENT_AS_PCT_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','median_tenancy_2013','median_tenancy_2018','labels']]
 grp3_length = str(grp3.shape)
 grp3 = grp3.sort_values('omega_change')
 
