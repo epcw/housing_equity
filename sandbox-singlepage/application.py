@@ -41,7 +41,9 @@ from data_prep_tract import grp2
 import data_prep_blockgrp
 df = data_prep_blockgrp.get_df(subset='wallingford')
 gdf = data_prep_blockgrp.get_gdf(subset='wallingford')
-
+df['GEOID'] = df['GEOID'].str.replace("53033", "")
+gdf['GEOID_a'] = gdf['GEOID_a'].str.replace("53033", "")
+gdf['GEOID_b'] = gdf['GEOID_b'].str.replace("53033", "")
 #from data_prep_blockgrp import grp0
 #from data_prep_blockgrp import grp1
 #from data_prep_blockgrp import grp2
