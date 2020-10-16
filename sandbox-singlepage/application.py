@@ -222,8 +222,8 @@ fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOI
 fig2.update_traces(marker=dict(size=20),
                    textposition="middle right")
 
-gdfcombo = gdf.loc[:, gdf.columns.str.endswith('_a')]
-gdfcombo['GEOID'] = gdfcombo['GEOID_a'].astype(str)
+dfcombo = df
+dfcombo['GEOID'] = dfcombo['GEOID'].astype(str)
 alpha = 1/6.0
 bravo = 1/6.0
 charlie = 1/6.0
@@ -231,27 +231,27 @@ delta = 1/6.0
 echo = 1/6.0
 foxtrot = 1/6.0
 
-gdfcombo['omega_13'] = (
-        -(alpha * gdfcombo.minority_pop_pct_2013z_a) + \
-        (bravo * gdfcombo.rent_25th_pctile_2013z_a) + \
-        (charlie * gdfcombo.totpop_2013z_a) + \
-        (delta * gdfcombo.rent_pct_income_2013z_a) + \
-        -(echo * gdfcombo.affordable_units_per_cap_2013z_a) + \
-        -(foxtrot * gdfcombo.median_tenancy_2013z_a) 
+dfcombo['omega_13'] = (
+        -(alpha * dfcombo.minority_pop_pct_2013z.fillna(0)) + \
+        (bravo * dfcombo.rent_25th_pctile_2013z.fillna(0)) + \
+        (charlie * dfcombo.totpop_2013z.fillna(0)) + \
+        (delta * dfcombo.rent_pct_income_2013z.fillna(0)) + \
+        -(echo * dfcombo.affordable_units_per_cap_2013z.fillna(0)) + \
+        -(foxtrot * dfcombo.median_tenancy_2013z.fillna(0))
 )
 
-gdfcombo['omega_18'] = (
-        -(alpha * gdfcombo.minority_pop_pct_2018z_a) + \
-        (bravo * gdfcombo.rent_25th_pctile_2018z_a) + \
-        (charlie * gdfcombo.totpop_2018z_a) + \
-        (delta * gdfcombo.rent_pct_income_2018z_a) + \
-        -(echo * gdfcombo.affordable_units_per_cap_2018z_a) + \
-        -(foxtrot * gdfcombo.median_tenancy_2018z_a) 
+dfcombo['omega_18'] = (
+        -(alpha * dfcombo.minority_pop_pct_2018z.fillna(0)) + \
+        (bravo * dfcombo.rent_25th_pctile_2018z.fillna(0)) + \
+        (charlie * dfcombo.totpop_2018z.fillna(0)) + \
+        (delta * dfcombo.rent_pct_income_2018z.fillna(0)) + \
+        -(echo * dfcombo.affordable_units_per_cap_2018z.fillna(0)) + \
+        -(foxtrot * dfcombo.median_tenancy_2018z.fillna(0))
 )
 
-gdfcombo = gdfcombo[['GEOID','GEOID_long_a','omega_13','omega_18']].drop_duplicates()
+dfcombo = dfcombo[['GEOID','GEOID_long','omega_13','omega_18']].drop_duplicates()
 #Kmeans clustering
-Y = gdfcombo[['GEOID','omega_13','omega_18']]
+Y = dfcombo[['GEOID','omega_13','omega_18']]
 Y = Y[~Y['omega_13'].isnull()]
 Y = Y[~Y['omega_18'].isnull()]
 X = Y[['omega_13','omega_18']]
@@ -267,24 +267,24 @@ for i in range(K):
     Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
 
 #re-merge with gdfcombo
-gdfcombo = gdfcombo.merge(Y, how='left', left_on=['GEOID','omega_13','omega_18'], right_on=['GEOID','omega_13','omega_18'])
+dfcombo = dfcombo.merge(Y, how='left', left_on=['GEOID','omega_13','omega_18'], right_on=['GEOID','omega_13','omega_18'])
 
-grp0 = gdfcombo[(gdfcombo['labels'] == 0)].drop_duplicates()
+grp0 = dfcombo[(dfcombo['labels'] == 0)].drop_duplicates()
 grp0 = grp0[['GEOID','omega_13','omega_18','labels']]
 grp0_length = str(grp0.shape)
-grp1 = gdfcombo[(gdfcombo['labels'] == 1)].drop_duplicates()
+grp1 = dfcombo[(dfcombo['labels'] == 1)].drop_duplicates()
 grp1 = grp1[['GEOID','omega_13','omega_18','labels']]
 grp1_length = str(grp1.shape)
 
-grp2 = gdfcombo[(gdfcombo['labels'] == 2)].drop_duplicates()
+grp2 = dfcombo[(dfcombo['labels'] == 2)].drop_duplicates()
 grp2 = grp2[['GEOID','omega_13','omega_18','labels']]
 grp2_length = str(grp2.shape)
 
-grp3 = gdfcombo[(gdfcombo['labels'] == 3)].drop_duplicates()
+grp3 = dfcombo[(dfcombo['labels'] == 3)].drop_duplicates()
 grp3 = grp3[['GEOID','omega_13','omega_18','labels']]
 grp3_length = str(grp3.shape)
 
-fig3 = px.scatter(gdfcombo, x="omega_13", y="omega_18",color='labels',text='GEOID'
+fig3 = px.scatter(dfcombo, x="omega_13", y="omega_18",color='labels',text='GEOID'
 )
 fig3.update_yaxes(
     range=[-1, 1]
@@ -314,12 +314,11 @@ fig3.add_shape(
             )
 )
 
-fig4 = px.choropleth_mapbox(gdfcombo,geojson=block_grp_geoids,locations=gdfcombo['GEOID_long_a'],featureidkey='properties.block_group_geoid',color=gdfcombo['omega_18'],
+fig4 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_13'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig4.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=12,
             mapbox_center=the_bounty)
-#TODO: map showing displacement pressure
 
 #here we make the graph a function called serve_layout(), which then allows us to have it run every time the page is loaded (unlike the normal which would just be app.layer = GRAPH CONTENT, which would run every time the app was started on the server (aka, once))
 
