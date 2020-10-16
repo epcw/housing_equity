@@ -248,8 +248,8 @@ dfcombo['omega_18'] = (
         -(echo * dfcombo.affordable_units_per_cap_2018z.fillna(0)) + \
         -(foxtrot * dfcombo.median_tenancy_2018z.fillna(0))
 )
-
-dfcombo = dfcombo[['GEOID','GEOID_long','omega_13','omega_18']].drop_duplicates()
+dfcombo['omega_change'] = dfcombo.omega_18 - dfcombo.omega_13
+dfcombo = dfcombo[['GEOID','GEOID_long','omega_13','omega_18','omega_change']].drop_duplicates()
 #Kmeans clustering
 Y = dfcombo[['GEOID','omega_13','omega_18']]
 Y = Y[~Y['omega_13'].isnull()]
@@ -270,19 +270,24 @@ for i in range(K):
 dfcombo = dfcombo.merge(Y, how='left', left_on=['GEOID','omega_13','omega_18'], right_on=['GEOID','omega_13','omega_18'])
 
 grp0 = dfcombo[(dfcombo['labels'] == 0)].drop_duplicates()
-grp0 = grp0[['GEOID','omega_13','omega_18','labels']]
+grp0 = grp0[['GEOID','omega_13','omega_18','omega_change','labels']]
 grp0_length = str(grp0.shape)
+grp0 = grp0.sort_values('omega_change')
+
 grp1 = dfcombo[(dfcombo['labels'] == 1)].drop_duplicates()
-grp1 = grp1[['GEOID','omega_13','omega_18','labels']]
+grp1 = grp1[['GEOID','omega_13','omega_18','omega_change','labels']]
+grp1 = grp1.sort_values('omega_change')
 grp1_length = str(grp1.shape)
 
 grp2 = dfcombo[(dfcombo['labels'] == 2)].drop_duplicates()
-grp2 = grp2[['GEOID','omega_13','omega_18','labels']]
+grp2 = grp2[['GEOID','omega_13','omega_18','omega_change','labels']]
 grp2_length = str(grp2.shape)
+grp2 = grp2.sort_values('omega_change')
 
 grp3 = dfcombo[(dfcombo['labels'] == 3)].drop_duplicates()
-grp3 = grp3[['GEOID','omega_13','omega_18','labels']]
+grp3 = grp3[['GEOID','omega_13','omega_18','omega_change','labels']]
 grp3_length = str(grp3.shape)
+grp3 = grp3.sort_values('omega_change')
 
 fig3 = px.scatter(dfcombo, x="omega_13", y="omega_18",color='labels',text='GEOID'
 )
@@ -314,9 +319,21 @@ fig3.add_shape(
             )
 )
 
-fig4 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_18'],
+fig4 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_change'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig4.update_layout(mapbox_style="open-street-map",
+            mapbox_zoom=12,
+            mapbox_center=the_bounty)
+
+fig5 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_13'],
+            opacity=0.7,color_continuous_scale='RdYlGn_r')
+fig5.update_layout(mapbox_style="open-street-map",
+            mapbox_zoom=12,
+            mapbox_center=the_bounty)
+
+fig6 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_18'],
+            opacity=0.7,color_continuous_scale='RdYlGn_r')
+fig6.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=12,
             mapbox_center=the_bounty)
 
@@ -341,6 +358,26 @@ def serve_layout():
             dcc.Graph(figure=fig3,
                       id='displacement_scatter'
                       ),
+            html.Div([
+                html.H1('2010 vs 2018'),
+                html.P('These maps compare the Displacement Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure.',
+                       className='description graph_title'),
+                html.Div([
+                    html.Div([
+                        html.H2(className='graph_title', children='2013'),
+                        dcc.Graph(figure=fig5,
+                            id='displacement_2013'
+                        )], className='col-6'),
+                    html.Div([
+                        html.H2(className='graph_title', children='2018'),
+                        dcc.Graph(figure=fig6,
+                            id='displacement_2018'
+                        )], className='col-6')], className='multi-col'),
+            ], className='container'),
+            html.H1('Change in displacement pressure map'),
+            html.P(
+                'This map compares displacement pressure (omega) in each census block group.  Red areas had INCREASING displacement pressure between 2013 and 2018. Green had decreasing',
+                className='description'),
             dcc.Graph(figure=fig4,
                 id='block_grp_map'
             ),
