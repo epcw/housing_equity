@@ -2,17 +2,19 @@ import pandas as pd
 import geopandas as gp
 from geopy import distance
 import json
+import os
 
 #set root directory for data files
-#ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
-ROOTDIR = '' #local
+#ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/data' #production
+ROOTDIR = os.path.join(os.getenv('EPCW_DROPBOX'), 'Projects/housing_equity/sandbox-singlepage/data')
+# ROOTDIR = '' #local
 
 #read in shapefile (needs to be in GeoJSON format)
 #with open('/home/ubuntu/dash/data/washingtongeo.json','r') as GeoJSON:
-with open(ROOTDIR + 'data/wa_king_census_block_groups.geojson','r') as GeoJSON:
+with open(os.path.join(ROOTDIR, 'wa_king_census_block_groups.geojson'),'r') as GeoJSON:
     block_grp_geoids = json.load(GeoJSON)
 
-df_rent = pd.read_csv(ROOTDIR + 'data/king_blockgrp_rent.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
+df_rent = pd.read_csv(os.path.join(ROOTDIR, 'king_blockgrp_rent.csv'), dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
 
 #filter for 2013
 df_rent = df_rent[(df_rent['YEAR'] == '2013') | (df_rent['YEAR'] == '2018')]
@@ -55,12 +57,12 @@ df18 = df18.merge(costs_df75_18, how = 'inner', left_on = ['GEOID','COUNTY','TRA
 df = df13 = df13.merge(df18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP']).drop_duplicates()
 
 #load in race data
-rdf = pd.read_csv(ROOTDIR + 'data/king_blockgrp_race.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
+rdf = pd.read_csv(os.path.join(ROOTDIR, 'king_blockgrp_race.csv'), dtype={"GEOID": str, "TRACT_NUM": str, "YEAR":str, "BLOCK_GRP":str}) #NOTE: pre-filtered in SQL for King County
 
 #filter for year 2013
 rdf = rdf[(rdf['YEAR'] == '2013') | (rdf['YEAR'] == '2018') ]
 
-gdf = pd.read_csv(ROOTDIR + 'data/wa_king_census_block_groups_distances.csv',
+gdf = pd.read_csv(os.path.join(ROOTDIR, 'wa_king_census_block_groups_distances.csv'),
                    dtype={"block_group_geoid_a": str,"block_group_geoid_b": str})
 
 rdf13 = rdf[(rdf['YEAR'] == '2013')]
@@ -147,7 +149,7 @@ df['minority_pop_2018'] = df['TOT_POP_2018'] - df['pop_white_nonhisp_only_2018']
 df['minority_pop_pct_2018'] = df['minority_pop_2018'] / df['TOT_POP_2018']
 
 #bring in affordable housing data
-housing_df_raw = pd.read_csv(ROOTDIR + 'data/king_blockgrp_housing-details.csv', dtype={"DATA":float,"YEAR":str,"TRACT_NUM": str, "BLOCK_GRP": str})
+housing_df_raw = pd.read_csv(os.path.join(ROOTDIR, 'king_blockgrp_housing-details.csv'), dtype={"DATA":float,"YEAR":str,"TRACT_NUM": str, "BLOCK_GRP": str})
 
 #create geoid
 housing_df_raw['GEOID'] = '53033' + housing_df_raw['TRACT_NUM'] + housing_df_raw['BLOCK_GRP']
@@ -320,6 +322,7 @@ gdf = gdf.rename(columns = {'median_housing_age_2013z':'median_housing_age_2013z
 gdf = gdf.rename(columns = {'median_housing_age_2018z':'median_housing_age_2018z_b'})
 gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2013z_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2013z_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2013z_a','median_tenancy_2018z_a','median_tenancy_change_b','median_tenancy_2013z_b','median_tenancy_2018z_b','median_housing_age_change_a','median_housing_age_2013z_a','median_housing_age_2018z_a','median_housing_age_change_b','median_housing_age_2013z_b','median_housing_age_2018z_b']]
 
+
 omicron = 1/3 #this is the vectored weighting factor of starting point (omicron) vs change (1-omicron)
 
 #calculate diff between the two tracts (and take absolute value since sign is meaningless here) - Delta taking into account starting point (2013) and change.
@@ -442,8 +445,8 @@ gdf = gdf[(gdf['omega'] >= threshold)]
 #gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
 
 #create cityname df
-muni_gdf = gp.read_file(ROOTDIR + 'data/shapefiles/Municipal_Boundaries/Municipal_Boundaries.shp')
-tract_gdf = gp.read_file(ROOTDIR + 'data/shapefiles/KingCountyTracts/kc_tract_10.shp')
+muni_gdf = gp.read_file(os.path.join(ROOTDIR, 'shapefiles/Municipal_Boundaries/Municipal_Boundaries.shp'))
+tract_gdf = gp.read_file(os.path.join(ROOTDIR, 'shapefiles/KingCountyTracts/kc_tract_10.shp'))
 t = tract_gdf[['OBJECTID', 'STATEFP10', 'COUNTYFP10', 'TRACTCE10', 'GEOID10', 'geometry']]
 m = muni_gdf[['OBJECTID', 'CITYNAME', 'geometry']]
 m = m.to_crs(epsg=2926)
