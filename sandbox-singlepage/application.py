@@ -232,8 +232,8 @@ df.loc[df.neighborhood =='wallingford','neighborhood_index'] = '1'
 df.loc[df.neighborhood == 'rainier_beach','neighborhood_index'] = '2'
 
 node_trace.marker.color = df['tract_index']
-node_trace.marker.size = (df['totpop_2018z'] + 2) * 10
-#node_trace.marker.size = node_adjacencies
+#node_trace.marker.size = (df['totpop_2018z'] + 2) * 10
+node_trace.marker.size = node_adjacencies
 #node_trace.text = node_text
 node_trace.text = node_label
 
