@@ -124,6 +124,8 @@ forceatlas2 = ForceAtlas2(
 for i in node_list:
     G.add_node(i)
 
+gdf = gdf[(gdf['omega'] > 0.05)] #filter to reduce connections by edge weight
+
 for i, row in gdf.iterrows():
     G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega'])])
 
@@ -136,18 +138,18 @@ def query_forceatlas2():
                             outboundAttractionDistribution=False,  # Dissuade hubs
                             linLogMode=False,  # NOT IMPLEMENTED
                             adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-                            edgeWeightInfluence=20.0, #was 5, testing if this can change things
+                            edgeWeightInfluence=10 ** 1, #was 5, testing if this can change things
 
                             # Performance
                             jitterTolerance=1.0,  # Tolerance
                             barnesHutOptimize=True,
-                            barnesHutTheta=1.2,
+                            barnesHutTheta=8.2,
                             multiThreaded=False,  # NOT IMPLEMENTED
 
                             # Tuning
-                            scalingRatio=2,
-                            strongGravityMode=True,
-                            gravity=10.0, #was 20, still seeing a straight line.
+                            scalingRatio=10,
+                            strongGravityMode=False,
+                            gravity=1, #was 20, still seeing a straight line.
 
                             # Log
                             verbose=True)
@@ -206,7 +208,7 @@ node_trace = go.Scatter(
         line=dict(width=0)
     ),
     showlegend=True,
-    marker_line_width=1,
+    marker_line_width=1
 )
 
 for node in G.nodes():
@@ -222,7 +224,7 @@ for node, adjacencies in enumerate(G.adjacency()):
 #node_text = df["COUNTY"] + ' ' + df["TRACT_NUM"] + ' - ' +str(len(adjacencies[1])) + ' connections'
 for node in G.nodes():
     node_label = df['neighborhood'] + '<br>' + df["TRACT_NUM"] + ' block group ' + df["BLOCK_GRP"]
-    node_text = df["TRACT_NUM"] + ', block group ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop change: ' + (df['minority_pop_pct_change']).round(2).astype('str') + '% <br>' + '25%ile housing: ' + df['rent_25th_pctile_change'].round(2).astype('str') + '%'
+#    node_text = df["TRACT_NUM"] + ', block group ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop change: ' + (df['minority_pop_pct_change']).round(2).astype('str') + '% <br>' + '25%ile housing: ' + df['rent_25th_pctile_change'].round(2).astype('str') + '%'
 
 df['tract_index'] = df['TRACT_NUM'].astype(int)
 df['neighborhood_index'] = ''
@@ -230,6 +232,8 @@ df.loc[df.neighborhood =='wallingford','neighborhood_index'] = '1'
 df.loc[df.neighborhood == 'rainier_beach','neighborhood_index'] = '2'
 
 node_trace.marker.color = df['tract_index']
+node_trace.marker.size = (df['totpop_2018z'] + 2) * 10
+#node_trace.marker.size = node_adjacencies
 #node_trace.text = node_text
 node_trace.text = node_label
 
@@ -244,7 +248,7 @@ fig = go.Figure(data=[edge_trace, node_trace],
                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
 
 fig.update_traces(textfont_size=25)
-
+'''
 #gdff = gdf[['GEOID_a','omega_bar']].drop_duplicates()
 gdff = gdf.loc[:, gdf.columns.str.endswith('_a')]
 gdfz = gdf[['GEOID_a','GEOID_long_a','omega_bar']]
@@ -252,10 +256,10 @@ gdff = gdff.merge(gdfz, how = 'inner', left_on = ['GEOID_a','GEOID_long_a'], rig
 gdff['GEOID'] = gdff['GEOID_a'].astype(str)
 gdff = gdff.sort_values('omega_bar')
 
-fig2 = px.scatter(gdff, x="rent_25th_pctile_change_a", y="omega_bar",color='GEOID',text='GEOID')
+fig2 = px.scatter(gdff, x="rent_25th_pctile_2018z_a", y="omega_bar",color='GEOID',text='GEOID')
 fig2.update_traces(marker=dict(size=20),
                    textposition="middle right")
-
+'''
 dfcombo = df
 dfcombo['GEOID'] = dfcombo['GEOID'].astype(str)
 alpha = 1/6.0
@@ -324,7 +328,7 @@ grp3 = grp3[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_INCOME_20
 grp3_length = str(grp3.shape)
 grp3 = grp3.sort_values('omega_change')
 
-fig3 = px.scatter(dfcombo, x="omega_13", y="omega_18",color='labels',text='GEOID'
+fig3 = px.scatter(dfcombo, x="omega_13", y="omega_18",color='neighborhood',text='GEOID'
 )
 fig3.update_yaxes(
     range=[-1, 1]
@@ -385,9 +389,9 @@ def serve_layout():
             dcc.Graph(figure=fig,
                       id='housing_networkx'
                       ),
-            dcc.Graph(figure=fig2,
-                      id='housing_bar'
-                      ),
+#            dcc.Graph(figure=fig2,
+#                      id='housing_bar'
+#                      ),
             html.H1('Change in displacement pressure'),
             html.P('This scatterplot compares displacement pressure (omega) in each census block group.  Block groups exactly along the dashed line had no change in pressure from 2013-18. Block groups above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018', className='description'),
             dcc.Graph(figure=fig3,
