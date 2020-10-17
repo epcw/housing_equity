@@ -3,6 +3,7 @@ import geopandas as gp
 from geopy import distance
 import json
 import os
+import numpy as np
 
 #set root directory for data files
 #ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/data' #production
@@ -323,7 +324,8 @@ gdf = gdf.rename(columns = {'median_housing_age_2018z':'median_housing_age_2018z
 gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2013z_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2013z_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2013z_a','median_tenancy_2018z_a','median_tenancy_change_b','median_tenancy_2013z_b','median_tenancy_2018z_b','median_housing_age_change_a','median_housing_age_2013z_a','median_housing_age_2018z_a','median_housing_age_change_b','median_housing_age_2013z_b','median_housing_age_2018z_b']]
 
 
-omicron = 1/3 #this is the vectored weighting factor of starting point (omicron) vs change (1-omicron)
+# omicron = 1/3 #this is the vectored weighting factor of starting point (omicron) vs change (1-omicron)
+omicron = 1.0
 
 #calculate diff between the two tracts (and take absolute value since sign is meaningless here) - Delta taking into account starting point (2013) and change.
 gdf['minority_pop_pct_change_delta'] = ((((1-omicron) * gdf.minority_pop_pct_change_a) + (omicron * gdf.minority_pop_pct_2013z_a)) - (((1-omicron) * gdf.minority_pop_pct_change_b) + (omicron * gdf.minority_pop_pct_2013z_b))).abs()
@@ -375,13 +377,20 @@ gdf['median_housing_age_change_delta_2018'] = gdf['median_housing_age_change_del
 
 
 #weight the edges
-alpha = 1/6.0
-bravo = 1/6.0
-charlie = 1/6.0
-delta = 1/6.0
-echo = 1/6.0
-foxtrot = 1/6.0
-golf = 0
+weights = [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+]
+
+z = np.sum(weights)
+weights = [ wi/z for wi in weights ]
+
+alpha, bravo, charlie, delta, echo, foxtrot, golf = weights
 
 threshold = -0.5
 
