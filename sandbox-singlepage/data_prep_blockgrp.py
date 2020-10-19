@@ -2,6 +2,7 @@ import pandas as pd
 import geopandas as gp
 from geopy import distance
 import json
+import csv
 
 #set root directory for data files
 #ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
@@ -194,6 +195,14 @@ housing_age18.loc[housing_age18.median_housing_age_2018 > 100, 'median_housing_a
 
 df = df.merge(housing_age13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'])
 df = df.merge(housing_age18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'], right_on = ['GEOID','COUNTY','TRACT_NUM','BLOCK_GRP'])
+
+'''
+#DEBUG - CHECK FOR NaNs
+nandf = df[df.isnull().any(axis=1)] 
+csv_filename = 'nan-check.csv'
+nandf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
+print("Exporting csv...")
+'''
 
 gdf = gdf.merge(df[['GEOID']], how='left', left_on='block_group_geoid_a', right_on='GEOID')
 gdf = gdf.rename(columns={'block_group_geoid_a':'GEOID_a'})
