@@ -570,18 +570,17 @@ gdf = gdf[(gdf['omega_bar'] >= threshold)]
 
 #gdf.loc[gdf.omega < 0, 'omega'] = None #corrects for the census having "2018" as an answer to some of these
 #gdf = gdf[(gdf['omega'] >= threshold)]
-
+'''
 #DEBUG - CHECK FOR NaNs
 nandf = df[df.isnull().any(axis=1)]
 csv_filename = 'data_prep_tract-nan-check.csv'
-gdf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
+nandf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
 print("Exporting csv...")
-
-
+'''
 import itertools
 
 #create mtbaker_station_df & mtbaker_station_gdf
-mtbaker_station_gdf = gdf[((gdf['GEOID_a'] == '53033010001') & (gdf['distance'] < 1.500)) | ((gdf['GEOID_b'] == '53033010001') & (gdf['distance'] < 1.500))]
+mtbaker_station_gdf = gdf[((gdf['GEOID_a'] == '53033010001') & (gdf['distance'] < 1500)) | ((gdf['GEOID_b'] == '53033010001') & (gdf['distance'] < 1500))]
 mtbaker_station_gid_a = list(mtbaker_station_gdf['GEOID_a'].drop_duplicates())
 mtbaker_station_gid_b = list(mtbaker_station_gdf['GEOID_b'].drop_duplicates())
 
@@ -605,7 +604,7 @@ mtbaker_station_df = df[df['GEOID'].isin(mtbaker_station_geoids)]
 mtbaker_station_df['neighborhood'] = 'mtbaker_station'
 
 #create othello_station_df & othello_station_gdf
-othello_station_gdf = gdf[((gdf['GEOID_a'] == '53033011001') & (gdf['distance'] < 1.500)) | ((gdf['GEOID_b'] == '53033011001') & (gdf['distance'] < 1.500))]
+othello_station_gdf = gdf[((gdf['GEOID_a'] == '53033011001') & (gdf['distance'] < 5000)) | ((gdf['GEOID_b'] == '53033011001') & (gdf['distance'] < 5000))]
 othello_station_gid_a = list(othello_station_gdf['GEOID_a'].drop_duplicates())
 othello_station_gid_b = list(othello_station_gdf['GEOID_b'].drop_duplicates())
 
@@ -629,7 +628,7 @@ othello_station_df = df[df['GEOID'].isin(othello_station_geoids)]
 othello_station_df['neighborhood'] = 'othello_station'
 
 #create rainier_beach_df & rainier_beach_gdf
-rainier_beach_gdf = gdf[((gdf['GEOID_a'] == '53033011700') & (gdf['distance'] < 2)) | ((gdf['GEOID_b'] == '53033011700') & (gdf['distance'] < 2))]
+rainier_beach_gdf = gdf[((gdf['GEOID_a'] == '53033011700') & (gdf['distance'] < 4000)) | ((gdf['GEOID_b'] == '53033011700') & (gdf['distance'] < 4000))]
 rainier_beach_gid_a = list(rainier_beach_gdf['GEOID_a'].drop_duplicates())
 rainier_beach_gid_b = list(rainier_beach_gdf['GEOID_b'].drop_duplicates())
 
@@ -653,7 +652,7 @@ rainier_beach_df = df[df['GEOID'].isin(rainier_beach_geoids)]
 rainier_beach_df['neighborhood'] = 'rainier_beach'
 
 #create wallingford_df & wallingford_gdf
-wallingford_gdf = gdf[((gdf['GEOID_a'] == '53033004600') & (gdf['distance'] < 3.000)) | ((gdf['GEOID_b'] == '53033004600') & (gdf['distance'] < 3.000))]
+wallingford_gdf = gdf[((gdf['GEOID_a'] == '53033004600') & (gdf['distance'] < 4000)) | ((gdf['GEOID_b'] == '53033004600') & (gdf['distance'] < 4000))]
 wallingford_gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
 wallingford_gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
 

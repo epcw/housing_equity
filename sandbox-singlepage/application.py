@@ -268,8 +268,8 @@ for node, adjacencies in enumerate(G.adjacency()):
     #node_text.append('# of connections: '+str(len(adjacencies[1])))
 #node_text = df["COUNTY"] + ' ' + df["TRACT_NUM"] + ' - ' +str(len(adjacencies[1])) + ' connections'
 for node in G.nodes():
-    node_label = df['neighborhood'] + '<br>' + df["TRACT_NUM"] + ' block group ' + df["BLOCK_GRP"]
-#    node_text = df["TRACT_NUM"] + ', block group ' + df["BLOCK_GRP"] + '<br>' + 'Minority pop change: ' + (df['minority_pop_pct_change']).round(2).astype('str') + '% <br>' + '25%ile housing: ' + df['rent_25th_pctile_change'].round(2).astype('str') + '%'
+#    node_label = df['neighborhood'] + '<br>' + df["TRACT_NUM"] + ' block group ' + df["BLOCK_GRP"] #block group version
+    node_label = df['neighborhood'] + '<br>' + df["TRACT_NUM"] #tract version
 
 df['tract_index'] = df['TRACT_NUM'].astype(int)
 df['neighborhood_index'] = ''
@@ -313,14 +313,16 @@ charlie = 1/6.0
 delta = 1/6.0
 echo = 1/6.0
 foxtrot = 1/6.0
+golf = 1/6.0
 
 dfcombo['omega_13'] = (
         -(alpha * dfcombo.minority_pop_pct_2013z.fillna(0)) + \
         (bravo * dfcombo.rent_25th_pctile_2013z.fillna(0)) + \
         (charlie * dfcombo.totpop_2013z.fillna(0)) + \
         (delta * dfcombo.rent_pct_income_2013z.fillna(0)) + \
-        -(echo * dfcombo.affordable_units_per_cap_2013z.fillna(0)) + \
-        -(foxtrot * dfcombo.median_tenancy_2013z.fillna(0))
+        (echo * dfcombo.monthly_housing_cost_2013z.fillna(0)) + \
+        -(foxtrot * dfcombo.affordable_units_per_cap_2013z.fillna(0)) + \
+        -(golf * dfcombo.median_tenancy_2013z.fillna(0))
 )
 
 dfcombo['omega_18'] = (
@@ -328,8 +330,9 @@ dfcombo['omega_18'] = (
         (bravo * dfcombo.rent_25th_pctile_2018z.fillna(0)) + \
         (charlie * dfcombo.totpop_2018z.fillna(0)) + \
         (delta * dfcombo.rent_pct_income_2018z.fillna(0)) + \
-        -(echo * dfcombo.affordable_units_per_cap_2018z.fillna(0)) + \
-        -(foxtrot * dfcombo.median_tenancy_2018z.fillna(0))
+        (echo * dfcombo.monthly_housing_cost_2018z.fillna(0)) + \
+        -(foxtrot * dfcombo.affordable_units_per_cap_2018z.fillna(0)) + \
+        -(golf * dfcombo.median_tenancy_2018z.fillna(0))
 )
 dfcombo['omega_change'] = dfcombo.omega_18 - dfcombo.omega_13
 dfcombo = dfcombo.drop_duplicates()
@@ -354,22 +357,22 @@ for i in range(K):
 dfcombo = dfcombo.merge(Y, how='left', left_on=['GEOID','omega_13','omega_18'], right_on=['GEOID','omega_13','omega_18'])
 
 grp0 = dfcombo[(dfcombo['labels'] == 0)].drop_duplicates()
-grp0 = grp0[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_INCOME_2013','RENT_AS_PCT_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','median_tenancy_2013','median_tenancy_2018','labels']]
+grp0 = grp0[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
 grp0_length = str(grp0.shape)
 grp0 = grp0.sort_values('omega_change')
 
 grp1 = dfcombo[(dfcombo['labels'] == 1)].drop_duplicates()
-grp1 = grp1[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_INCOME_2013','RENT_AS_PCT_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','median_tenancy_2013','median_tenancy_2018','labels']]
+grp1 = grp1[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
 grp1 = grp1.sort_values('omega_change')
 grp1_length = str(grp1.shape)
 
 grp2 = dfcombo[(dfcombo['labels'] == 2)].drop_duplicates()
-grp2 = grp2[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_INCOME_2013','RENT_AS_PCT_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','median_tenancy_2013','median_tenancy_2018','labels']]
+grp2 = grp2[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
 grp2_length = str(grp2.shape)
 grp2 = grp2.sort_values('omega_change')
 
 grp3 = dfcombo[(dfcombo['labels'] == 3)].drop_duplicates()
-grp3 = grp3[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_INCOME_2013','RENT_AS_PCT_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','median_tenancy_2013','median_tenancy_2018','labels']]
+grp3 = grp3[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
 grp3_length = str(grp3.shape)
 grp3 = grp3.sort_values('omega_change')
 
@@ -403,19 +406,19 @@ fig3.add_shape(
             )
 )
 
-fig4 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_change'],
+fig4 = px.choropleth_mapbox(dfcombo,geojson=tracts,locations=dfcombo['GEOID_long'],featureidkey='properties.GEOID',color=dfcombo['omega_change'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig4.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,
             mapbox_center=pikes_place)
 
-fig5 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_13'],
+fig5 = px.choropleth_mapbox(dfcombo,geojson=tracts,locations=dfcombo['GEOID_long'],featureidkey='properties.GEOID',color=dfcombo['omega_13'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig5.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,
             mapbox_center=pikes_place)
 
-fig6 = px.choropleth_mapbox(dfcombo,geojson=block_grp_geoids,locations=dfcombo['GEOID_long'],featureidkey='properties.block_group_geoid',color=dfcombo['omega_18'],
+fig6 = px.choropleth_mapbox(dfcombo,geojson=tracts,locations=dfcombo['GEOID_long'],featureidkey='properties.GEOID',color=dfcombo['omega_18'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig6.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,
