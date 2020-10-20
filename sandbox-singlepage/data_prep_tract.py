@@ -1,11 +1,11 @@
 import pandas as pd
-import geopandas as gp
-from geopy import distance
-from sklearn.cluster import KMeans
+import re
+import csv
+import json
 
 #set root directory for data files
-ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
-#ROOTDIR = '' #local
+#ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
+ROOTDIR = '' #local
 
 df = pd.read_csv(ROOTDIR + 'data/housing_prepped.csv', dtype={"GEOID": str,"TRACT_NUM": str})
 
@@ -14,7 +14,7 @@ df = df[(df['COUNTY'] == 'King')]
 
 #bring in affordable housing data
 housing_df_raw = pd.read_csv(ROOTDIR + 'data/affordable_housing_units.csv', dtype={"TRACT_NUM": str})
-median_costs_raw = pd.read_csv(ROOTDIR + 'data/housing_costs_medians.csv', dtype={"TRACT_NUM": str}) #NOTE: pre-filtered in SQL for King County
+median_costs_raw = pd.read_csv(ROOTDIR + 'data/housing_costs_medians.csv', dtype={"TRACT_NUM": str}) #NOTE: pre-filtered in SQL for King County and already has GEOID
 
 #filter for King County
 housing_df_raw = housing_df_raw[(housing_df_raw['COUNTY'] == 'King')]
@@ -31,206 +31,383 @@ housing_df = housing_df.merge(housing_data, how='left', left_on=['GEOID'], right
 housing_df = housing_df[['COUNTY','TRACT_NUM','GEOID','DATA']]
 housing_df = housing_df.rename(columns = {'DATA' : 'sub_600_per_mo_housing_units'})
 
+#bring in tenancy, cost, and occupancy data and filter for 2010 & 2018
+housing_details_raw = pd.read_csv(ROOTDIR + 'data/housing_details.csv', dtype={"TRACT_NUM": str, "GEOID": str, "YEAR":int}) #NOTE: pre-filtered in SQL for King County
+housing_details_raw['DATA'] = housing_details_raw['DATA'].astype(str).map(lambda x: x.rstrip('+-'))
+housing_details_raw['DATA'] = housing_details_raw['DATA'].astype(float)
+housing_details13 = housing_details_raw[(housing_details_raw['YEAR'] == 2013)]
+housing_details18 = housing_details_raw[(housing_details_raw['YEAR'] == 2018)]
+
 #sort median_costs_df by census query, creating new column-sorted dfs instead of rows
-costs_df25 = median_costs_df[(median_costs_df['CENSUS_QUERY'] == 'B25057_001E')]
-costs_df25 = costs_df25.rename(columns = {'DATA' : 'RENT_25PCTILE'})
-costs_df25 = costs_df25[['GEOID','RENT_25PCTILE','COUNTY','TRACT_NUM']]
-costs_df50 = median_costs_df[(median_costs_df['CENSUS_QUERY'] == 'B25058_001E')]
-costs_df50 = costs_df50.rename(columns = {'DATA' : 'RENT_50PCTILE'})
-costs_df50 = costs_df50[['GEOID','RENT_50PCTILE','COUNTY','TRACT_NUM']]
-costs_df75 = median_costs_df[(median_costs_df['CENSUS_QUERY'] == 'B25059_001E')]
-costs_df75 = costs_df75.rename(columns = {'DATA' : 'RENT_75PCTILE'})
-costs_df75 = costs_df75[['GEOID','RENT_75PCTILE','COUNTY','TRACT_NUM']]
-costs_dfpct = median_costs_df[(median_costs_df['CENSUS_QUERY'] == 'B25071_001E')]
-costs_dfpct = costs_dfpct.rename(columns = {'DATA' : 'RENT_AS_PCT_HOUSEHOLD_INCOME'})
-costs_dfpct = costs_dfpct[['GEOID','RENT_AS_PCT_HOUSEHOLD_INCOME','COUNTY','TRACT_NUM']]
-costs_dfmedcost = median_costs_df[(median_costs_df['CENSUS_QUERY'] == 'B25105_001E')]
-costs_dfmedcost = costs_dfmedcost.rename(columns = {'DATA' : 'MEDIAN_MONTHLY_HOUSING_COST'})
-costs_dfmedcost = costs_dfmedcost[['GEOID','MEDIAN_MONTHLY_HOUSING_COST','COUNTY','TRACT_NUM']]
-costs_df = costs_df25.merge(costs_df50, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-costs_df = costs_df.merge(costs_df75, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-costs_df = costs_df.merge(costs_dfpct, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-costs_df = costs_df.merge(costs_dfmedcost, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_13f25 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25057_001E')]
+costs_13f25['DATA'] = costs_13f25['DATA'].astype(float)
+costs_13f25 = costs_13f25.rename(columns = {'DATA' : 'RENT_25PCTILE_2013'})
+costs_13f25 = costs_13f25[['GEOID','RENT_25PCTILE_2013','COUNTY','TRACT_NUM']]
+costs_13f50 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25058_001E')]
+costs_13f50 = costs_13f50.rename(columns = {'DATA' : 'RENT_50PCTILE_2013'})
+costs_13f50 = costs_13f50[['GEOID','RENT_50PCTILE_2013','COUNTY','TRACT_NUM']]
+costs_13f75 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25059_001E')]
+costs_13f75 = costs_13f75.rename(columns = {'DATA' : 'RENT_75PCTILE_2013'})
+costs_13f75 = costs_13f75[['GEOID','RENT_75PCTILE_2013','COUNTY','TRACT_NUM']]
+costs_13fpct = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25071_001E')]
+costs_13fpct['DATA'] = costs_13fpct['DATA'].astype(float)
+costs_13fpct = costs_13fpct.rename(columns = {'DATA' : 'RENT_AS_PCT_HOUSEHOLD_INCOME_2013'})
+costs_13fpct = costs_13fpct[['GEOID','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','COUNTY','TRACT_NUM']]
+costs_13fmedcost = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25105_001E')]
+costs_13fmedcost = costs_13fmedcost.rename(columns = {'DATA' : 'MEDIAN_MONTHLY_HOUSING_COST_2013'})
+costs_13fmedcost['MEDIAN_MONTHLY_HOUSING_COST_2013'] = costs_13fmedcost['MEDIAN_MONTHLY_HOUSING_COST_2013'].astype(float)
+costs_13fmedcost = costs_13fmedcost[['GEOID','MEDIAN_MONTHLY_HOUSING_COST_2013','COUNTY','TRACT_NUM']]
+costs_13f = costs_13f25.merge(costs_13f50, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_13f = costs_13f.merge(costs_13f75, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_13f = costs_13f.merge(costs_13fpct, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_13f = costs_13f.merge(costs_13fmedcost, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+
+costs_18df25 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25057_001E')]
+costs_18df25['DATA'] = costs_18df25['DATA'].astype(float)
+costs_18df25 = costs_18df25.rename(columns = {'DATA' : 'RENT_25PCTILE_2018'})
+costs_18df25 = costs_18df25[['GEOID','RENT_25PCTILE_2018','COUNTY','TRACT_NUM']]
+costs_18df50 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25058_001E')]
+costs_18df50 = costs_18df50.rename(columns = {'DATA' : 'RENT_50PCTILE_2018'})
+costs_18df50 = costs_18df50[['GEOID','RENT_50PCTILE_2018','COUNTY','TRACT_NUM']]
+costs_18df75 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25059_001E')]
+costs_18df75 = costs_18df75.rename(columns = {'DATA' : 'RENT_75PCTILE_2018'})
+costs_18df75 = costs_18df75[['GEOID','RENT_75PCTILE_2018','COUNTY','TRACT_NUM']]
+costs_18dfpct = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25071_001E')]
+costs_18dfpct['DATA'] = costs_18dfpct['DATA'].astype(float)
+costs_18dfpct = costs_18dfpct.rename(columns = {'DATA' : 'RENT_AS_PCT_HOUSEHOLD_INCOME_2018'})
+costs_18dfpct = costs_18dfpct[['GEOID','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','COUNTY','TRACT_NUM']]
+costs_18dfmedcost = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25105_001E')]
+costs_18dfmedcost = costs_18dfmedcost.rename(columns = {'DATA' : 'MEDIAN_MONTHLY_HOUSING_COST_2018'})
+costs_18dfmedcost['MEDIAN_MONTHLY_HOUSING_COST_2018'] = costs_18dfmedcost['MEDIAN_MONTHLY_HOUSING_COST_2018'].astype(float)
+costs_18dfmedcost = costs_18dfmedcost[['GEOID','MEDIAN_MONTHLY_HOUSING_COST_2018','COUNTY','TRACT_NUM']]
+costs_18df = costs_18df25.merge(costs_18df50, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_18df = costs_18df.merge(costs_18df75, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_18df = costs_18df.merge(costs_18dfpct, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+costs_18df = costs_18df.merge(costs_18dfmedcost, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
 #merge into main df
 df = df.merge(housing_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-df = df.merge(costs_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+df = df.merge(costs_13f, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+df = df.merge(costs_18df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+
+#occupancy and housing age data
+#occupancydf_units13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25002_001E')]
+#occupancydf_units13['DATA'] = occupancydf_units13['DATA'].astype(float)
+#occupancydf_units13 = occupancydf_units13.rename(columns = {'DATA' : 'housing_units_2013'})
+#occupancydf_units13 = occupancydf_units13[['GEOID','housing_units_2013','COUNTY','TRACT_NUM']]
+#occupancydf_occupied13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25002_002E')]
+#occupancydf_occupied13['DATA'] = occupancydf_occupied13['DATA'].astype(float)
+#occupancydf_occupied13 = occupancydf_occupied13.rename(columns = {'DATA' : 'housing_occupied_2013'})
+#occupancydf_occupied13 = occupancydf_occupied13[['GEOID','housing_occupied_2013','COUNTY','TRACT_NUM']]
+#occupancydf_vacant13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25002_003E')]
+#occupancydf_vacant13['DATA'] = occupancydf_vacant13['DATA'].astype(float)
+#occupancydf_vacant13 = occupancydf_vacant13.rename(columns = {'DATA' : 'housing_vacant_2013'})
+#occupancydf_vacant13 = occupancydf_vacant13[['GEOID','housing_vacant_2013','COUNTY','TRACT_NUM']]
+occupancydf_built13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25037_001E')]
+occupancydf_built13['DATA'] = occupancydf_built13['DATA'].astype(float)
+occupancydf_built13 = occupancydf_built13.rename(columns = {'DATA' : 'housing_yr_built_2013'})
+occupancydf_built13 = occupancydf_built13[['GEOID','housing_yr_built_2013','COUNTY','TRACT_NUM']]
+#occupancydf_built_owned13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25037_002E')]
+#occupancydf_built_owned13['DATA'] = occupancydf_built_owned13['DATA'].astype(float)
+#occupancydf_built_owned13 = occupancydf_built_owned13.rename(columns = {'DATA' : 'housing_yr_built_owned_2013'})
+#occupancydf_built_owned13 = occupancydf_built_owned13[['GEOID','housing_yr_built_owned_2013','COUNTY','TRACT_NUM']]
+#occupancydf_built_rented13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25037_003E')]
+#occupancydf_built_rented13['DATA'] = occupancydf_built_rented13['DATA'].astype(float)
+#occupancydf_built_rented13 = occupancydf_built_rented13.rename(columns = {'DATA' : 'housing_yr_built_rented_2013'})
+#occupancydf_built_rented13 = occupancydf_built_rented13[['GEOID','housing_yr_built_rented_2013','COUNTY','TRACT_NUM']]
+occupancydf_tenure13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25039_001E')]
+occupancydf_tenure13['DATA'] = occupancydf_tenure13['DATA'].astype(float)
+occupancydf_tenure13 = occupancydf_tenure13.rename(columns = {'DATA' : 'housing_yr_movein_2013'})
+occupancydf_tenure13 = occupancydf_tenure13[['GEOID','housing_yr_movein_2013','COUNTY','TRACT_NUM']]
+#occupancydf_tenure_owned13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25039_002E')]
+#occupancydf_tenure_owned13['DATA'] = occupancydf_tenure_owned13['DATA'].astype(float)
+#occupancydf_tenure_owned13 = occupancydf_tenure_owned13.rename(columns = {'DATA' : 'housing_yr_movein_owned_2013'})
+#occupancydf_tenure_owned13 = occupancydf_tenure_owned13[['GEOID','housing_yr_movein_owned_2013','COUNTY','TRACT_NUM']]
+#occupancydf_tenure_rented13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25039_003E')]
+#occupancydf_tenure_rented13['DATA'] = occupancydf_tenure_rented13['DATA'].astype(float)
+#occupancydf_tenure_rented13 = occupancydf_tenure_rented13.rename(columns = {'DATA' : 'housing_yr_movein_rented_2013'})
+#occupancydf_tenure_rented13 = occupancydf_tenure_rented13[['GEOID','housing_yr_movein_rented_2013','COUNTY','TRACT_NUM']]
+#occupancydf13 = occupancydf_units13.merge(occupancydf_occupied13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf13 = occupancydf13.merge(occupancydf_vacant13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf13 = occupancydf_units13.merge(occupancydf_built13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf13 = occupancydf13.merge(occupancydf_built_owned13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf13 = occupancydf13.merge(occupancydf_built_rented13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+occupancydf13 = occupancydf_built13.merge(occupancydf_tenure13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf13 = occupancydf13.merge(occupancydf_tenure_owned13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf13 = occupancydf13.merge(occupancydf_tenure_rented13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+
+df = df.merge(occupancydf13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#df['occupancy_pct13'] = (df['housing_occupied_2013'] / df['housing_units_2013']) * 100
+#df['vacancy_pct13'] = (df['housing_vacant_2013'] / df['housing_units_2013']) * 100
+df['housing_age13'] = 2013 - df['housing_yr_built_2013']
+#df['housing_age_owned13'] = 2013 - df['housing_yr_built_owned_2013']
+#df['housing_age_rented13'] = 2013 - df['housing_yr_built_rented_2013']
+df['housing_tenure13'] = 2013 - df['housing_yr_movein_2013']
+#df['housing_tenure_owned13'] = 2013 - df['housing_yr_movein_owned_2013']
+#df['housing_tenure_rented13'] = 2013 - df['housing_yr_movein_rented_2013']
+
+#occupancydf_units18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25002_001E')]
+#occupancydf_units18['DATA'] = occupancydf_units18['DATA'].astype(float)
+#occupancydf_units18 = occupancydf_units18.rename(columns = {'DATA' : 'housing_units_2018'})
+#occupancydf_units18 = occupancydf_units18[['GEOID','housing_units_2018','COUNTY','TRACT_NUM']]
+#occupancydf_occupied18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25002_002E')]
+#occupancydf_occupied18['DATA'] = occupancydf_occupied18['DATA'].astype(float)
+#occupancydf_occupied18 = occupancydf_occupied18.rename(columns = {'DATA' : 'housing_occupied_2018'})
+#occupancydf_occupied18 = occupancydf_occupied18[['GEOID','housing_occupied_2018','COUNTY','TRACT_NUM']]
+#occupancydf_vacant18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25002_003E')]
+#occupancydf_vacant18['DATA'] = occupancydf_vacant18['DATA'].astype(float)
+#occupancydf_vacant18 = occupancydf_vacant18.rename(columns = {'DATA' : 'housing_vacant_2018'})
+#occupancydf_vacant18 = occupancydf_vacant18[['GEOID','housing_vacant_2018','COUNTY','TRACT_NUM']]
+occupancydf_built18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25037_001E')]
+occupancydf_built18['DATA'] = occupancydf_built18['DATA'].astype(float)
+occupancydf_built18 = occupancydf_built18.rename(columns = {'DATA' : 'housing_yr_built_2018'})
+occupancydf_built18 = occupancydf_built18[['GEOID','housing_yr_built_2018','COUNTY','TRACT_NUM']]
+#occupancydf_built_owned18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25037_002E')]
+#occupancydf_built_owned18['DATA'] = occupancydf_built_owned18['DATA'].astype(float)
+#occupancydf_built_owned18 = occupancydf_built_owned18.rename(columns = {'DATA' : 'housing_yr_built_owned_2018'})
+#occupancydf_built_owned18 = occupancydf_built_owned18[['GEOID','housing_yr_built_owned_2018','COUNTY','TRACT_NUM']]
+#occupancydf_built_rented18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25037_003E')]
+#occupancydf_built_rented18['DATA'] = occupancydf_built_rented18['DATA'].astype(float)
+#occupancydf_built_rented18 = occupancydf_built_rented18.rename(columns = {'DATA' : 'housing_yr_built_rented_2018'})
+#occupancydf_built_rented18 = occupancydf_built_rented18[['GEOID','housing_yr_built_rented_2018','COUNTY','TRACT_NUM']]
+occupancydf_tenure18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25039_001E')]
+occupancydf_tenure18['DATA'] = occupancydf_tenure18['DATA'].astype(float)
+occupancydf_tenure18 = occupancydf_tenure18.rename(columns = {'DATA' : 'housing_yr_movein_2018'})
+occupancydf_tenure18 = occupancydf_tenure18[['GEOID','housing_yr_movein_2018','COUNTY','TRACT_NUM']]
+#occupancydf_tenure_owned18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25039_002E')]
+#occupancydf_tenure_owned18['DATA'] = occupancydf_tenure_owned18['DATA'].astype(float)
+#occupancydf_tenure_owned18 = occupancydf_tenure_owned18.rename(columns = {'DATA' : 'housing_yr_movein_owned_2018'})
+#occupancydf_tenure_owned18 = occupancydf_tenure_owned18[['GEOID','housing_yr_movein_owned_2018','COUNTY','TRACT_NUM']]
+#occupancydf_tenure_rented18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25039_003E')]
+#occupancydf_tenure_rented18['DATA'] = occupancydf_tenure_rented18['DATA'].astype(float)
+#occupancydf_tenure_rented18 = occupancydf_tenure_rented18.rename(columns = {'DATA' : 'housing_yr_movein_rented_2018'})
+#occupancydf_tenure_rented18 = occupancydf_tenure_rented18[['GEOID','housing_yr_movein_rented_2018','COUNTY','TRACT_NUM']]
+#occupancydf18 = occupancydf_units18.merge(occupancydf_occupied18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf18 = occupancydf18.merge(occupancydf_vacant18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf18 = occupancydf18.merge(occupancydf_built18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf18 = occupancydf18.merge(occupancydf_built_owned18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf18 = occupancydf18.merge(occupancydf_built_rented18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+occupancydf18 = occupancydf_built18.merge(occupancydf_tenure18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf18 = occupancydf18.merge(occupancydf_tenure_owned18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#occupancydf18 = occupancydf18.merge(occupancydf_tenure_rented18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+
+df = df.merge(occupancydf18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
+#df['occupancy_pct18'] = (df['housing_occupied_2018'] / df['housing_units_2018']) * 180
+#df['vacancy_pct18'] = (df['housing_vacant_2018'] / df['housing_units_2018']) * 180
+df['housing_age18'] = 2018 - df['housing_yr_built_2018']
+#df['housing_age_owned18'] = 2018 - df['housing_yr_built_owned_2018']
+#df['housing_age_rented18'] = 2018 - df['housing_yr_built_rented_2018']
+df['housing_tenure18'] = 2018 - df['housing_yr_movein_2018']
+#df['housing_tenure_owned18'] = 2018 - df['housing_yr_movein_owned_2018']
+#df['housing_tenure_rented18'] = 2018 - df['housing_yr_movein_rented_2018']
+
+#displays missing data on house age as Nan instead of 0, to filter out erroneous results that claim houses were built in year "0"
+df.loc[df.housing_age13 > 100, 'housing_age13'] = None
+df.loc[df.housing_age18 > 100, 'housing_age18'] = None
+#df.loc[df.housing_age_owned10 > 100, 'housing_age_owned10'] = None
+#df.loc[df.housing_age_owned18 > 100, 'housing_age_owned18'] = None
+#df.loc[df.housing_age_rented10 > 100, 'housing_age_rented10'] = None
+#df.loc[df.housing_age_rented18 > 100, 'housing_age_rented18'] = None
 
 rdf = pd.read_csv(ROOTDIR + 'data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
 
 #filter for King County 2010
-rdf = rdf[(rdf['COUNTY'] == 'King') & (rdf['YEAR'] == '2010')]
+rdf13 = rdf[(rdf['COUNTY'] == 'King') & (rdf['YEAR'] == '2013')]
+
+#filter for King County 2018
+rdf18 = rdf[(rdf['COUNTY'] == 'King') & (rdf['YEAR'] == '2018')]
 
 #create GEOID
-rdf['GEOID'] = '53033' + rdf['TRACT_NUM']
+rdf13['GEOID'] = '53033' + rdf13['TRACT_NUM']
+rdf18['GEOID'] = '53033' + rdf18['TRACT_NUM']
 
-gdf = pd.read_csv(ROOTDIR + 'data/washingtongeo_dist.csv',
-                   dtype={"TRACTCE_a": str,"TRACTCE_b": str})
+#racial percentages
+white13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B03002_003E')]
+white13 = white13[['GEOID','COUNTY','TRACT_NUM','DATA']]
+white13 = white13.rename(columns = {'DATA' : 'pop_white_nonhisp_only13'})
+black13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_003E')]
+black13 = black13[['GEOID','COUNTY','TRACT_NUM','DATA']]
+black13 = black13.rename(columns = {'DATA' : 'pop_black_only13'})
+native13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_004E')]
+native13 = native13[['GEOID','COUNTY','TRACT_NUM','DATA']]
+native13 = native13.rename(columns = {'DATA' : 'pop_native_only13'})
+asian13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_005E')]
+asian13 = asian13[['GEOID','COUNTY','TRACT_NUM','DATA']]
+asian13 = asian13.rename(columns = {'DATA' : 'pop_asian_only13'})
+polynesian13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_006E')]
+polynesian13 = polynesian13[['GEOID','COUNTY','TRACT_NUM','DATA']]
+polynesian13 = polynesian13.rename(columns = {'DATA' : 'pop_polynesian_only13'})
+latino13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B03002_012E')]
+latino13 = latino13[['GEOID','COUNTY','TRACT_NUM','DATA']]
+latino13 = latino13.rename(columns = {'DATA' : 'pop_hispanic13'})
+other13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_007E')]
+other13 = other13[['GEOID','COUNTY','TRACT_NUM','DATA']]
+other13 = other13.rename(columns = {'DATA' : 'pop_other_only13'})
+multiracial13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_008E')]
+multiracial13 = multiracial13[['GEOID','COUNTY','TRACT_NUM','DATA']]
+multiracial13 = multiracial13.rename(columns = {'DATA' : 'pop_multiracial13'})
+racial13 = white13.merge(black13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial13 = racial13.merge(native13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial13 = racial13.merge(asian13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial13 = racial13.merge(polynesian13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial13 = racial13.merge(latino13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial13 = racial13.merge(other13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial13 = racial13.merge(multiracial13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+race_data13 = racial13[['GEOID','COUNTY','TRACT_NUM','pop_white_nonhisp_only13','pop_black_only13','pop_native_only13','pop_asian_only13','pop_polynesian_only13','pop_hispanic13','pop_other_only13','pop_multiracial13']]
 
-white = rdf[(rdf['CENSUS_QUERY'] == 'B03002_003E')]
-white = white[['GEOID','COUNTY','TRACT_NUM','DATA']]
-white = white.rename(columns = {'DATA' : 'pop_white_nonhisp_only'})
-black = rdf[(rdf['CENSUS_QUERY'] == 'B02001_003E')]
-black = black[['GEOID','COUNTY','TRACT_NUM','DATA']]
-black = black.rename(columns = {'DATA' : 'pop_black_only'})
-native = rdf[(rdf['CENSUS_QUERY'] == 'B02001_004E')]
-native = native[['GEOID','COUNTY','TRACT_NUM','DATA']]
-native = native.rename(columns = {'DATA' : 'pop_native_only'})
-asian = rdf[(rdf['CENSUS_QUERY'] == 'B02001_005E')]
-asian = asian[['GEOID','COUNTY','TRACT_NUM','DATA']]
-asian = asian.rename(columns = {'DATA' : 'pop_asian_only'})
-polynesian = rdf[(rdf['CENSUS_QUERY'] == 'B02001_006E')]
-polynesian = polynesian[['GEOID','COUNTY','TRACT_NUM','DATA']]
-polynesian = polynesian.rename(columns = {'DATA' : 'pop_polynesian_only'})
-latino = rdf[(rdf['CENSUS_QUERY'] == 'B03002_012E')]
-latino = latino[['GEOID','COUNTY','TRACT_NUM','DATA']]
-latino = latino.rename(columns = {'DATA' : 'pop_hispanic'})
-other = rdf[(rdf['CENSUS_QUERY'] == 'B02001_007E')]
-other = other[['GEOID','COUNTY','TRACT_NUM','DATA']]
-other = other.rename(columns = {'DATA' : 'pop_other_only'})
-multiracial = rdf[(rdf['CENSUS_QUERY'] == 'B02001_008E')]
-multiracial = multiracial[['GEOID','COUNTY','TRACT_NUM','DATA']]
-multiracial = multiracial.rename(columns = {'DATA' : 'pop_multiracial'})
-racial = white.merge(black, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-racial = racial.merge(native, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-racial = racial.merge(asian, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-racial = racial.merge(polynesian, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-racial = racial.merge(latino, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-racial = racial.merge(other, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-racial = racial.merge(multiracial, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-race_data = racial[['GEOID','COUNTY','TRACT_NUM','pop_white_nonhisp_only','pop_black_only','pop_native_only','pop_asian_only','pop_polynesian_only','pop_hispanic','pop_other_only','pop_multiracial']]
+df = df.merge(race_data13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
-df = df.merge(race_data, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-df['minority_pop'] = df['TOT_POP_2010'] - df['pop_white_nonhisp_only']
-df['minority_pop_pct'] = df['minority_pop'] / df['TOT_POP_2010']
+white18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B03002_003E')]
+white18 = white18[['GEOID','COUNTY','TRACT_NUM','DATA']]
+white18 = white18.rename(columns = {'DATA' : 'pop_white_nonhisp_only18'})
+black18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_003E')]
+black18 = black18[['GEOID','COUNTY','TRACT_NUM','DATA']]
+black18 = black18.rename(columns = {'DATA' : 'pop_black_only18'})
+native18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_004E')]
+native18 = native18[['GEOID','COUNTY','TRACT_NUM','DATA']]
+native18 = native18.rename(columns = {'DATA' : 'pop_native_only18'})
+asian18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_005E')]
+asian18 = asian18[['GEOID','COUNTY','TRACT_NUM','DATA']]
+asian18 = asian18.rename(columns = {'DATA' : 'pop_asian_only18'})
+polynesian18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_006E')]
+polynesian18 = polynesian18[['GEOID','COUNTY','TRACT_NUM','DATA']]
+polynesian18 = polynesian18.rename(columns = {'DATA' : 'pop_polynesian_only18'})
+latino18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B03002_012E')]
+latino18 = latino18[['GEOID','COUNTY','TRACT_NUM','DATA']]
+latino18 = latino18.rename(columns = {'DATA' : 'pop_hispanic18'})
+other18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_007E')]
+other18 = other18[['GEOID','COUNTY','TRACT_NUM','DATA']]
+other18 = other18.rename(columns = {'DATA' : 'pop_other_only18'})
+multiracial18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_008E')]
+multiracial18 = multiracial18[['GEOID','COUNTY','TRACT_NUM','DATA']]
+multiracial18 = multiracial18.rename(columns = {'DATA' : 'pop_multiracial18'})
+racial18 = white18.merge(black18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial18 = racial18.merge(native18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial18 = racial18.merge(asian18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial18 = racial18.merge(polynesian18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial18 = racial18.merge(latino18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial18 = racial18.merge(other18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+racial18 = racial18.merge(multiracial18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+race_data18 = racial18[['GEOID','COUNTY','TRACT_NUM','pop_white_nonhisp_only18','pop_black_only18','pop_native_only18','pop_asian_only18','pop_polynesian_only18','pop_hispanic18','pop_other_only18','pop_multiracial18']]
 
-gdf = gdf.merge(df[['TRACT_NUM','GEOID']], how='left', left_on='TRACTCE_a', right_on='TRACT_NUM')
-gdf = gdf.rename(columns={'GEOID':'GEOID_a'})
-gdf = gdf.merge(df[['TRACT_NUM','GEOID']], how='left', left_on='TRACTCE_b', right_on='TRACT_NUM')
-gdf = gdf.rename(columns={'GEOID':'GEOID_b'})
+df = df.merge(race_data18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+#TODO- need to pull total population data for 2013, not 2010 (redo housing_prepped)
 
-#merge dataframes to combine the different datasets so that you can calculate it.
-minority10 = df[['GEOID','minority_pop_pct']]
-gdf = gdf.merge(minority10, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'minority_pop_pct':'minority_pop_pct_2010_a'})
-gdf = gdf.merge(minority10, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'minority_pop_pct':'minority_pop_pct_2010_b'})
+df['minority_pop_2013'] = df['TOT_POP_2013'] - df['pop_white_nonhisp_only_2013']
+df['minority_pop_pct_2013'] = df['minority_pop_2013'] / df['TOT_POP_2013']
+df['minority_pop_2018'] = df['TOT_POP_2018'] - df['pop_white_nonhisp_only_2018']
+df['minority_pop_pct_2018'] = df['minority_pop_2018'] / df['TOT_POP_2018']
 
-aff_housing10 = df[['GEOID','sub_600_per_mo_housing_units']]
-gdf = gdf.merge(aff_housing10, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'sub_600_per_mo_housing_units':'affordable_units_a'})
-gdf = gdf.merge(aff_housing10, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'sub_600_per_mo_housing_units':'affordable_units_b'})
-
-lower_quartile_cost10 = df[['GEOID','RENT_25PCTILE']]
-gdf = gdf.merge(lower_quartile_cost10, how = 'inner', left_on = ['GEOID_a'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'RENT_25PCTILE':'lower_quartile_rent_a'})
-gdf = gdf.merge(lower_quartile_cost10, how = 'inner', left_on = ['GEOID_b'], right_on = ['GEOID'])
-gdf = gdf.rename(columns = {'RENT_25PCTILE':'lower_quartile_rent_b'})
-
-#calculate diff between the two tracts (and take absolute value since sign is meaningless here)
-gdf['minority_pop_pct_delta'] = (gdf.minority_pop_pct_2010_a - gdf.minority_pop_pct_2010_b).abs()
-gdf['affordable_units_delta'] = (gdf.affordable_units_a - gdf.affordable_units_b).abs()
-gdf['lower_quartile_rent_delta'] = (gdf.lower_quartile_rent_a - gdf.lower_quartile_rent_b).abs()
-
-#delete unnecessary columns to save memory
-del gdf['TRACT_NUM_x']
-del gdf['TRACT_NUM_y']
-del gdf['GEOID_x']
-del gdf['GEOID_y']
-
-#Kmeans clustering
-Y = df[['GEOID','RENT_25PCTILE','minority_pop_pct']]
-Y = Y[~Y['minority_pop_pct'].isnull()]
-Y = Y[~Y['RENT_25PCTILE'].isnull()]
-X = Y[['RENT_25PCTILE','minority_pop_pct']]
-K = 3
-kmeans = KMeans(n_clusters=K, random_state=0).fit(X)
-Y['labels'] = kmeans.labels_
-c0 = kmeans.cluster_centers_[0]
-c1 = kmeans.cluster_centers_[1]
-c = pd.DataFrame(kmeans.transform(X), columns=['center_{}'.format(i) for i in range(K)])
-for i in range(K):
-    Y['center_{}'.format(i)] = c['center_{}'.format(i)]
-for i in range(K):
-    Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
-#re-merge with df
-df = df.merge(Y, how='left', left_on=['GEOID','minority_pop_pct','RENT_25PCTILE'], right_on=['GEOID','minority_pop_pct','RENT_25PCTILE'])
-
-grp0 = df[(df['labels'] == 0)]
-grp0 = grp0[['COUNTY','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
-grp0_length = str(grp0.shape)
-grp1 = df[(df['labels'] == 1)]
-grp1 = grp1[['COUNTY','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
-grp1_length = str(grp1.shape)
-
-grp2 = df[(df['labels'] == 2)]
-grp2 = grp2[['COUNTY','TRACT_NUM','minority_pop_pct','RENT_25PCTILE','labels','d']]
-grp2_length = str(grp2.shape)
-
-'''
-grp3 = df[(df['labels'] == 3)]
-grp3 = grp3[['COUNTY','TRACT_NUM','minority_pop_pct','sub_600_per_mo_housing_units','labels','d']]
-grp3_length = str(grp3.shape)
-'''
-
-# TODO: alpha & omega redef
-
-#alpha time
-alpha = .5
-gdf['omega'] = (alpha * gdf.minority_pop_pct_delta + (1.0-alpha) * gdf.lower_quartile_rent_delta*10e-03)
-
-#gdf = gdf[gdf['distance'] < 3500] #filter, is only necessary if you need to threshold this and also don't use one of the subset dfs below.
-
-#create cityname df
-muni_gdf = gp.read_file(ROOTDIR + 'data/shapefiles/Municipal_Boundaries/Municipal_Boundaries.shp')
-tract_gdf = gp.read_file(ROOTDIR + 'data/shapefiles/KingCountyTracts/kc_tract_10.shp')
-t = tract_gdf[['OBJECTID', 'STATEFP10', 'COUNTYFP10', 'TRACTCE10', 'GEOID10', 'geometry']]
-m = muni_gdf[['OBJECTID', 'CITYNAME', 'geometry']]
-m = m.to_crs(epsg=2926)
-#pd.options.display.max_rows = 500
-mt = gp.sjoin(t, m, how='left', op='intersects', lsuffix='', rsuffix='_muni')
-mt[['GEOID10', 'CITYNAME']]
-
-#merge with cityname df
-df = df.merge(mt, how = 'inner', left_on = ['GEOID'], right_on = ['GEOID10'])
-
-#delete unnecessary columns to save memory
-del df['OBJECTID_']
-del df['GEOID10']
-del df['TRACTCE10']
-#df = df.rename(columns = {'CITYNAME_y':'CITYNAME'})
+#DEBUG - CHECK FOR NaNs
+nandf = df[df.isnull().any(axis=1)]
+csv_filename = 'data_prep_tract-nan-check.csv'
+nandf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
+print("Exporting csv...")
 
 import itertools
 
-wallingford_gdf = gdf[(gdf['GEOID_a'] == '53033004600') & (gdf['distance'] < 3500)]
-gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
-gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
+#create mtbaker_station_df & mtbaker_station_gdf
+mtbaker_station_gdf = gdf[((gdf['GEOID_a'] == '53033010001') & (gdf['distance'] < 1.500)) | ((gdf['GEOID_b'] == '53033010001') & (gdf['distance'] < 1.500))]
+mtbaker_station_gid_a = list(mtbaker_station_gdf['GEOID_a'].drop_duplicates())
+mtbaker_station_gid_b = list(mtbaker_station_gdf['GEOID_b'].drop_duplicates())
 
-pair_data = {
+mtbaker_station_pair_data = {
     'GEOID_a': list(),
     'GEOID_b': list()
 }
 
-for ga, gb in itertools.product(gid_a + gid_b, gid_a + gid_b):
-    pair_data['GEOID_a'].append(ga)
-    pair_data['GEOID_b'].append(gb)
+for ga, gb in itertools.product(mtbaker_station_gid_a + mtbaker_station_gid_b, mtbaker_station_gid_a + mtbaker_station_gid_b):
+    mtbaker_station_pair_data['GEOID_a'].append(ga)
+    mtbaker_station_pair_data['GEOID_b'].append(gb)
 
-pair_df = pd.DataFrame.from_dict(pair_data)
-pair_df = pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
-pair_df = pair_df[~pair_df['distance'].isnull()]
+mtbaker_station_pair_df = pd.DataFrame.from_dict(mtbaker_station_pair_data)
+mtbaker_station_pair_df = mtbaker_station_pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
+mtbaker_station_pair_df = mtbaker_station_pair_df[~mtbaker_station_pair_df['distance'].isnull()]
 
-wallingford_gdf = pair_df
+mtbaker_station_gdf = mtbaker_station_pair_df
+mtbaker_station_geoids = list(mtbaker_station_gdf['GEOID_a'].drop_duplicates()) + \
+                     list(mtbaker_station_gdf['GEOID_b'].drop_duplicates())
+mtbaker_station_df = df[df['GEOID'].isin(mtbaker_station_geoids)]
+mtbaker_station_df['neighborhood'] = 'mtbaker_station'
+
+#create othello_station_df & othello_station_gdf
+othello_station_gdf = gdf[((gdf['GEOID_a'] == '53033011001') & (gdf['distance'] < 1.500)) | ((gdf['GEOID_b'] == '53033011001') & (gdf['distance'] < 1.500))]
+othello_station_gid_a = list(othello_station_gdf['GEOID_a'].drop_duplicates())
+othello_station_gid_b = list(othello_station_gdf['GEOID_b'].drop_duplicates())
+
+othello_station_pair_data = {
+    'GEOID_a': list(),
+    'GEOID_b': list()
+}
+
+for ga, gb in itertools.product(othello_station_gid_a + othello_station_gid_b, othello_station_gid_a + othello_station_gid_b):
+    othello_station_pair_data['GEOID_a'].append(ga)
+    othello_station_pair_data['GEOID_b'].append(gb)
+
+othello_station_pair_df = pd.DataFrame.from_dict(othello_station_pair_data)
+othello_station_pair_df = othello_station_pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
+othello_station_pair_df = othello_station_pair_df[~othello_station_pair_df['distance'].isnull()]
+
+othello_station_gdf = othello_station_pair_df
+othello_station_geoids = list(othello_station_gdf['GEOID_a'].drop_duplicates()) + \
+                     list(othello_station_gdf['GEOID_b'].drop_duplicates())
+othello_station_df = df[df['GEOID'].isin(othello_station_geoids)]
+othello_station_df['neighborhood'] = 'othello_station'
+
+#create rainier_beach_df & rainier_beach_gdf
+rainier_beach_gdf = gdf[((gdf['GEOID_a'] == '53033011700') & (gdf['distance'] < 2)) | ((gdf['GEOID_b'] == '53033011700') & (gdf['distance'] < 2))]
+rainier_beach_gid_a = list(rainier_beach_gdf['GEOID_a'].drop_duplicates())
+rainier_beach_gid_b = list(rainier_beach_gdf['GEOID_b'].drop_duplicates())
+
+rainier_beach_pair_data = {
+    'GEOID_a': list(),
+    'GEOID_b': list()
+}
+
+for ga, gb in itertools.product(rainier_beach_gid_a + rainier_beach_gid_b, rainier_beach_gid_a + rainier_beach_gid_b):
+    rainier_beach_pair_data['GEOID_a'].append(ga)
+    rainier_beach_pair_data['GEOID_b'].append(gb)
+
+rainier_beach_pair_df = pd.DataFrame.from_dict(rainier_beach_pair_data)
+rainier_beach_pair_df = rainier_beach_pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
+rainier_beach_pair_df = rainier_beach_pair_df[~rainier_beach_pair_df['distance'].isnull()]
+
+rainier_beach_gdf = rainier_beach_pair_df
+rainier_beach_geoids = list(rainier_beach_gdf['GEOID_a'].drop_duplicates()) + \
+                     list(rainier_beach_gdf['GEOID_b'].drop_duplicates())
+rainier_beach_df = df[df['GEOID'].isin(rainier_beach_geoids)]
+rainier_beach_df['neighborhood'] = 'rainier_beach'
+
+#create wallingford_df & wallingford_gdf
+wallingford_gdf = gdf[((gdf['GEOID_a'] == '53033004600') & (gdf['distance'] < 3.000)) | ((gdf['GEOID_b'] == '53033004600') & (gdf['distance'] < 3.000))]
+wallingford_gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
+wallingford_gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
+
+wallingford_pair_data = {
+    'GEOID_a': list(),
+    'GEOID_b': list()
+}
+
+for ga, gb in itertools.product(wallingford_gid_a + wallingford_gid_b, wallingford_gid_a + wallingford_gid_b):
+    wallingford_pair_data['GEOID_a'].append(ga)
+    wallingford_pair_data['GEOID_b'].append(gb)
+
+wallingford_pair_df = pd.DataFrame.from_dict(wallingford_pair_data)
+wallingford_pair_df = wallingford_pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
+wallingford_pair_df = wallingford_pair_df[~wallingford_pair_df['distance'].isnull()]
+
+wallingford_gdf = wallingford_pair_df
 wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
                      list(wallingford_gdf['GEOID_b'].drop_duplicates())
 wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
-
-
-
+wallingford_df['neighborhood'] = 'wallingford'
 
 def get_df(subset='all'):
     subsets = {
         'all': df,
+        'mtbaker_station': mtbaker_station_df,
+        'othello_station': othello_station_df,
+        'rainier_beach': rainier_beach_df,
         'wallingford': wallingford_df
     }
 
@@ -243,6 +420,9 @@ def get_df(subset='all'):
 def get_gdf(subset='all'):
     subsets = {
         'all': gdf,
+        'mtbaker_station': mtbaker_station_gdf,
+        'othello_station': othello_station_gdf,
+        'rainier_beach': rainier_beach_gdf,
         'wallingford': wallingford_gdf
     }
 
