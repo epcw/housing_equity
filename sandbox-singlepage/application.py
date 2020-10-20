@@ -26,17 +26,61 @@ cache = Cache(app.server, config={
 
 TIMEOUT = 60
 
-'''
+
 #TRACT VERSION
 import data_prep_tract
+df_all = data_prep_tract.get_df()
+gdf_all = data_prep_tract.get_gdf()
 df = data_prep_tract.get_df(subset='wallingford')
 gdf = data_prep_tract.get_gdf(subset='wallingford')
-from data_prep_tract import grp0
-from data_prep_tract import grp1
-from data_prep_tract import grp2
-#from data_prep_tract import grp3
-'''
+df_rb = data_prep_tract.get_df(subset='rainier_beach')
+gdf_rb = data_prep_tract.get_gdf(subset='rainier_beach')
+#df_mtbaker = data_prep_tract.get_df(subset='mtbaker_station')
+#gdf_mtbaker = data_prep_tract.get_gdf(subset='mtbaker_station')
+#df_othello = data_prep_tract.get_df(subset='othello_station')
+#gdf_othello = data_prep_tract.get_gdf(subset='othello_station')
+df_rb['GEOID_long'] = df_rb['GEOID']
+df_rb['GEOID'] = df_rb['GEOID'].str.replace("53033", "")
+gdf_rb['GEOID_long_a'] = gdf_rb['GEOID_a']
+gdf_rb['GEOID_long_b'] = gdf_rb['GEOID_b']
+gdf_rb['GEOID_a'] = gdf_rb['GEOID_a'].str.replace("53033", "")
+gdf_rb['GEOID_b'] = gdf_rb['GEOID_b'].str.replace("53033", "")
+#df_mtbaker['GEOID_long'] = df_mtbaker['GEOID']
+#df_mtbaker['GEOID'] = df_mtbaker['GEOID'].str.replace("53033", "")
+#gdf_mtbaker['GEOID_long_a'] = gdf_mtbaker['GEOID_a']
+#gdf_mtbaker['GEOID_long_b'] = gdf_mtbaker['GEOID_b']
+#gdf_mtbaker['GEOID_a'] = gdf_mtbaker['GEOID_a'].str.replace("53033", "")
+#gdf_mtbaker['GEOID_b'] = gdf_mtbaker['GEOID_b'].str.replace("53033", "")
+#df_othello['GEOID_long'] = df_othello['GEOID']
+#df_othello['GEOID'] = df_othello['GEOID'].str.replace("53033", "")
+#gdf_othello['GEOID_long_a'] = gdf_othello['GEOID_a']
+#gdf_othello['GEOID_long_b'] = gdf_othello['GEOID_b']
+#gdf_othello['GEOID_a'] = gdf_othello['GEOID_a'].str.replace("53033", "")
+#gdf_othello['GEOID_b'] = gdf_othello['GEOID_b'].str.replace("53033", "")
+df['GEOID_long'] = df['GEOID']
+df['GEOID'] = df['GEOID'].str.replace("53033", "")
+gdf['GEOID_long_a'] = gdf['GEOID_a']
+gdf['GEOID_long_b'] = gdf['GEOID_b']
+gdf['GEOID_a'] = gdf['GEOID_a'].str.replace("53033", "")
+gdf['GEOID_b'] = gdf['GEOID_b'].str.replace("53033", "")
+df_all['GEOID_long'] = df_all['GEOID']
+df_all['GEOID'] = df_all['GEOID'].str.replace("53033", "")
+gdf_all['GEOID_long_a'] = gdf_all['GEOID_a']
+gdf_all['GEOID_long_b'] = gdf_all['GEOID_b']
+gdf_all['GEOID_a'] = gdf_all['GEOID_a'].str.replace("53033", "")
+gdf_all['GEOID_b'] = gdf_all['GEOID_b'].str.replace("53033", "")
 
+df = df.append(df_rb)
+#df = df.append(df_mtbaker)
+#df = df.append(df_othello)
+
+gdf = gdf.append(gdf_rb)
+#gdf = gdf.append(gdf_mtbaker)
+#gdf = gdf.append(gdf_othello)
+
+from data_prep_tract import tracts
+
+'''
 #BLOCK GROUP VERSION
 import data_prep_blockgrp
 df_all = data_prep_blockgrp.get_df()
@@ -89,6 +133,7 @@ gdf = gdf.append(gdf_mtbaker)
 gdf = gdf.append(gdf_othello)
 
 from data_prep_blockgrp import block_grp_geoids
+'''
 
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
