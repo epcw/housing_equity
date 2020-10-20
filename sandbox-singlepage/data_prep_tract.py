@@ -7,10 +7,14 @@ import json
 #ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
 ROOTDIR = '' #local
 
-df = pd.read_csv(ROOTDIR + 'data/housing_prepped.csv', dtype={"GEOID": str,"TRACT_NUM": str})
-
-#filter for King County
-df = df[(df['COUNTY'] == 'King')]
+df_raw = pd.read_csv(ROOTDIR + 'data/totalpop-tract.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
+df13_raw = df_raw[(df_raw['YEAR'] == '2013')]
+df13_raw = df13_raw.rename(columns = {'DATA' : 'TOT_POP_2013'})
+df13_raw = df13_raw[['GEOID','COUNTY','TRACT_NUM','TOT_POP_2013']]
+df18_raw = df_raw[(df_raw['YEAR'] == '2018')]
+df18_raw = df18_raw.rename(columns = {'DATA' : 'TOT_POP_2018'})
+df18_raw = df18_raw[['GEOID','COUNTY','TRACT_NUM','TOT_POP_2018']]
+df = df13_raw.merge(df18_raw, how='left', left_on=['GEOID','COUNTY','TRACT_NUM'], right_on=['GEOID','COUNTY','TRACT_NUM'])
 
 #bring in affordable housing data
 housing_df_raw = pd.read_csv(ROOTDIR + 'data/affordable_housing_units.csv', dtype={"TRACT_NUM": str})
@@ -18,6 +22,7 @@ median_costs_raw = pd.read_csv(ROOTDIR + 'data/housing_costs_medians.csv', dtype
 
 #filter for King County
 housing_df_raw = housing_df_raw[(housing_df_raw['COUNTY'] == 'King')]
+#TODO: Get affordable housing data for 2013 & 2018
 
 #create geoid
 housing_df_raw['GEOID'] = '53033' + housing_df_raw['TRACT_NUM']
@@ -224,28 +229,28 @@ rdf18['GEOID'] = '53033' + rdf18['TRACT_NUM']
 #racial percentages
 white13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B03002_003E')]
 white13 = white13[['GEOID','COUNTY','TRACT_NUM','DATA']]
-white13 = white13.rename(columns = {'DATA' : 'pop_white_nonhisp_only13'})
+white13 = white13.rename(columns = {'DATA' : 'pop_white_nonhisp_only_2013'})
 black13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_003E')]
 black13 = black13[['GEOID','COUNTY','TRACT_NUM','DATA']]
-black13 = black13.rename(columns = {'DATA' : 'pop_black_only13'})
+black13 = black13.rename(columns = {'DATA' : 'pop_black_only_2013'})
 native13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_004E')]
 native13 = native13[['GEOID','COUNTY','TRACT_NUM','DATA']]
-native13 = native13.rename(columns = {'DATA' : 'pop_native_only13'})
+native13 = native13.rename(columns = {'DATA' : 'pop_native_only_2013'})
 asian13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_005E')]
 asian13 = asian13[['GEOID','COUNTY','TRACT_NUM','DATA']]
-asian13 = asian13.rename(columns = {'DATA' : 'pop_asian_only13'})
+asian13 = asian13.rename(columns = {'DATA' : 'pop_asian_only_2013'})
 polynesian13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_006E')]
 polynesian13 = polynesian13[['GEOID','COUNTY','TRACT_NUM','DATA']]
-polynesian13 = polynesian13.rename(columns = {'DATA' : 'pop_polynesian_only13'})
+polynesian13 = polynesian13.rename(columns = {'DATA' : 'pop_polynesian_only_2013'})
 latino13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B03002_012E')]
 latino13 = latino13[['GEOID','COUNTY','TRACT_NUM','DATA']]
-latino13 = latino13.rename(columns = {'DATA' : 'pop_hispanic13'})
+latino13 = latino13.rename(columns = {'DATA' : 'pop_hispanic_2013'})
 other13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_007E')]
 other13 = other13[['GEOID','COUNTY','TRACT_NUM','DATA']]
-other13 = other13.rename(columns = {'DATA' : 'pop_other_only13'})
+other13 = other13.rename(columns = {'DATA' : 'pop_other_only_2013'})
 multiracial13 = rdf13[(rdf13['CENSUS_QUERY'] == 'B02001_008E')]
 multiracial13 = multiracial13[['GEOID','COUNTY','TRACT_NUM','DATA']]
-multiracial13 = multiracial13.rename(columns = {'DATA' : 'pop_multiracial13'})
+multiracial13 = multiracial13.rename(columns = {'DATA' : 'pop_multiracial_2013'})
 racial13 = white13.merge(black13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 racial13 = racial13.merge(native13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 racial13 = racial13.merge(asian13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
@@ -253,34 +258,34 @@ racial13 = racial13.merge(polynesian13, how = 'inner', left_on = ['GEOID','COUNT
 racial13 = racial13.merge(latino13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 racial13 = racial13.merge(other13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 racial13 = racial13.merge(multiracial13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-race_data13 = racial13[['GEOID','COUNTY','TRACT_NUM','pop_white_nonhisp_only13','pop_black_only13','pop_native_only13','pop_asian_only13','pop_polynesian_only13','pop_hispanic13','pop_other_only13','pop_multiracial13']]
+race_data13 = racial13[['GEOID','COUNTY','TRACT_NUM','pop_white_nonhisp_only_2013','pop_black_only_2013','pop_native_only_2013','pop_asian_only_2013','pop_polynesian_only_2013','pop_hispanic_2013','pop_other_only_2013','pop_multiracial_2013']]
 
 df = df.merge(race_data13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
 white18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B03002_003E')]
 white18 = white18[['GEOID','COUNTY','TRACT_NUM','DATA']]
-white18 = white18.rename(columns = {'DATA' : 'pop_white_nonhisp_only18'})
+white18 = white18.rename(columns = {'DATA' : 'pop_white_nonhisp_only_2018'})
 black18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_003E')]
 black18 = black18[['GEOID','COUNTY','TRACT_NUM','DATA']]
-black18 = black18.rename(columns = {'DATA' : 'pop_black_only18'})
+black18 = black18.rename(columns = {'DATA' : 'pop_black_only_2018'})
 native18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_004E')]
 native18 = native18[['GEOID','COUNTY','TRACT_NUM','DATA']]
-native18 = native18.rename(columns = {'DATA' : 'pop_native_only18'})
+native18 = native18.rename(columns = {'DATA' : 'pop_native_only_2018'})
 asian18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_005E')]
 asian18 = asian18[['GEOID','COUNTY','TRACT_NUM','DATA']]
-asian18 = asian18.rename(columns = {'DATA' : 'pop_asian_only18'})
+asian18 = asian18.rename(columns = {'DATA' : 'pop_asian_only_2018'})
 polynesian18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_006E')]
 polynesian18 = polynesian18[['GEOID','COUNTY','TRACT_NUM','DATA']]
-polynesian18 = polynesian18.rename(columns = {'DATA' : 'pop_polynesian_only18'})
+polynesian18 = polynesian18.rename(columns = {'DATA' : 'pop_polynesian_only_2018'})
 latino18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B03002_012E')]
 latino18 = latino18[['GEOID','COUNTY','TRACT_NUM','DATA']]
-latino18 = latino18.rename(columns = {'DATA' : 'pop_hispanic18'})
+latino18 = latino18.rename(columns = {'DATA' : 'pop_hispanic_2018'})
 other18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_007E')]
 other18 = other18[['GEOID','COUNTY','TRACT_NUM','DATA']]
-other18 = other18.rename(columns = {'DATA' : 'pop_other_only18'})
+other18 = other18.rename(columns = {'DATA' : 'pop_other_only_2018'})
 multiracial18 = rdf18[(rdf18['CENSUS_QUERY'] == 'B02001_008E')]
 multiracial18 = multiracial18[['GEOID','COUNTY','TRACT_NUM','DATA']]
-multiracial18 = multiracial18.rename(columns = {'DATA' : 'pop_multiracial18'})
+multiracial18 = multiracial18.rename(columns = {'DATA' : 'pop_multiracial_2018'})
 racial18 = white18.merge(black18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 racial18 = racial18.merge(native18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 racial18 = racial18.merge(asian18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
@@ -288,7 +293,7 @@ racial18 = racial18.merge(polynesian18, how = 'inner', left_on = ['GEOID','COUNT
 racial18 = racial18.merge(latino18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 racial18 = racial18.merge(other18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 racial18 = racial18.merge(multiracial18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
-race_data18 = racial18[['GEOID','COUNTY','TRACT_NUM','pop_white_nonhisp_only18','pop_black_only18','pop_native_only18','pop_asian_only18','pop_polynesian_only18','pop_hispanic18','pop_other_only18','pop_multiracial18']]
+race_data18 = racial18[['GEOID','COUNTY','TRACT_NUM','pop_white_nonhisp_only_2018','pop_black_only_2018','pop_native_only_2018','pop_asian_only_2018','pop_polynesian_only_2018','pop_hispanic_2018','pop_other_only_2018','pop_multiracial_2018']]
 
 df = df.merge(race_data18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 #TODO- need to pull total population data for 2013, not 2010 (redo housing_prepped)
@@ -298,12 +303,59 @@ df['minority_pop_pct_2013'] = df['minority_pop_2013'] / df['TOT_POP_2013']
 df['minority_pop_2018'] = df['TOT_POP_2018'] - df['pop_white_nonhisp_only_2018']
 df['minority_pop_pct_2018'] = df['minority_pop_2018'] / df['TOT_POP_2018']
 
+gdf = pd.read_csv(ROOTDIR + 'data/washingtongeo_dist.csv',
+                   dtype={"TRACTCE_a": str,"TRACTCE_b": str})
+
+#create GEOID
+gdf['GEOID_a'] = '53033' + gdf['TRACTCE_a']
+gdf['GEOID_b'] = '53033' + gdf['TRACTCE_b']
+
+df['minority_pop_pct_change'] = (df.minority_pop_pct_2018 - df.minority_pop_pct_2013)
+df['rent_25th_pctile_change'] = (df.RENT_25PCTILE_2018 - df.RENT_25PCTILE_2013)
+df['totpop_change'] = (df.TOT_POP_2018 - df.TOT_POP_2013)
+df['rent_pct_income_change'] = (df.RENT_AS_PCT_HOUSEHOLD_INCOME_2018 - df.RENT_AS_PCT_HOUSEHOLD_INCOME_2013)
+df['monthly_housing_cost_change'] = (df.MEDIAN_MONTHLY_HOUSING_COST_2018 - df.MEDIAN_MONTHLY_HOUSING_COST_2013)
+#df['affordable_units_per_cap_change'] = (df.sub_600_units_per_capita_2018 - df.sub_600_units_per_capita_2013)
+df['median_tenancy_change'] = (df.housing_tenure18 - df.housing_tenure13)
+df['median_housing_age_change'] = (df.housing_age18 - df.housing_age13)
+
+#CONVERT ALL CHANGES TO Z-SCORE SO YOU CAN COMPARE THEM
+df['minority_pop_pct_change'] = (df.minority_pop_pct_change - df.minority_pop_pct_change.mean())/df.minority_pop_pct_change.std()
+df['rent_25th_pctile_change'] = (df.rent_25th_pctile_change - df.rent_25th_pctile_change.mean())/df.rent_25th_pctile_change.std()
+df['totpop_change'] = (df.totpop_change - df.totpop_change.mean())/df.totpop_change.std()
+df['rent_pct_income_change'] = (df.rent_pct_income_change - df.rent_pct_income_change.mean())/df.rent_pct_income_change.std()
+df['monthly_housing_cost_change'] = (df.monthly_housing_cost_change - df.monthly_housing_cost_change.mean())/df.monthly_housing_cost_change.std()
+#df['affordable_units_per_cap_change'] = (df.affordable_units_per_cap_change - df.affordable_units_per_cap_change.mean())/df.affordable_units_per_cap_change.std()
+df['median_tenancy_change'] = (df.median_tenancy_change - df.median_tenancy_change.mean())/df.median_tenancy_change.std()
+df['median_housing_age_change'] = (df.median_housing_age_change - df.median_housing_age_change.mean())/df.median_housing_age_change.std()
+
+#CONVERT 2013 numbers to z-score for comparison
+df['minority_pop_pct_2013z'] = (df.minority_pop_pct_2013 - df.minority_pop_pct_2013.mean())/df.minority_pop_pct_2013.std()
+df['rent_25th_pctile_2013z'] = (df.RENT_25PCTILE_2013 - df.RENT_25PCTILE_2013.mean())/df.RENT_25PCTILE_2013.std()
+df['totpop_2013z'] = (df.TOT_POP_2013 - df.TOT_POP_2013.mean())/df.TOT_POP_2013.std()
+df['rent_pct_income_2013z'] = (df.RENT_AS_PCT_HOUSEHOLD_INCOME_2013 - df.RENT_AS_PCT_HOUSEHOLD_INCOME_2013.mean())/df.RENT_AS_PCT_HOUSEHOLD_INCOME_2013.std()
+df['monthly_housing_cost_2013z'] = (df.MEDIAN_MONTHLY_HOUSING_COST_2013 - df.MEDIAN_MONTHLY_HOUSING_COST_2013.mean())/df.MEDIAN_MONTHLY_HOUSING_COST_2013.std()
+#df['affordable_units_per_cap_2013z'] = (df.sub_600_units_per_capita_2013 - df.sub_600_units_per_capita_2013.mean())/df.sub_600_units_per_capita_2013.std()
+df['median_tenancy_2013z'] = (df.housing_tenure13 - df.housing_tenure13.mean())/df.housing_tenure13.std()
+df['median_housing_age_2013z'] = (df.housing_age18 - df.housing_age18.mean())/df.housing_age18.std()
+
+#CONVERT 2018 numbers to z-score for comparison
+df['minority_pop_pct_2018z'] = (df.minority_pop_pct_2018 - df.minority_pop_pct_2018.mean())/df.minority_pop_pct_2018.std()
+df['rent_25th_pctile_2018z'] = (df.RENT_25PCTILE_2018 - df.RENT_25PCTILE_2018.mean())/df.RENT_25PCTILE_2018.std()
+df['totpop_2018z'] = (df.TOT_POP_2018 - df.TOT_POP_2018.mean())/df.TOT_POP_2018.std()
+df['rent_pct_income_2018z'] = (df.RENT_AS_PCT_HOUSEHOLD_INCOME_2018 - df.RENT_AS_PCT_HOUSEHOLD_INCOME_2018.mean())/df.RENT_AS_PCT_HOUSEHOLD_INCOME_2018.std()
+df['monthly_housing_cost_2018z'] = (df.MEDIAN_MONTHLY_HOUSING_COST_2018 - df.MEDIAN_MONTHLY_HOUSING_COST_2018.mean())/df.MEDIAN_MONTHLY_HOUSING_COST_2018.std()
+#df['affordable_units_per_cap_2018z'] = (df.sub_600_units_per_capita_2018 - df.sub_600_units_per_capita_2018.mean())/df.sub_600_units_per_capita_2018.std()
+df['median_tenancy_2018z'] = (df.housing_tenure18 - df.housing_tenure18.mean())/df.housing_tenure18.std()
+df['median_housing_age_2018z'] = (df.housing_age18 - df.housing_age18.mean())/df.housing_age18.std()
+
+'''
 #DEBUG - CHECK FOR NaNs
 nandf = df[df.isnull().any(axis=1)]
 csv_filename = 'data_prep_tract-nan-check.csv'
 nandf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
 print("Exporting csv...")
-
+'''
 import itertools
 
 #create mtbaker_station_df & mtbaker_station_gdf
