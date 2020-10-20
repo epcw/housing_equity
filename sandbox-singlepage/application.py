@@ -307,13 +307,13 @@ fig2.update_traces(marker=dict(size=20),
 '''
 dfcombo = df
 dfcombo['GEOID'] = dfcombo['GEOID'].astype(str)
-alpha = 1/6.0
-bravo = 1/6.0
-charlie = 1/6.0
-delta = 1/6.0
-echo = 1/6.0
-foxtrot = 1/6.0
-golf = 1/6.0
+alpha = 1/5.0
+bravo = 0
+charlie = 1/5.0
+delta = 0
+echo = 1/5.0
+foxtrot = 1/5.0
+golf = 1/5.0
 
 dfcombo['omega_13'] = (
         -(alpha * dfcombo.minority_pop_pct_2013z.fillna(0)) + \
@@ -379,10 +379,10 @@ grp3 = grp3.sort_values('omega_change')
 fig3 = px.scatter(dfcombo, x="omega_13", y="omega_18",color='neighborhood',text='GEOID'
 )
 fig3.update_yaxes(
-    range=[-1, 1]
+    range=[-1.5, 1.5]
   )
 fig3.update_xaxes(
-    range=[-1, 1]
+    range=[-1.5, 1.5]
   )
 fig3.update_traces(textposition="middle right")
 #can set axis ratios, as well

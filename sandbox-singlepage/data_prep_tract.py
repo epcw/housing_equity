@@ -502,9 +502,9 @@ gdf['median_housing_age_change_delta_2018'] = gdf['median_housing_age_change_del
 
 #weight the edges
 alpha = 1/6.0
-bravo = 1/6.0
+bravo = 0
 charlie = 1/6.0
-delta = 1/6.0
+delta = 0
 echo = 1/6.0
 foxtrot = 1/6.0
 golf = 1/6.0
@@ -570,13 +570,6 @@ gdf = gdf[(gdf['omega_bar'] >= threshold)]
 
 #gdf.loc[gdf.omega < 0, 'omega'] = None #corrects for the census having "2018" as an answer to some of these
 #gdf = gdf[(gdf['omega'] >= threshold)]
-'''
-#DEBUG - CHECK FOR NaNs
-nandf = df[df.isnull().any(axis=1)]
-csv_filename = 'data_prep_tract-nan-check.csv'
-nandf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
-print("Exporting csv...")
-'''
 import itertools
 
 #create mtbaker_station_df & mtbaker_station_gdf
@@ -628,7 +621,7 @@ othello_station_df = df[df['GEOID'].isin(othello_station_geoids)]
 othello_station_df['neighborhood'] = 'othello_station'
 
 #create rainier_beach_df & rainier_beach_gdf
-rainier_beach_gdf = gdf[((gdf['GEOID_a'] == '53033011700') & (gdf['distance'] < 4000)) | ((gdf['GEOID_b'] == '53033011700') & (gdf['distance'] < 4000))]
+rainier_beach_gdf = gdf[((gdf['GEOID_a'] == '53033011700') & (gdf['distance'] < 7000)) | ((gdf['GEOID_b'] == '53033011700') & (gdf['distance'] < 7000))]
 rainier_beach_gid_a = list(rainier_beach_gdf['GEOID_a'].drop_duplicates())
 rainier_beach_gid_b = list(rainier_beach_gdf['GEOID_b'].drop_duplicates())
 
@@ -703,3 +696,11 @@ def get_gdf(subset='all'):
         return subsets[subset]
     else:
         raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
+
+'''
+#DEBUG - CHECK FOR NaNs
+nandf = df[df.isnull().any(axis=1)]
+csv_filename = 'data_prep_tract-nan-check.csv'
+rainier_beach_gdf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
+print("Exporting csv...")
+'''
