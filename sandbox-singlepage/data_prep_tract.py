@@ -641,6 +641,13 @@ rainier_beach_pair_df = rainier_beach_pair_df[~rainier_beach_pair_df['distance']
 rainier_beach_gdf = rainier_beach_pair_df
 rainier_beach_geoids = list(rainier_beach_gdf['GEOID_a'].drop_duplicates()) + \
                      list(rainier_beach_gdf['GEOID_b'].drop_duplicates())
+#hacky-ass manual add to the geoids
+rainier_beach_missing = ['53033010401', '53033011200','53033011300','53033027200','53033026801']
+for tract in rainier_beach_missing:
+    rainier_beach_geoids.append(tract)
+while '53033024602' in rainier_beach_geoids:
+    rainier_beach_geoids.remove('53033024602')
+
 rainier_beach_df = df[df['GEOID'].isin(rainier_beach_geoids)]
 rainier_beach_df['neighborhood'] = 'rainier_beach'
 
@@ -665,6 +672,11 @@ wallingford_pair_df = wallingford_pair_df[~wallingford_pair_df['distance'].isnul
 wallingford_gdf = wallingford_pair_df
 wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
                      list(wallingford_gdf['GEOID_b'].drop_duplicates())
+#hacky-ass manual add to the geoids
+wallingford_missing = ['530330052001']
+for tract in wallingford_missing:
+    wallingford_geoids.append(tract)
+
 wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
 wallingford_df['neighborhood'] = 'wallingford'
 
