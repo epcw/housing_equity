@@ -35,6 +35,8 @@ df = data_prep_tract.get_df(subset='wallingford')
 gdf = data_prep_tract.get_gdf(subset='wallingford')
 df_rb = data_prep_tract.get_df(subset='rainier_beach')
 gdf_rb = data_prep_tract.get_gdf(subset='rainier_beach')
+df_combo = data_prep_tract.get_df(subset='combo')
+gdf_combo = data_prep_tract.get_gdf(subset='combo')
 #df_mtbaker = data_prep_tract.get_df(subset='mtbaker_station')
 #gdf_mtbaker = data_prep_tract.get_gdf(subset='mtbaker_station')
 #df_othello = data_prep_tract.get_df(subset='othello_station')
@@ -69,14 +71,12 @@ gdf_all['GEOID_long_a'] = gdf_all['GEOID_a']
 gdf_all['GEOID_long_b'] = gdf_all['GEOID_b']
 gdf_all['GEOID_a'] = gdf_all['GEOID_a'].str.replace("53033", "")
 gdf_all['GEOID_b'] = gdf_all['GEOID_b'].str.replace("53033", "")
-
-df = df.append(df_rb)
-#df = df.append(df_mtbaker)
-#df = df.append(df_othello)
-
-gdf = gdf.append(gdf_rb)
-#gdf = gdf.append(gdf_mtbaker)
-#gdf = gdf.append(gdf_othello)
+df_combo['GEOID_long'] = df_combo['GEOID']
+df_combo['GEOID'] = df_combo['GEOID'].str.replace("53033", "")
+gdf_combo['GEOID_long_a'] = gdf_combo['GEOID_a']
+gdf_combo['GEOID_long_b'] = gdf_combo['GEOID_b']
+gdf_combo['GEOID_a'] = gdf_combo['GEOID_a'].str.replace("53033", "")
+gdf_combo['GEOID_b'] = gdf_combo['GEOID_b'].str.replace("53033", "")
 
 from data_prep_tract import tracts
 
@@ -140,7 +140,7 @@ the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
 #PLOT
-node_list = list(set(df['GEOID']))
+node_list = list(set(df_combo['GEOID']))
 G = nx.Graph()
 #G=nx.random_geometric_graph(1422,radius=-0.5)
 '''
@@ -169,7 +169,7 @@ forceatlas2 = ForceAtlas2(
 for i in node_list:
     G.add_node(i)
 
-gdf = gdf[(gdf['omega'] > 0.05)] #filter to reduce connections by edge weight
+gdf_combo = gdf_combo[(gdf_combo['omega'] > 0.05)] #filter to reduce connections by edge weight
 
 for i, row in gdf.iterrows():
     G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega'])])
@@ -236,7 +236,7 @@ node_trace = go.Scatter(
     mode='markers+text', #make markers+text to show labels
     text=[],
     hoverinfo='text',
-    customdata=df['GEOID'],
+    customdata=df_combo['GEOID'],
     marker=dict(
         showscale=False,
         colorscale='Edge',
@@ -269,14 +269,14 @@ for node, adjacencies in enumerate(G.adjacency()):
 #node_text = df["COUNTY"] + ' ' + df["TRACT_NUM"] + ' - ' +str(len(adjacencies[1])) + ' connections'
 for node in G.nodes():
 #    node_label = df['neighborhood'] + '<br>' + df["TRACT_NUM"] + ' block group ' + df["BLOCK_GRP"] #block group version
-    node_label = df['neighborhood'] + '<br>' + df["TRACT_NUM"] #tract version
+    node_label = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"] #tract version
 
-df['tract_index'] = df['TRACT_NUM'].astype(int)
-df['neighborhood_index'] = ''
-df.loc[df.neighborhood =='wallingford','neighborhood_index'] = '1'
-df.loc[df.neighborhood == 'rainier_beach','neighborhood_index'] = '2'
+df_combo['tract_index'] = df_combo['TRACT_NUM'].astype(int)
+df_combo['neighborhood_index'] = ''
+df_combo.loc[df_combo.neighborhood =='wallingford','neighborhood_index'] = '1'
+df_combo.loc[df_combo.neighborhood == 'rainier_beach','neighborhood_index'] = '2'
 
-node_trace.marker.color = df['tract_index']
+node_trace.marker.color = df_combo['tract_index']
 #node_trace.marker.size = (df['totpop_2018z'] + 2) * 10
 node_trace.marker.size = node_adjacencies
 #node_trace.text = node_text
@@ -305,7 +305,7 @@ fig2 = px.scatter(gdff, x="rent_25th_pctile_2018z_a", y="omega_bar",color='GEOID
 fig2.update_traces(marker=dict(size=20),
                    textposition="middle right")
 '''
-dfcombo = df
+dfcombo = df_combo
 dfcombo['GEOID'] = dfcombo['GEOID'].astype(str)
 alpha = 1/6.0
 bravo = 1/6.0

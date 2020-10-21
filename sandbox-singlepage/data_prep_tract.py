@@ -686,9 +686,33 @@ for tract in wallingford_missing:
 wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
 wallingford_df['neighborhood'] = 'wallingford'
 
+#combine groupss for a comparison network
+combo_geoids = wallingford_geoids + rainier_beach_geoids
+combo_gdf = gdf[(gdf['GEOID_a'].isin(combo_geoids)) & (gdf['GEOID_b'].isin(combo_geoids))]
+
+combo_gid_a = list(combo_gdf['GEOID_a'].drop_duplicates())
+combo_gid_b = list(combo_gdf['GEOID_b'].drop_duplicates())
+
+combo_pair_data = {
+    'GEOID_a': list(),
+    'GEOID_b': list()
+}
+
+for ga, gb in itertools.product(combo_gid_a + combo_gid_b, combo_gid_a + combo_gid_b):
+    combo_pair_data['GEOID_a'].append(ga)
+    combo_pair_data['GEOID_b'].append(gb)
+
+combo_pair_df = pd.DataFrame.from_dict(combo_pair_data)
+combo_pair_df = combo_pair_df.merge(gdf, how='left', on=['GEOID_a', 'GEOID_b'])
+combo_pair_df = combo_pair_df[~combo_pair_df['distance'].isnull()]
+
+combo_gdf = combo_pair_df.drop_duplicates()
+combo_df = rainier_beach_df.append(wallingford_df)
+
 def get_df(subset='all'):
     subsets = {
         'all': df,
+        'combo':combo_df,
         'mtbaker_station': mtbaker_station_df,
         'othello_station': othello_station_df,
         'rainier_beach': rainier_beach_df,
@@ -704,6 +728,7 @@ def get_df(subset='all'):
 def get_gdf(subset='all'):
     subsets = {
         'all': gdf,
+        'combo':combo_gdf,
         'mtbaker_station': mtbaker_station_gdf,
         'othello_station': othello_station_gdf,
         'rainier_beach': rainier_beach_gdf,
@@ -715,10 +740,11 @@ def get_gdf(subset='all'):
     else:
         raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
 
-'''
-#DEBUG - CHECK FOR NaNs
+#DEBUG - CHECK FOR NaNs OR output dfs to csv for exporting
 nandf = df[df.isnull().any(axis=1)]
-csv_filename = 'data_prep_tract-nan-check.csv'
-rainier_beach_gdf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
+#csv_filename = 'data_prep_tract-nan-check.csv'
+csv_filename = 'data_prep_tract-combo_gdf.csv'
+combo_gdf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
+csv_filename = 'data_prep_tract-combo_df.csv'
+combo_df.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
 print("Exporting csv...")
-'''
