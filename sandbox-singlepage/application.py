@@ -430,10 +430,10 @@ def serve_layout():
     return html.Div([
         dcc.Link('Dashboard Home', href='/', id="app_menu"),
         html.Div([
-            html.H1('Wallingford Urban Village Network'),
-            html.P('Pilot network model of census block groups within the urban village of Wallingford (defined as all census block groups within 3km of 5303305002). Block groups that are closer together are more similar than those further apart. Census tracts (which may contain 1 or several block groups) are noted by color.', className='description'),
-            html.P('Edge weights are determined by minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income (block groups that are closer together are more similar than those further apart).', className='description'),
-            html.P('Census tracts (which may contain 1 or several block groups) are noted by color.', className='description'),
+            html.H1('EPCW pilot network model of Displacement Pressure in Seattle'),
+            html.P('Our pilot network model compares change in equitable access to housing and displacement pressure in two Seattle neighborhoods over the years 2013 to 2018.  RICHS PITHY SUMMARY OF WHY MODELS ARE GOOD TOOLS HERE.', className='description'),
+            html.P('In the network model below, tracts that are closer together are more similar than those further apart.', className='description'),
+            html.P('Edge weights are determined by minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income, and median monthly housing cost.', className='description'),
             dcc.Graph(figure=fig,
                       id='housing_networkx'
                       ),
@@ -441,13 +441,13 @@ def serve_layout():
 #                      id='housing_bar'
 #                      ),
             html.H1('Change in displacement pressure'),
-            html.P('This scatterplot compares displacement pressure (omega) in each census block group.  Block groups exactly along the dashed line had no change in pressure from 2013-18. Block groups above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018', className='description'),
+            html.P('This scatterplot compares displacement pressure (omega) in each census block group.  Block groups exactly along the dashed line had no change in pressure from 2013-18. Block groups above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018. YOUR ANALYSIS HERE TO EXPLAIN WTF THIS IS', className='description'),
             dcc.Graph(figure=fig3,
                       id='displacement_scatter'
                       ),
             html.Div([
                 html.H1('2010 vs 2018'),
-                html.P('These maps compare the Displacement Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure.',
+                html.P('These maps compare the Displacement Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure. YOUR ANALYSIS HERE TO EXPLAIN WTF THIS IS',
                        className='description graph_title'),
                 html.Div([
                     html.Div([
@@ -463,7 +463,7 @@ def serve_layout():
             ], className='container'),
             html.H1('Change in displacement pressure map'),
             html.P(
-                'This map compares displacement pressure (omega) in each census block group.  Red areas had INCREASING displacement pressure between 2013 and 2018. Green had decreasing',
+                'This map compares displacement pressure (omega) in each census block group.  Red areas had INCREASING displacement pressure between 2013 and 2018. Green had decreasing. YOUR ANALYSIS HERE TO EXPLAIN WTF THIS IS',
                 className='description'),
             dcc.Graph(figure=fig4,
                 id='block_grp_map'
