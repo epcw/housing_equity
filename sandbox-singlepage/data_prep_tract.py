@@ -510,7 +510,7 @@ foxtrot = 1/6.0
 golf = 1/6.0
 hotel = 0
 
-threshold = -10.5
+threshold = -0.5
 
 #2013 + change version
 gdf['omega'] = (
