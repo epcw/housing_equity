@@ -483,34 +483,34 @@ gdf['median_housing_age_change_delta_2013'] = ((gdf.median_housing_age_2013z_a) 
 gdf['median_housing_age_change_delta_2013'] = gdf['median_housing_age_change_delta_2013'].fillna(0)
 
 #Delta in 2018 (without taking into account change)
-gdf['minority_pop_pct_change_delta_2018'] = (gdf.minority_pop_pct_2018z_a) - (gdf.minority_pop_pct_2018z_b).abs()
+gdf['minority_pop_pct_change_delta_2018'] = ((gdf.minority_pop_pct_2018z_a) - (gdf.minority_pop_pct_2018z_b)).abs()
 gdf['minority_pop_pct_change_delta_2018'] = gdf['minority_pop_pct_change_delta_2018'].fillna(0) #deals with nan in dataframe, which was breaking the network
-gdf['rent_25th_pctile_change_delta_2018'] = (gdf.rent_25th_pctile_2018z_a) - (gdf.rent_25th_pctile_2018z_b).abs()
+gdf['rent_25th_pctile_change_delta_2018'] = ((gdf.rent_25th_pctile_2018z_a) - (gdf.rent_25th_pctile_2018z_b)).abs()
 gdf['rent_25th_pctile_change_delta_2018'] = gdf['rent_25th_pctile_change_delta_2018'].fillna(0)
-gdf['totpop_change_delta_2018'] = (gdf.totpop_2018z_a) - (gdf.totpop_2018z_b).abs()
+gdf['totpop_change_delta_2018'] = ((gdf.totpop_2018z_a) - (gdf.totpop_2018z_b)).abs()
 gdf['totpop_change_delta_2018'] = gdf['totpop_change_delta_2018'].fillna(0)
-gdf['rent_pct_income_change_delta_2018'] = (gdf.rent_pct_income_2018z_a) - (gdf.rent_pct_income_2018z_b).abs()
+gdf['rent_pct_income_change_delta_2018'] = ((gdf.rent_pct_income_2018z_a) - (gdf.rent_pct_income_2018z_b)).abs()
 gdf['rent_pct_income_change_delta_2018'] = gdf['rent_pct_income_change_delta_2018'].fillna(0)
 gdf['monthly_housing_cost_change_delta_2018'] = ((gdf.monthly_housing_cost_2018z_a) - (gdf.monthly_housing_cost_2018z_b)).abs()
 gdf['monthly_housing_cost_change_delta_2018'] = gdf['monthly_housing_cost_change_delta_2018'].fillna(0)
-gdf['affordable_units_per_cap_change_delta_2018'] = (gdf.affordable_units_per_cap_2018z_a) - (gdf.affordable_units_per_cap_2018z_b).abs()
+gdf['affordable_units_per_cap_change_delta_2018'] = ((gdf.affordable_units_per_cap_2018z_a) - (gdf.affordable_units_per_cap_2018z_b)).abs()
 gdf['affordable_units_per_cap_change_delta_2018'] = gdf['affordable_units_per_cap_change_delta_2018'].fillna(0)
-gdf['median_tenancy_change_delta_2018'] = (gdf.median_tenancy_2018z_a) - (gdf.median_tenancy_2018z_b).abs()
+gdf['median_tenancy_change_delta_2018'] = ((gdf.median_tenancy_2018z_a) - (gdf.median_tenancy_2018z_b)).abs()
 gdf['median_tenancy_change_delta_2018'] = gdf['median_tenancy_change_delta_2018'].fillna(0)
-gdf['median_housing_age_change_delta_2018'] = (gdf.median_housing_age_2018z_a) - (gdf.median_housing_age_2018z_b).abs()
+gdf['median_housing_age_change_delta_2018'] = ((gdf.median_housing_age_2018z_a) - (gdf.median_housing_age_2018z_b)).abs()
 gdf['median_housing_age_change_delta_2018'] = gdf['median_housing_age_change_delta_2018'].fillna(0)
 
 #weight the edges
 alpha = 1/6.0
-bravo = 0
+bravo = 1/6.0
 charlie = 1/6.0
-delta = 0
+delta = 1/6.0
 echo = 1/6.0
 foxtrot = 1/6.0
 golf = 1/6.0
 hotel = 0
 
-threshold = -0.5
+threshold = -10.5
 
 #2013 + change version
 gdf['omega'] = (
@@ -622,6 +622,8 @@ othello_station_df['neighborhood'] = 'othello_station'
 
 #create rainier_beach_df & rainier_beach_gdf
 rainier_beach_gdf = gdf[((gdf['GEOID_a'] == '53033011700') & (gdf['distance'] < 7000)) | ((gdf['GEOID_b'] == '53033011700') & (gdf['distance'] < 7000))]
+#rainier_beach_gdf = gdf[((gdf['GEOID_a'] == '53033001701') | (gdf['GEOID_a'] == '53033010900')) & ((gdf['GEOID_b'] == '53033001701') | (gdf['GEOID_b'] == '53033010900'))]
+
 rainier_beach_gid_a = list(rainier_beach_gdf['GEOID_a'].drop_duplicates())
 rainier_beach_gid_b = list(rainier_beach_gdf['GEOID_b'].drop_duplicates())
 
@@ -647,12 +649,15 @@ for tract in rainier_beach_missing:
     rainier_beach_geoids.append(tract)
 while '53033024602' in rainier_beach_geoids:
     rainier_beach_geoids.remove('53033024602')
-
+#for testing
+#rainier_beach_geoids = ['53033001701','53033010900']
 rainier_beach_df = df[df['GEOID'].isin(rainier_beach_geoids)]
 rainier_beach_df['neighborhood'] = 'rainier_beach'
 
 #create wallingford_df & wallingford_gdf
 wallingford_gdf = gdf[((gdf['GEOID_a'] == '53033004600') & (gdf['distance'] < 4000)) | ((gdf['GEOID_b'] == '53033004600') & (gdf['distance'] < 4000))]
+#wallingford_gdf = gdf[((gdf['GEOID_a'] == '53033005000') | (gdf['GEOID_a'] == '53033003500') | (gdf['GEOID_a'] == '53033005200')) & ((gdf['GEOID_b'] == '53033005000') | (gdf['GEOID_b'] == '53033003500')| (gdf['GEOID_b'] == '53033005200'))]
+
 wallingford_gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
 wallingford_gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
 
@@ -676,7 +681,8 @@ wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
 wallingford_missing = ['53033005200']
 for tract in wallingford_missing:
     wallingford_geoids.append(tract)
-
+#for testing
+#wallingford_geoids = ['53033005000','53033003500']
 wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
 wallingford_df['neighborhood'] = 'wallingford'
 

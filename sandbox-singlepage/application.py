@@ -307,13 +307,13 @@ fig2.update_traces(marker=dict(size=20),
 '''
 dfcombo = df
 dfcombo['GEOID'] = dfcombo['GEOID'].astype(str)
-alpha = 1/5.0
-bravo = 0
-charlie = 1/5.0
-delta = 0
-echo = 1/5.0
-foxtrot = 1/5.0
-golf = 1/5.0
+alpha = 1/6.0
+bravo = 1/6.0
+charlie = 1/6.0
+delta = 1/6.0
+echo = 1/6.0
+foxtrot = 1/6.0
+golf = 1/6.0
 
 dfcombo['omega_13'] = (
         -(alpha * dfcombo.minority_pop_pct_2013z.fillna(0)) + \
@@ -434,9 +434,93 @@ def serve_layout():
             html.P('Our pilot network model compares change in equitable access to housing and displacement pressure in two Seattle neighborhoods over the years 2013 to 2018.  RICHS PITHY SUMMARY OF WHY MODELS ARE GOOD TOOLS HERE.', className='description'),
             html.P('In the network model below, tracts that are closer together are more similar than those further apart.', className='description'),
             html.P('Edge weights are determined by minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income, and median monthly housing cost.', className='description'),
+            html.Div([
+                html.H1('2010 vs 2018'),
+                html.P(
+                    'These maps compare the Displacement Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure. YOUR ANALYSIS HERE TO EXPLAIN WTF THIS IS',
+                    className='description graph_title'),
+
             dcc.Graph(figure=fig,
                       id='housing_networkx'
                       ),
+                html.Div([
+                    html.Div([
+                        html.H4('Minority Population Percentage')], className='col-4'),
+                    html.Div([
+                        dcc.Slider(
+                            id='alpha',
+                            min=0,
+                            max=1,
+                            step=0.1,
+                            value=1
+                        )], className='col-6')], className='multi-col'),
+                html.Div([
+                    html.Div([
+                        html.H4('Rent cost of 25th percentile')], className='col-4'),
+                    html.Div([
+                        dcc.Slider(
+                            id='beta',
+                            min=0,
+                            max=1,
+                            step=0.1,
+                            value=1
+                        )], className='col-6')], className='multi-col'),
+                html.Div([
+                    html.Div([
+                        html.H4('Total Population')], className='col-4'),
+                    html.Div([
+                        dcc.Slider(
+                            id='charlie',
+                            min=0,
+                            max=1,
+                            step=0.1,
+                            value=1
+                        )], className='col-6')], className='multi-col'),
+                html.Div([
+                    html.Div([
+                        html.H4('Rent as a percentage of income')], className='col-4'),
+                    html.Div([
+                        dcc.Slider(
+                            id='delta',
+                            min=0,
+                            max=1,
+                            step=0.1,
+                            value=1
+                        )], className='col-6')], className='multi-col'),
+                html.Div([
+                    html.Div([
+                        html.H4('Monthly housing cost')], className='col-4'),
+                    html.Div([
+                        dcc.Slider(
+                            id='echo',
+                            min=0,
+                            max=1,
+                            step=0.1,
+                            value=1
+                        )], className='col-6')], className='multi-col'),
+                html.Div([
+                    html.Div([
+                        html.H4('Affordable Housing Units / capita')], className='col-4'),
+                    html.Div([
+                        dcc.Slider(
+                            id='foxtrot',
+                            min=0,
+                            max=1,
+                            step=0.1,
+                            value=1
+                        )], className='col-6')], className='multi-col'),
+                html.Div([
+                    html.Div([
+                        html.H4('Median Tenure')], className='col-4'),
+                    html.Div([
+                        dcc.Slider(
+                            id='golf',
+                            min=0,
+                            max=1,
+                            step=0.1,
+                            value=1
+                        )], className='col-6')], className='multi-col'),
+            ], className='container'),
 #            dcc.Graph(figure=fig2,
 #                      id='housing_bar'
 #                      ),
@@ -469,7 +553,7 @@ def serve_layout():
                 id='block_grp_map'
             ),
              html.H1('Groupings'),
-             html.P('Census Block Groups', className='description'),
+             html.H4('Census Tracts', className='description'),
             html.P('Group 0 - size: ' + str(grp0_length), className='description'),
             generate_table(grp0),
             html.P('Group 1 - size: ' + str(grp1_length), className='description'),
