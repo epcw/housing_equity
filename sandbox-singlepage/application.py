@@ -175,7 +175,7 @@ for i in node_list:
 gdf_combo = gdf_combo[(gdf_combo['omega'] > 0.05)] #filter to reduce connections by edge weight
 
 for i, row in gdf.iterrows():
-    G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega'])])
+    G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega13'])])
 
 
 #CACHE-USING VERSION

@@ -506,12 +506,14 @@ bravo = 1/6.0
 charlie = 1/6.0
 delta = 1/6.0
 echo = 1/6.0
-foxtrot = 1/6.0
-golf = 1/6.0
+foxtrot = 0
+golf = 0
 hotel = 0
 
 threshold = -0.5
 
+#TODO - switch to non-hispanic white population instead of minority to get rid of negative sign.
+#TODO - Add in total-units-tract for denominator for affordablehousing.
 #2013 + change version
 gdf['omega'] = (
         -(alpha * gdf.minority_pop_pct_change_delta) + \
@@ -529,7 +531,7 @@ gdf = gdf[(gdf['omega'] >= threshold)]
 
 #2013 only version
 gdf['omega13'] = (
-        -(alpha * gdf.minority_pop_pct_change_delta_2013) + \
+        (alpha * gdf.minority_pop_pct_change_delta_2013) + \
         (bravo * gdf.rent_25th_pctile_change_delta_2013) + \
         (charlie * gdf.totpop_change_delta_2013) + \
         (delta * gdf.rent_pct_income_change_delta_2013) + \
