@@ -673,7 +673,7 @@ wallingford_gdf = wallingford_pair_df
 wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
                      list(wallingford_gdf['GEOID_b'].drop_duplicates())
 #hacky-ass manual add to the geoids
-wallingford_missing = ['530330052001']
+wallingford_missing = ['53033005200']
 for tract in wallingford_missing:
     wallingford_geoids.append(tract)
 

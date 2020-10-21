@@ -335,7 +335,7 @@ dfcombo['omega_18'] = (
         -(golf * dfcombo.median_tenancy_2018z.fillna(0))
 )
 dfcombo['omega_change'] = dfcombo.omega_18 - dfcombo.omega_13
-dfcombo = dfcombo.drop_duplicates()
+#dfcombo = dfcombo.drop_duplicates()
 #dfcombo = dfcombo[['GEOID','GEOID_long','omega_13','omega_18','omega_change']].drop_duplicates()
 #Kmeans clustering
 Y = dfcombo[['GEOID','omega_13','omega_18']]
