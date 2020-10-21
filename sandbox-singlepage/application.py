@@ -78,6 +78,9 @@ gdf_combo['GEOID_long_b'] = gdf_combo['GEOID_b']
 gdf_combo['GEOID_a'] = gdf_combo['GEOID_a'].str.replace("53033", "")
 gdf_combo['GEOID_b'] = gdf_combo['GEOID_b'].str.replace("53033", "")
 
+df = df.append(df_rb)
+gdf = gdf.append(gdf_rb)
+
 from data_prep_tract import tracts
 
 '''
@@ -305,7 +308,7 @@ fig2 = px.scatter(gdff, x="rent_25th_pctile_2018z_a", y="omega_bar",color='GEOID
 fig2.update_traces(marker=dict(size=20),
                    textposition="middle right")
 '''
-dfcombo = df_combo
+dfcombo = df
 dfcombo['GEOID'] = dfcombo['GEOID'].astype(str)
 alpha = 1/6.0
 bravo = 1/6.0

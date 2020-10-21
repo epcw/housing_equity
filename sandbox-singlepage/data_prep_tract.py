@@ -4,13 +4,13 @@ import csv
 import json
 
 #set root directory for data files
-#ROOTDIR = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
-ROOTDIR = '' #local
+#ROOTBEER = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
+ROOTBEER = '' #local
 
-with open(ROOTDIR + 'data/washingtongeo.json','r') as GeoJSON:
+with open(ROOTBEER + 'data/washingtongeo.json','r') as GeoJSON:
     tracts = json.load(GeoJSON)
 
-df_raw = pd.read_csv(ROOTDIR + 'data/totalpop-tract.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
+df_raw = pd.read_csv(ROOTBEER + 'data/totalpop-tract.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
 df13_raw = df_raw[(df_raw['YEAR'] == '2013')]
 df13_raw = df13_raw.rename(columns = {'DATA' : 'TOT_POP_2013'})
 df13_raw = df13_raw[['GEOID','COUNTY','TRACT_NUM','TOT_POP_2013']]
@@ -20,7 +20,7 @@ df18_raw = df18_raw[['GEOID','COUNTY','TRACT_NUM','TOT_POP_2018']]
 df = df13_raw.merge(df18_raw, how='left', left_on=['GEOID','COUNTY','TRACT_NUM'], right_on=['GEOID','COUNTY','TRACT_NUM'])
 
 #bring in affordable housing data
-housing_df_raw = pd.read_csv(ROOTDIR + 'data/affordable_housing_units-allyears-tract.csv', dtype={"TRACT_NUM": str,"YEAR":str,"GEOID":str}) #prefiltered for King County
+housing_df_raw = pd.read_csv(ROOTBEER + 'data/affordable_housing_units-allyears-tract.csv', dtype={"TRACT_NUM": str,"YEAR":str,"GEOID":str}) #prefiltered for King County
 
 #filter for Year
 housing_df13 = housing_df_raw[(housing_df_raw['YEAR'] == '2013')]
@@ -34,7 +34,7 @@ housing_data18 = housing_data18.rename(columns = {'DATA' : 'sub_600_per_mo_housi
 housing_df = housing_data13.merge(housing_data18, how='left', left_on=['GEOID','TRACT_NUM','COUNTY'], right_on=['GEOID','TRACT_NUM','COUNTY'])
 
 #bring in tenancy, cost, and occupancy data and filter for 2010 & 2018
-housing_details_raw = pd.read_csv(ROOTDIR + 'data/housing_details.csv', dtype={"TRACT_NUM": str, "GEOID": str, "YEAR":int}) #NOTE: pre-filtered in SQL for King County
+housing_details_raw = pd.read_csv(ROOTBEER + 'data/housing_details.csv', dtype={"TRACT_NUM": str, "GEOID": str, "YEAR":int}) #NOTE: pre-filtered in SQL for King County
 housing_details_raw['DATA'] = housing_details_raw['DATA'].astype(str).map(lambda x: x.rstrip('+-'))
 housing_details_raw['DATA'] = housing_details_raw['DATA'].astype(float)
 housing_details13 = housing_details_raw[(housing_details_raw['YEAR'] == 2013)]
@@ -213,7 +213,7 @@ df.loc[df.housing_age18 > 100, 'housing_age18'] = None
 #df.loc[df.housing_age_rented10 > 100, 'housing_age_rented10'] = None
 #df.loc[df.housing_age_rented18 > 100, 'housing_age_rented18'] = None
 
-rdf = pd.read_csv(ROOTDIR + 'data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
+rdf = pd.read_csv(ROOTBEER + 'data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
 
 #filter for King County 2010
 rdf13 = rdf[(rdf['COUNTY'] == 'King') & (rdf['YEAR'] == '2013')]
@@ -301,7 +301,7 @@ df['minority_pop_pct_2013'] = df['minority_pop_2013'] / df['TOT_POP_2013']
 df['minority_pop_2018'] = df['TOT_POP_2018'] - df['pop_white_nonhisp_only_2018']
 df['minority_pop_pct_2018'] = df['minority_pop_2018'] / df['TOT_POP_2018']
 
-gdf = pd.read_csv(ROOTDIR + 'data/washingtongeo_dist.csv',
+gdf = pd.read_csv(ROOTBEER + 'data/washingtongeo_dist.csv',
                    dtype={"TRACTCE_a": str,"TRACTCE_b": str})
 
 #create GEOID
