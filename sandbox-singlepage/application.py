@@ -144,9 +144,9 @@ pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
 #PLOT
 node_list = list(set(df_combo['GEOID']))
-G = nx.Graph()
+#G = nx.Graph()
 G2018 = nx.Graph()
-#G=nx.random_geometric_graph(1422,radius=-0.5)
+
 '''
 #normal version (no cache)
 forceatlas2 = ForceAtlas2(
@@ -171,12 +171,12 @@ forceatlas2 = ForceAtlas2(
                         verbose=True)
 '''
 for i in node_list:
-    G.add_node(i)
+#    G.add_node(i)
     G2018.add_node(i)
 
 #Build the Edge list for the network graph for 2013
 for i, row in gdf_combo.iterrows():
-    G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega13'])])
+#    G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega13'])])
     G2018.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega18'])])
 
 #CACHE-USING VERSION
@@ -204,14 +204,14 @@ def query_forceatlas2():
                             verbose=False)
     return forceatlas2
 
-def pos():
-    return query_forceatlas2().forceatlas2_networkx_layout(G,pos=None, iterations=1000)
+#def pos():
+#    return query_forceatlas2().forceatlas2_networkx_layout(G,pos=None, iterations=1000)
 
 def pos2018():
     return query_forceatlas2().forceatlas2_networkx_layout(G2018,pos=None, iterations=1000)
 
-for n, p in pos().items():
-    G.nodes[n]['pos'] = p
+#for n, p in pos().items():
+#    G.nodes[n]['pos'] = p
 
 for n, p in pos2018().items():
     G2018.nodes[n]['pos'] = p
@@ -226,13 +226,13 @@ for n, p in pos.items():
 '''
 
 #plot this bad boy
-edge_trace = go.Scatter(
-    x=[],
-    y=[],
-    line=dict(width=1,color='#c6c6c6'),
-    hoverinfo='text',
-    mode='lines'
-)
+#edge_trace = go.Scatter(
+#    x=[],
+#    y=[],
+#    line=dict(width=1,color='#c6c6c6'),
+#    hoverinfo='text',
+#    mode='lines'
+#)
 
 edge_trace2018 = go.Scatter(
     x=[],
@@ -242,11 +242,11 @@ edge_trace2018 = go.Scatter(
     mode='lines'
 )
 
-for edge in G.edges():
-    x0, y0 = G.nodes[edge[0]]['pos']
-    x1, y1 = G.nodes[edge[1]]['pos']
-    edge_trace['x'] += tuple([x0, x1, None])
-    edge_trace['y'] += tuple([y0, y1, None])
+#for edge in G.edges():
+#    x0, y0 = G.nodes[edge[0]]['pos']
+#    x1, y1 = G.nodes[edge[1]]['pos']
+#    edge_trace['x'] += tuple([x0, x1, None])
+#    edge_trace['y'] += tuple([y0, y1, None])
 
 for edge in G2018.edges():
     x0, y0 = G2018.nodes[edge[0]]['pos']
@@ -254,36 +254,36 @@ for edge in G2018.edges():
     edge_trace2018['x'] += tuple([x0, x1, None])
     edge_trace2018['y'] += tuple([y0, y1, None])
 
-node_trace = go.Scatter(
-    x=[],
-    y=[],
-    mode='markers+text', #make markers+text to show labels
-    text=[],
-    hoverinfo='text',
-    customdata=df_combo['GEOID'],
-    marker=dict(
-        showscale=False,
-        colorscale='Edge',
-        reversescale=False,
-        color=[],
-        size=30,
-        opacity=0.8,
-        colorbar=dict(
-            thickness=10,
-            title='COLOR GROUP BY CENSUS TRACT NUMBER',
-            xanchor='left',
-            titleside='right'
-        ),
-        line=dict(width=0)
-    ),
-    showlegend=True,
-    marker_line_width=1
-)
+#node_trace = go.Scatter(
+#    x=[],
+#    y=[],
+#    mode='markers+text', #make markers+text to show labels
+#    text=[],
+#    hoverinfo='text',
+#    customdata=df_combo['GEOID'],
+#    marker=dict(
+#        showscale=False,
+#        colorscale='Edge',
+#        reversescale=False,
+#        color=[],
+#        size=20,
+#        opacity=0.8,
+#        colorbar=dict(
+#            thickness=10,
+#            title='COLOR GROUP BY CENSUS TRACT NUMBER',
+#            xanchor='left',
+#            titleside='right'
+#        ),
+#        line=dict(width=0)
+#    ),
+#    showlegend=True,
+#    marker_line_width=1
+#)
 
 node_trace2018 = go.Scatter(
     x=[],
     y=[],
-    mode='markers+text', #make markers+text to show labels
+   mode='markers+text', #make markers+text to show labels
     text=[],
     hoverinfo='text',
     customdata=df_combo['GEOID'],
@@ -292,7 +292,7 @@ node_trace2018 = go.Scatter(
         colorscale='Edge',
         reversescale=False,
         color=[],
-        size=30,
+        size=20,
         opacity=0.8,
         colorbar=dict(
             thickness=10,
@@ -306,27 +306,27 @@ node_trace2018 = go.Scatter(
     marker_line_width=1
 )
 
-for node in G.nodes():
-    x, y = G.nodes[node]['pos']
-    node_trace['x'] += tuple([x])
-    node_trace['y'] += tuple([y])
+#for node in G.nodes():
+#    x, y = G.nodes[node]['pos']
+#    node_trace['x'] += tuple([x])
+#    node_trace['y'] += tuple([y])
 
 for node in G2018.nodes():
     x, y = G2018.nodes[node]['pos']
     node_trace2018['x'] += tuple([x])
     node_trace2018['y'] += tuple([y])
 
-node_adjacencies = []
+#node_adjacencies = []
 node_adjacencies2018 = []
 
-for node, adjacencies in enumerate(G.adjacency()):
-    node_adjacencies.append(len(adjacencies[1]))
+#for node, adjacencies in enumerate(G.adjacency()):
+#    node_adjacencies.append(len(adjacencies[1]))
 
 for node, adjacencies in enumerate(G2018.adjacency()):
     node_adjacencies2018.append(len(adjacencies[1]))
 
-for node in G.nodes():
-    node_label = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"] #tract version
+#for node in G.nodes():
+#    node_label = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"] #tract version
 
 for node in G2018.nodes():
     node_label2018 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"] #tract version
@@ -336,25 +336,25 @@ df_combo['neighborhood_index'] = ''
 df_combo.loc[df_combo.neighborhood =='wallingford','neighborhood_index'] = '1'
 df_combo.loc[df_combo.neighborhood == 'rainier_beach','neighborhood_index'] = '2'
 
-node_trace.marker.color = df_combo['tract_index']
-node_trace.marker.size = node_adjacencies
-node_trace.text = node_label
+#node_trace.marker.color = df_combo['tract_index']
+#node_trace.marker.size = node_adjacencies
+#node_trace.text = node_label
 
 node_trace2018.marker.color = df_combo['tract_index']
-node_trace2018.marker.size = node_adjacencies
-node_trace2018.text = node_label
+node_trace2018.marker.size = node_adjacencies2018
+node_trace2018.text = node_label2018
 
-fig = go.Figure(data=[edge_trace, node_trace],
-             layout=go.Layout(
-                title='',
-                titlefont=dict(size=16),
-                showlegend=False,
-                hovermode='closest',
-                margin=dict(b=20,l=5,r=5,t=40),
-                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+#fig = go.Figure(data=[edge_trace, node_trace],
+#             layout=go.Layout(
+#                title='',
+#                titlefont=dict(size=16),
+#                showlegend=False,
+#                hovermode='closest',
+#                margin=dict(b=20,l=5,r=5,t=40),
+#                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+#                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
 
-fig.update_traces(textfont_size=25)
+#fig.update_traces(textfont_size=25)
 
 fig2 = go.Figure(data=[edge_trace2018, node_trace2018],
              layout=go.Layout(
@@ -398,8 +398,8 @@ dfcombo['omega_18'] = (
         (golf * dfcombo.median_tenancy_2018z.fillna(0))
 )
 dfcombo['omega_change'] = dfcombo.omega_18 - dfcombo.omega_13
-#dfcombo = dfcombo.drop_duplicates()
-#dfcombo = dfcombo[['GEOID','GEOID_long','omega_13','omega_18','omega_change']].drop_duplicates()
+
+'''
 #Kmeans clustering
 Y = dfcombo[['GEOID','omega_13','omega_18']]
 Y = Y[~Y['omega_13'].isnull()]
@@ -415,7 +415,6 @@ for i in range(K):
     Y['center_{}'.format(i)] = c['center_{}'.format(i)]
 for i in range(K):
     Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
-
 #re-merge with gdfcombo
 dfcombo = dfcombo.merge(Y, how='left', left_on=['GEOID','omega_13','omega_18'], right_on=['GEOID','omega_13','omega_18'])
 
@@ -438,6 +437,7 @@ grp3 = dfcombo[(dfcombo['labels'] == 3)].drop_duplicates()
 grp3 = grp3[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
 grp3_length = str(grp3.shape)
 grp3 = grp3.sort_values('omega_change')
+'''
 
 fig3 = px.scatter(dfcombo, x="omega_13", y="omega_18",color='neighborhood',text='GEOID'
 )
@@ -497,18 +497,23 @@ def serve_layout():
             html.P('In the network model below, tracts that are closer together are more similar than those further apart.  One can best think of this network as a comparison of SIMILARITY.  Nodes closer together have more similar demographic properties than those further apart.', className='description'),
             html.P('Edge weights are determined by minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income, and median monthly housing cost.', className='description'),
             html.Div([
-                html.Div([
-                    html.Div([
-                        html.H2(className='graph_title', children='2013'),
-                        dcc.Graph(figure=fig,
-                                  id='housing_networkx'
-                                  )], className='col-6'),
-                    html.Div([
-                        html.H2(className='graph_title', children='2018'),
-                        dcc.Graph(figure=fig2,
-                                  id='housing_networkx18'
-                                  )], className='col-6')], className='multi-col'),
-            ], className='container'),
+                dcc.Graph(figure=fig2,
+                          id='housing_networkx18',
+                          )
+            ]),
+#            html.Div([
+#                html.Div([
+#                    html.Div([
+#                        html.H2(className='graph_title', children='2013'),
+#                        dcc.Graph(figure=fig,
+#                                  id='housing_networkx'
+#                                  )], className='col-6'),
+#                    html.Div([
+#                        html.H2(className='graph_title', children='2018'),
+#                        dcc.Graph(figure=fig2,
+#                                  id='housing_networkx18'
+#                                  )], className='col-6')], className='multi-col'),
+#            ], className='container'),
             html.Div([
                 html.P(['NOTE: these sliders are currently inactive, but when functional will allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
                 ]),
