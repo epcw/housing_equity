@@ -321,18 +321,14 @@ node_adjacencies2018 = []
 
 for node, adjacencies in enumerate(G.adjacency()):
     node_adjacencies.append(len(adjacencies[1]))
-    #node_text.append('# of connections: '+str(len(adjacencies[1])))
 
 for node, adjacencies in enumerate(G2018.adjacency()):
     node_adjacencies2018.append(len(adjacencies[1]))
 
-#node_text = df["COUNTY"] + ' ' + df["TRACT_NUM"] + ' - ' +str(len(adjacencies[1])) + ' connections'
 for node in G.nodes():
-#    node_label = df['neighborhood'] + '<br>' + df["TRACT_NUM"] + ' block group ' + df["BLOCK_GRP"] #block group version
     node_label = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"] #tract version
 
 for node in G2018.nodes():
-#    node_label = df['neighborhood'] + '<br>' + df["TRACT_NUM"] + ' block group ' + df["BLOCK_GRP"] #block group version
     node_label2018 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"] #tract version
 
 df_combo['tract_index'] = df_combo['TRACT_NUM'].astype(int)
@@ -341,9 +337,7 @@ df_combo.loc[df_combo.neighborhood =='wallingford','neighborhood_index'] = '1'
 df_combo.loc[df_combo.neighborhood == 'rainier_beach','neighborhood_index'] = '2'
 
 node_trace.marker.color = df_combo['tract_index']
-#node_trace.marker.size = (df['totpop_2018z'] + 2) * 10
 node_trace.marker.size = node_adjacencies
-#node_trace.text = node_text
 node_trace.text = node_label
 
 node_trace2018.marker.color = df_combo['tract_index']

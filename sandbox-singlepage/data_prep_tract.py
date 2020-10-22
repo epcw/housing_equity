@@ -107,123 +107,37 @@ df = df.merge(costs_13f, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM']
 df = df.merge(costs_18df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
 #occupancy and housing age data
-#occupancydf_units13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25002_001E')]
-#occupancydf_units13['DATA'] = occupancydf_units13['DATA'].astype(float)
-#occupancydf_units13 = occupancydf_units13.rename(columns = {'DATA' : 'housing_units_2013'})
-#occupancydf_units13 = occupancydf_units13[['GEOID','housing_units_2013','COUNTY','TRACT_NUM']]
-#occupancydf_occupied13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25002_002E')]
-#occupancydf_occupied13['DATA'] = occupancydf_occupied13['DATA'].astype(float)
-#occupancydf_occupied13 = occupancydf_occupied13.rename(columns = {'DATA' : 'housing_occupied_2013'})
-#occupancydf_occupied13 = occupancydf_occupied13[['GEOID','housing_occupied_2013','COUNTY','TRACT_NUM']]
-#occupancydf_vacant13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25002_003E')]
-#occupancydf_vacant13['DATA'] = occupancydf_vacant13['DATA'].astype(float)
-#occupancydf_vacant13 = occupancydf_vacant13.rename(columns = {'DATA' : 'housing_vacant_2013'})
-#occupancydf_vacant13 = occupancydf_vacant13[['GEOID','housing_vacant_2013','COUNTY','TRACT_NUM']]
 occupancydf_built13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25037_001E')]
 occupancydf_built13['DATA'] = occupancydf_built13['DATA'].astype(float)
 occupancydf_built13 = occupancydf_built13.rename(columns = {'DATA' : 'housing_yr_built_2013'})
 occupancydf_built13 = occupancydf_built13[['GEOID','housing_yr_built_2013','COUNTY','TRACT_NUM']]
-#occupancydf_built_owned13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25037_002E')]
-#occupancydf_built_owned13['DATA'] = occupancydf_built_owned13['DATA'].astype(float)
-#occupancydf_built_owned13 = occupancydf_built_owned13.rename(columns = {'DATA' : 'housing_yr_built_owned_2013'})
-#occupancydf_built_owned13 = occupancydf_built_owned13[['GEOID','housing_yr_built_owned_2013','COUNTY','TRACT_NUM']]
-#occupancydf_built_rented13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25037_003E')]
-#occupancydf_built_rented13['DATA'] = occupancydf_built_rented13['DATA'].astype(float)
-#occupancydf_built_rented13 = occupancydf_built_rented13.rename(columns = {'DATA' : 'housing_yr_built_rented_2013'})
-#occupancydf_built_rented13 = occupancydf_built_rented13[['GEOID','housing_yr_built_rented_2013','COUNTY','TRACT_NUM']]
 occupancydf_tenure13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25039_001E')]
 occupancydf_tenure13['DATA'] = occupancydf_tenure13['DATA'].astype(float)
 occupancydf_tenure13 = occupancydf_tenure13.rename(columns = {'DATA' : 'housing_yr_movein_2013'})
 occupancydf_tenure13 = occupancydf_tenure13[['GEOID','housing_yr_movein_2013','COUNTY','TRACT_NUM']]
-#occupancydf_tenure_owned13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25039_002E')]
-#occupancydf_tenure_owned13['DATA'] = occupancydf_tenure_owned13['DATA'].astype(float)
-#occupancydf_tenure_owned13 = occupancydf_tenure_owned13.rename(columns = {'DATA' : 'housing_yr_movein_owned_2013'})
-#occupancydf_tenure_owned13 = occupancydf_tenure_owned13[['GEOID','housing_yr_movein_owned_2013','COUNTY','TRACT_NUM']]
-#occupancydf_tenure_rented13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25039_003E')]
-#occupancydf_tenure_rented13['DATA'] = occupancydf_tenure_rented13['DATA'].astype(float)
-#occupancydf_tenure_rented13 = occupancydf_tenure_rented13.rename(columns = {'DATA' : 'housing_yr_movein_rented_2013'})
-#occupancydf_tenure_rented13 = occupancydf_tenure_rented13[['GEOID','housing_yr_movein_rented_2013','COUNTY','TRACT_NUM']]
-#occupancydf13 = occupancydf_units13.merge(occupancydf_occupied13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf13 = occupancydf13.merge(occupancydf_vacant13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf13 = occupancydf_units13.merge(occupancydf_built13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf13 = occupancydf13.merge(occupancydf_built_owned13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf13 = occupancydf13.merge(occupancydf_built_rented13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
 occupancydf13 = occupancydf_built13.merge(occupancydf_tenure13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf13 = occupancydf13.merge(occupancydf_tenure_owned13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf13 = occupancydf13.merge(occupancydf_tenure_rented13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
 
 df = df.merge(occupancydf13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#df['occupancy_pct13'] = (df['housing_occupied_2013'] / df['housing_units_2013']) * 100
-#df['vacancy_pct13'] = (df['housing_vacant_2013'] / df['housing_units_2013']) * 100
 df['housing_age13'] = 2013 - df['housing_yr_built_2013']
-#df['housing_age_owned13'] = 2013 - df['housing_yr_built_owned_2013']
-#df['housing_age_rented13'] = 2013 - df['housing_yr_built_rented_2013']
 df['housing_tenure13'] = df['housing_yr_movein_2013']
-#df['housing_tenure_owned13'] = 2013 - df['housing_yr_movein_owned_2013']
-#df['housing_tenure_rented13'] = 2013 - df['housing_yr_movein_rented_2013']
 
-#occupancydf_units18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25002_001E')]
-#occupancydf_units18['DATA'] = occupancydf_units18['DATA'].astype(float)
-#occupancydf_units18 = occupancydf_units18.rename(columns = {'DATA' : 'housing_units_2018'})
-#occupancydf_units18 = occupancydf_units18[['GEOID','housing_units_2018','COUNTY','TRACT_NUM']]
-#occupancydf_occupied18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25002_002E')]
-#occupancydf_occupied18['DATA'] = occupancydf_occupied18['DATA'].astype(float)
-#occupancydf_occupied18 = occupancydf_occupied18.rename(columns = {'DATA' : 'housing_occupied_2018'})
-#occupancydf_occupied18 = occupancydf_occupied18[['GEOID','housing_occupied_2018','COUNTY','TRACT_NUM']]
-#occupancydf_vacant18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25002_003E')]
-#occupancydf_vacant18['DATA'] = occupancydf_vacant18['DATA'].astype(float)
-#occupancydf_vacant18 = occupancydf_vacant18.rename(columns = {'DATA' : 'housing_vacant_2018'})
-#occupancydf_vacant18 = occupancydf_vacant18[['GEOID','housing_vacant_2018','COUNTY','TRACT_NUM']]
 occupancydf_built18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25037_001E')]
 occupancydf_built18['DATA'] = occupancydf_built18['DATA'].astype(float)
 occupancydf_built18 = occupancydf_built18.rename(columns = {'DATA' : 'housing_yr_built_2018'})
 occupancydf_built18 = occupancydf_built18[['GEOID','housing_yr_built_2018','COUNTY','TRACT_NUM']]
-#occupancydf_built_owned18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25037_002E')]
-#occupancydf_built_owned18['DATA'] = occupancydf_built_owned18['DATA'].astype(float)
-#occupancydf_built_owned18 = occupancydf_built_owned18.rename(columns = {'DATA' : 'housing_yr_built_owned_2018'})
-#occupancydf_built_owned18 = occupancydf_built_owned18[['GEOID','housing_yr_built_owned_2018','COUNTY','TRACT_NUM']]
-#occupancydf_built_rented18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25037_003E')]
-#occupancydf_built_rented18['DATA'] = occupancydf_built_rented18['DATA'].astype(float)
-#occupancydf_built_rented18 = occupancydf_built_rented18.rename(columns = {'DATA' : 'housing_yr_built_rented_2018'})
-#occupancydf_built_rented18 = occupancydf_built_rented18[['GEOID','housing_yr_built_rented_2018','COUNTY','TRACT_NUM']]
 occupancydf_tenure18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25039_001E')]
 occupancydf_tenure18['DATA'] = occupancydf_tenure18['DATA'].astype(float)
 occupancydf_tenure18 = occupancydf_tenure18.rename(columns = {'DATA' : 'housing_yr_movein_2018'})
 occupancydf_tenure18 = occupancydf_tenure18[['GEOID','housing_yr_movein_2018','COUNTY','TRACT_NUM']]
-#occupancydf_tenure_owned18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25039_002E')]
-#occupancydf_tenure_owned18['DATA'] = occupancydf_tenure_owned18['DATA'].astype(float)
-#occupancydf_tenure_owned18 = occupancydf_tenure_owned18.rename(columns = {'DATA' : 'housing_yr_movein_owned_2018'})
-#occupancydf_tenure_owned18 = occupancydf_tenure_owned18[['GEOID','housing_yr_movein_owned_2018','COUNTY','TRACT_NUM']]
-#occupancydf_tenure_rented18 = housing_details18[(housing_details18['CENSUS_QUERY'] == 'B25039_003E')]
-#occupancydf_tenure_rented18['DATA'] = occupancydf_tenure_rented18['DATA'].astype(float)
-#occupancydf_tenure_rented18 = occupancydf_tenure_rented18.rename(columns = {'DATA' : 'housing_yr_movein_rented_2018'})
-#occupancydf_tenure_rented18 = occupancydf_tenure_rented18[['GEOID','housing_yr_movein_rented_2018','COUNTY','TRACT_NUM']]
-#occupancydf18 = occupancydf_units18.merge(occupancydf_occupied18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf18 = occupancydf18.merge(occupancydf_vacant18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf18 = occupancydf18.merge(occupancydf_built18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf18 = occupancydf18.merge(occupancydf_built_owned18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf18 = occupancydf18.merge(occupancydf_built_rented18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
 occupancydf18 = occupancydf_built18.merge(occupancydf_tenure18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf18 = occupancydf18.merge(occupancydf_tenure_owned18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#occupancydf18 = occupancydf18.merge(occupancydf_tenure_rented18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
 
 df = df.merge(occupancydf18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
-#df['occupancy_pct18'] = (df['housing_occupied_2018'] / df['housing_units_2018']) * 180
-#df['vacancy_pct18'] = (df['housing_vacant_2018'] / df['housing_units_2018']) * 180
 df['housing_age18'] = 2018 - df['housing_yr_built_2018']
-#df['housing_age_owned18'] = 2018 - df['housing_yr_built_owned_2018']
-#df['housing_age_rented18'] = 2018 - df['housing_yr_built_rented_2018']
 df['housing_tenure18'] = df['housing_yr_movein_2018']
-#df['housing_tenure_owned18'] = 2018 - df['housing_yr_movein_owned_2018']
-#df['housing_tenure_rented18'] = 2018 - df['housing_yr_movein_rented_2018']
 
 #displays missing data on house age as Nan instead of 0, to filter out erroneous results that claim houses were built in year "0"
 df.loc[df.housing_age13 > 100, 'housing_age13'] = None
 df.loc[df.housing_age18 > 100, 'housing_age18'] = None
-#df.loc[df.housing_age_owned10 > 100, 'housing_age_owned10'] = None
-#df.loc[df.housing_age_owned18 > 100, 'housing_age_owned18'] = None
-#df.loc[df.housing_age_rented10 > 100, 'housing_age_rented10'] = None
-#df.loc[df.housing_age_rented18 > 100, 'housing_age_rented18'] = None
 
 rdf = pd.read_csv(ROOTBEER + 'data/race-data.csv', dtype={"TRACT_NUM": str, "YEAR": str})
 
@@ -611,23 +525,7 @@ gdf['omega18'] = 1/(
 )
 gdf = gdf[(gdf['omega18'] >= threshold)]
 
-#tester for bar graph of just geoid_a
-gdf['omega_bar'] = (
-        (alpha * (((1-omicron) * gdf.white_pop_pct_change_a) + (omicron * gdf.white_pop_pct_2013z_a))) + \
-        (bravo * (((1-omicron) * gdf.rent_25th_pctile_change_a) + (omicron * gdf.rent_25th_pctile_2013z_a))) + \
-        (charlie * (((1-omicron) * gdf.totpop_change_a) + (omicron * gdf.totpop_2013z_a))) + \
-        (delta * (((1-omicron) * gdf.rent_pct_income_change_a) + (omicron * gdf.rent_pct_income_2013z_a))) + \
-        (echo * (((1-omicron) * gdf.monthly_housing_cost_change_a) + (omicron * gdf.monthly_housing_cost_2013z_a))) + \
-        (foxtrot * (((1-omicron) * gdf.market_rate_units_per_cap_change_a) + (omicron * gdf.market_rate_units_per_cap_2013z_a))) + \
-        (golf * (((1-omicron) * gdf.median_tenancy_change_a) + (omicron * gdf.median_tenancy_2013z_a))) + \
-        (hotel * (((1-omicron) * gdf.median_housing_age_change_a) + (omicron * gdf.median_housing_age_2013z_a)))
-)
-gdf['omega_bar'] = gdf['omega_bar'].fillna(0) #deals with nan in dataframe, which was breaking the network
-#gdf = gdf[(gdf['omega_bar'] >= threshold)]
 
-
-#gdf.loc[gdf.omega < 0, 'omega'] = None #corrects for the census having "2018" as an answer to some of these
-#gdf = gdf[(gdf['omega'] >= threshold)]
 import itertools
 
 #create mtbaker_station_df & mtbaker_station_gdf
@@ -709,14 +607,11 @@ while '53033024602' in rainier_beach_geoids:
     rainier_beach_geoids.remove('53033024602')
     rainier_beach_geoids.remove('53033024601')
     rainier_beach_geoids.remove('53033025301')
-#for testing
-#rainier_beach_geoids = ['53033001701','53033010900']
 rainier_beach_df = df[df['GEOID'].isin(rainier_beach_geoids)]
 rainier_beach_df['neighborhood'] = 'rainier_beach'
 
 #create wallingford_df & wallingford_gdf
 wallingford_gdf = gdf[((gdf['GEOID_a'] == '53033004600') & (gdf['distance'] < 4000)) | ((gdf['GEOID_b'] == '53033004600') & (gdf['distance'] < 4000))]
-#wallingford_gdf = gdf[((gdf['GEOID_a'] == '53033005000') | (gdf['GEOID_a'] == '53033003500') | (gdf['GEOID_a'] == '53033005200')) & ((gdf['GEOID_b'] == '53033005000') | (gdf['GEOID_b'] == '53033003500')| (gdf['GEOID_b'] == '53033005200'))]
 
 wallingford_gid_a = list(wallingford_gdf['GEOID_a'].drop_duplicates())
 wallingford_gid_b = list(wallingford_gdf['GEOID_b'].drop_duplicates())
@@ -741,8 +636,6 @@ wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
 wallingford_missing = ['53033005200','53033002000','53033004302','53033001300']
 for tract in wallingford_missing:
     wallingford_geoids.append(tract)
-#for testing
-#wallingford_geoids = ['53033005000','53033003500']
 wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
 wallingford_df['neighborhood'] = 'wallingford'
 
@@ -800,6 +693,7 @@ def get_gdf(subset='all'):
     else:
         raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
 
+'''
 #DEBUG - CHECK FOR NaNs OR output dfs to csv for exporting
 nandf = df[df.isnull().any(axis=1)]
 #csv_filename = 'data_prep_tract-nan-check.csv'
@@ -808,3 +702,4 @@ combo_gdf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL
 csv_filename = 'data_prep_tract-combo_df.csv'
 combo_df.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
 print("Exporting csv...")
+'''
