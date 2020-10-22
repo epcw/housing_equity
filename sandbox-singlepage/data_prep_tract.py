@@ -21,17 +21,24 @@ df = df13_raw.merge(df18_raw, how='left', left_on=['GEOID','COUNTY','TRACT_NUM']
 
 #bring in affordable housing data
 housing_df_raw = pd.read_csv(ROOTBEER + 'data/affordable_housing_units-allyears-tract.csv', dtype={"TRACT_NUM": str,"YEAR":str,"GEOID":str}) #prefiltered for King County
+housing_df_totalunits = pd.read_csv(ROOTBEER + 'data/totalunits-tract.csv', dtype={"TRACT_NUM": str,"YEAR":str,"GEOID":str}) #prefiltered for King County
 
 #filter for Year
 housing_df13 = housing_df_raw[(housing_df_raw['YEAR'] == '2013')]
 housing_df18 = housing_df_raw[(housing_df_raw['YEAR'] == '2018')]
+housingtotal_df13 = housing_df_totalunits[(housing_df_totalunits['YEAR'] == '2013')]
+housingtotal_df18 = housing_df_totalunits[(housing_df_totalunits['YEAR'] == '2018')]
 
 #Aggregate unit data (rows in original housing_df_raw are counts of units under 100/mo, 200/mo, 300/mo, etc.
 housing_data13 = housing_df13.groupby(['GEOID','TRACT_NUM','COUNTY']).sum().reset_index()
 housing_data13 = housing_data13.rename(columns = {'DATA' : 'sub_600_per_mo_housing_units_2013'})
 housing_data18 = housing_df18.groupby(['GEOID','TRACT_NUM','COUNTY']).sum().reset_index()
 housing_data18 = housing_data18.rename(columns = {'DATA' : 'sub_600_per_mo_housing_units_2018'})
+housingtotal_df13 = housingtotal_df13.rename(columns = {'DATA' : 'total_housing_units_2013'})
+housingtotal_df18 = housingtotal_df18.rename(columns = {'DATA' : 'total_housing_units_2018'})
 housing_df = housing_data13.merge(housing_data18, how='left', left_on=['GEOID','TRACT_NUM','COUNTY'], right_on=['GEOID','TRACT_NUM','COUNTY'])
+housing_df = housing_df.merge(housingtotal_df13, how='left', left_on=['GEOID','TRACT_NUM','COUNTY'], right_on=['GEOID','TRACT_NUM','COUNTY'])
+housing_df = housing_df.merge(housingtotal_df18, how='left', left_on=['GEOID','TRACT_NUM','COUNTY'], right_on=['GEOID','TRACT_NUM','COUNTY'])
 
 #bring in tenancy, cost, and occupancy data and filter for 2010 & 2018
 housing_details_raw = pd.read_csv(ROOTBEER + 'data/housing_details.csv', dtype={"TRACT_NUM": str, "GEOID": str, "YEAR":int}) #NOTE: pre-filtered in SQL for King County
@@ -91,6 +98,11 @@ costs_18df = costs_18df.merge(costs_18dfmedcost, how = 'inner', left_on = ['GEOI
 df = df.merge(housing_df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 df['sub_600_units_per_capita_2013'] = df['sub_600_per_mo_housing_units_2013']/df['TOT_POP_2013']
 df['sub_600_units_per_capita_2018'] = df['sub_600_per_mo_housing_units_2018']/df['TOT_POP_2018']
+df['total_housing_units_per_capita_2013'] = df['total_housing_units_2013']/df['TOT_POP_2013']
+df['total_housing_units_per_capita_2018'] = df['total_housing_units_2018']/df['TOT_POP_2018']
+df['over_600_units_per_capita_2013'] = (df['total_housing_units_per_capita_2013'] - df['sub_600_units_per_capita_2013']) / df['total_housing_units_per_capita_2013']
+df['over_600_units_per_capita_2018'] = (df['total_housing_units_per_capita_2018'] - df['sub_600_units_per_capita_2018']) / df['total_housing_units_per_capita_2018']
+
 df = df.merge(costs_13f, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 df = df.merge(costs_18df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
@@ -316,6 +328,7 @@ df['rent_25th_pctile_change'] = (df.RENT_25PCTILE_2018 - df.RENT_25PCTILE_2013)
 df['totpop_change'] = (df.TOT_POP_2018 - df.TOT_POP_2013)
 df['rent_pct_income_change'] = (df.RENT_AS_PCT_HOUSEHOLD_INCOME_2018 - df.RENT_AS_PCT_HOUSEHOLD_INCOME_2013)
 df['monthly_housing_cost_change'] = (df.MEDIAN_MONTHLY_HOUSING_COST_2018 - df.MEDIAN_MONTHLY_HOUSING_COST_2013)
+df['market_rate_units_per_cap_change'] = (df.over_600_units_per_capita_2018 - df.over_600_units_per_capita_2013)
 df['affordable_units_per_cap_change'] = (df.sub_600_units_per_capita_2018 - df.sub_600_units_per_capita_2013)
 df['median_tenancy_change'] = (df.housing_tenure18 - df.housing_tenure13)
 df['median_housing_age_change'] = (df.housing_age18 - df.housing_age13)
@@ -328,6 +341,7 @@ df['totpop_change'] = (df.totpop_change - df.totpop_change.mean())/df.totpop_cha
 df['rent_pct_income_change'] = (df.rent_pct_income_change - df.rent_pct_income_change.mean())/df.rent_pct_income_change.std()
 df['monthly_housing_cost_change'] = (df.monthly_housing_cost_change - df.monthly_housing_cost_change.mean())/df.monthly_housing_cost_change.std()
 df['affordable_units_per_cap_change'] = (df.affordable_units_per_cap_change - df.affordable_units_per_cap_change.mean())/df.affordable_units_per_cap_change.std()
+df['market_rate_units_per_cap_change'] = (df.market_rate_units_per_cap_change - df.market_rate_units_per_cap_change.mean())/df.market_rate_units_per_cap_change.std()
 df['median_tenancy_change'] = (df.median_tenancy_change - df.median_tenancy_change.mean())/df.median_tenancy_change.std()
 df['median_housing_age_change'] = (df.median_housing_age_change - df.median_housing_age_change.mean())/df.median_housing_age_change.std()
 
@@ -339,6 +353,7 @@ df['totpop_2013z'] = (df.TOT_POP_2013 - df.TOT_POP_2013.mean())/df.TOT_POP_2013.
 df['rent_pct_income_2013z'] = (df.RENT_AS_PCT_HOUSEHOLD_INCOME_2013 - df.RENT_AS_PCT_HOUSEHOLD_INCOME_2013.mean())/df.RENT_AS_PCT_HOUSEHOLD_INCOME_2013.std()
 df['monthly_housing_cost_2013z'] = (df.MEDIAN_MONTHLY_HOUSING_COST_2013 - df.MEDIAN_MONTHLY_HOUSING_COST_2013.mean())/df.MEDIAN_MONTHLY_HOUSING_COST_2013.std()
 df['affordable_units_per_cap_2013z'] = (df.sub_600_units_per_capita_2013 - df.sub_600_units_per_capita_2013.mean())/df.sub_600_units_per_capita_2013.std()
+df['market_rate_units_per_cap_2013z'] = (df.over_600_units_per_capita_2013 - df.over_600_units_per_capita_2013.mean())/df.over_600_units_per_capita_2013.std()
 df['median_tenancy_2013z'] = (df.housing_tenure13 - df.housing_tenure13.mean())/df.housing_tenure13.std()
 df['median_housing_age_2013z'] = (df.housing_age18 - df.housing_age18.mean())/df.housing_age18.std()
 
@@ -350,6 +365,7 @@ df['totpop_2018z'] = (df.TOT_POP_2018 - df.TOT_POP_2018.mean())/df.TOT_POP_2018.
 df['rent_pct_income_2018z'] = (df.RENT_AS_PCT_HOUSEHOLD_INCOME_2018 - df.RENT_AS_PCT_HOUSEHOLD_INCOME_2018.mean())/df.RENT_AS_PCT_HOUSEHOLD_INCOME_2018.std()
 df['monthly_housing_cost_2018z'] = (df.MEDIAN_MONTHLY_HOUSING_COST_2018 - df.MEDIAN_MONTHLY_HOUSING_COST_2018.mean())/df.MEDIAN_MONTHLY_HOUSING_COST_2018.std()
 df['affordable_units_per_cap_2018z'] = (df.sub_600_units_per_capita_2018 - df.sub_600_units_per_capita_2018.mean())/df.sub_600_units_per_capita_2018.std()
+df['market_rate_units_per_cap_2018z'] = (df.over_600_units_per_capita_2018 - df.over_600_units_per_capita_2018.mean())/df.over_600_units_per_capita_2018.std()
 df['median_tenancy_2018z'] = (df.housing_tenure18 - df.housing_tenure18.mean())/df.housing_tenure18.std()
 df['median_housing_age_2018z'] = (df.housing_age18 - df.housing_age18.mean())/df.housing_age18.std()
 
@@ -479,6 +495,8 @@ gdf['monthly_housing_cost_change_delta'] = ((((1-omicron) * gdf.monthly_housing_
 gdf['monthly_housing_cost_change_delta'] = gdf['monthly_housing_cost_change_delta'].fillna(0)
 gdf['affordable_units_per_cap_change_delta'] = ((((1-omicron) * gdf.affordable_units_per_cap_change_a) + (omicron * gdf.affordable_units_per_cap_2013z_a)) - (((1-omicron) * gdf.affordable_units_per_cap_change_b) + (omicron * gdf.affordable_units_per_cap_2013z_b))).abs()
 gdf['affordable_units_per_cap_change_delta'] = gdf['affordable_units_per_cap_change_delta'].fillna(0)
+gdf['market_rate_units_per_cap_change_delta'] = ((((1-omicron) * gdf.market_rate_units_per_cap_change_a) + (omicron * gdf.market_rate_units_per_cap_2013z_a)) - (((1-omicron) * gdf.market_rate_units_per_cap_change_b) + (omicron * gdf.market_rate_units_per_cap_2013z_b))).abs()
+gdf['market_rate_units_per_cap_change_delta'] = gdf['market_rate_units_per_cap_change_delta'].fillna(0)
 gdf['median_tenancy_change_delta'] = ((((1-omicron) * gdf.median_tenancy_change_a) + (omicron * gdf.median_tenancy_2013z_a)) - (((1-omicron) * gdf.median_tenancy_change_b) + (omicron * gdf.median_tenancy_2013z_b))).abs()
 gdf['median_tenancy_change_delta'] = gdf['median_tenancy_change_delta'].fillna(0)
 gdf['median_housing_age_change_delta'] = ((((1-omicron) * gdf.median_housing_age_change_a) + (omicron * gdf.median_housing_age_2013z_a)) - (((1-omicron) * gdf.median_housing_age_change_b) + (omicron * gdf.median_housing_age_2013z_b))).abs()
@@ -499,6 +517,8 @@ gdf['monthly_housing_cost_change_delta_2013'] = ((gdf.monthly_housing_cost_2013z
 gdf['monthly_housing_cost_change_delta_2013'] = gdf['monthly_housing_cost_change_delta_2013'].fillna(0)
 gdf['affordable_units_per_cap_change_delta_2013'] = ((gdf.affordable_units_per_cap_2013z_a) - (gdf.affordable_units_per_cap_2013z_b)).abs()
 gdf['affordable_units_per_cap_change_delta_2013'] = gdf['affordable_units_per_cap_change_delta_2013'].fillna(0)
+gdf['market_rate_units_per_cap_change_delta_2013'] = ((gdf.market_rate_units_per_cap_2013z_a) - (gdf.market_rate_units_per_cap_2013z_b)).abs()
+gdf['market_rate_units_per_cap_change_delta_2013'] = gdf['market_rate_units_per_cap_change_delta_2013'].fillna(0)
 gdf['median_tenancy_change_delta_2013'] = ((gdf.median_tenancy_2013z_a) - (gdf.median_tenancy_2013z_b)).abs()
 gdf['median_tenancy_change_delta_2013'] = gdf['median_tenancy_change_delta_2013'].fillna(0)
 gdf['median_housing_age_change_delta_2013'] = ((gdf.median_housing_age_2013z_a) - (gdf.median_housing_age_2013z_b)).abs()
@@ -519,6 +539,8 @@ gdf['monthly_housing_cost_change_delta_2018'] = ((gdf.monthly_housing_cost_2018z
 gdf['monthly_housing_cost_change_delta_2018'] = gdf['monthly_housing_cost_change_delta_2018'].fillna(0)
 gdf['affordable_units_per_cap_change_delta_2018'] = ((gdf.affordable_units_per_cap_2018z_a) - (gdf.affordable_units_per_cap_2018z_b)).abs()
 gdf['affordable_units_per_cap_change_delta_2018'] = gdf['affordable_units_per_cap_change_delta_2018'].fillna(0)
+gdf['market_rate_units_per_cap_change_delta_2018'] = ((gdf.market_rate_units_per_cap_2018z_a) - (gdf.market_rate_units_per_cap_2018z_b)).abs()
+gdf['market_rate_units_per_cap_change_delta_2018'] = gdf['market_rate_units_per_cap_change_delta_2018'].fillna(0)
 gdf['median_tenancy_change_delta_2018'] = ((gdf.median_tenancy_2018z_a) - (gdf.median_tenancy_2018z_b)).abs()
 gdf['median_tenancy_change_delta_2018'] = gdf['median_tenancy_change_delta_2018'].fillna(0)
 gdf['median_housing_age_change_delta_2018'] = ((gdf.median_housing_age_2018z_a) - (gdf.median_housing_age_2018z_b)).abs()
@@ -536,7 +558,6 @@ hotel = 0
 
 threshold = 0
 
-#TODO - switch to non-hispanic white population instead of minority to get rid of negative sign.
 #TODO - Add in total-units-tract for denominator for affordablehousing and flip sign to get rid of negative
 #2013 + change version
 gdf['omega'] = (
@@ -545,7 +566,7 @@ gdf['omega'] = (
         (charlie * gdf.totpop_change_delta) + \
         (delta * gdf.rent_pct_income_change_delta) + \
         (echo * gdf.monthly_housing_cost_change_delta) + \
-        -(foxtrot * gdf.affordable_units_per_cap_change_delta) + \
+        (foxtrot * gdf.market_rate_units_per_cap_change_delta) + \
         -(golf * gdf.median_tenancy_change_delta) + \
         (hotel * gdf.median_housing_age_change_delta)
 )
@@ -560,7 +581,7 @@ gdf['omega13'] = (
         (charlie * gdf.totpop_change_delta_2013) + \
         (delta * gdf.rent_pct_income_change_delta_2013) + \
         (echo * gdf.monthly_housing_cost_change_delta_2018) + \
-        -(foxtrot * gdf.affordable_units_per_cap_change_delta_2013) + \
+        (foxtrot * gdf.market_rate_units_per_cap_change_delta_2013) + \
         -(golf * gdf.median_tenancy_change_delta_2013) + \
         (hotel * gdf.median_housing_age_change_delta_2013)
 )
@@ -573,7 +594,7 @@ gdf['omega18'] = (
         (charlie * gdf.totpop_change_delta_2018) + \
         (delta * gdf.rent_pct_income_change_delta_2018) + \
         (echo * gdf.monthly_housing_cost_change_delta_2018) + \
-        -(foxtrot * gdf.affordable_units_per_cap_change_delta_2018) + \
+        (foxtrot * gdf.market_rate_units_per_cap_change_delta_2018) + \
         -(golf * gdf.median_tenancy_change_delta_2018) + \
         (hotel * gdf.median_housing_age_change_delta_2018)
 )
@@ -586,7 +607,7 @@ gdf['omega_bar'] = (
         (charlie * (((1-omicron) * gdf.totpop_change_a) + (omicron * gdf.totpop_2013z_a))) + \
         (delta * (((1-omicron) * gdf.rent_pct_income_change_a) + (omicron * gdf.rent_pct_income_2013z_a))) + \
         (echo * (((1-omicron) * gdf.monthly_housing_cost_change_a) + (omicron * gdf.monthly_housing_cost_2013z_a))) + \
-        -(foxtrot * (((1-omicron) * gdf.affordable_units_per_cap_change_a) + (omicron * gdf.affordable_units_per_cap_2013z_a))) + \
+        (foxtrot * (((1-omicron) * gdf.market_rate_units_per_cap_change_a) + (omicron * gdf.market_rate_units_per_cap_2013z_a))) + \
         -(golf * (((1-omicron) * gdf.median_tenancy_change_a) + (omicron * gdf.median_tenancy_2013z_a))) + \
         (hotel * (((1-omicron) * gdf.median_housing_age_change_a) + (omicron * gdf.median_housing_age_2013z_a)))
 )
