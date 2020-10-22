@@ -172,11 +172,10 @@ forceatlas2 = ForceAtlas2(
 for i in node_list:
     G.add_node(i)
 
-gdf_combo = gdf_combo[(gdf_combo['omega'] > 0.05)] #filter to reduce connections by edge weight
+#gdf_combo = gdf_combo[(gdf_combo['omega'] > 0.05)] #filter to reduce connections by edge weight
 
 for i, row in gdf.iterrows():
     G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega13'])])
-
 
 #CACHE-USING VERSION
 @cache.memoize(timeout=TIMEOUT)
@@ -186,7 +185,7 @@ def query_forceatlas2():
                             outboundAttractionDistribution=False,  # Dissuade hubs
                             linLogMode=False,  # NOT IMPLEMENTED
                             adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-                            edgeWeightInfluence=10 ** .5, #was 5, testing if this can change things
+                            edgeWeightInfluence=1, #was 5, testing if this can change things
 
                             # Performance
                             jitterTolerance=1.0,  # Tolerance
@@ -197,10 +196,10 @@ def query_forceatlas2():
                             # Tuning
                             scalingRatio=12,
                             strongGravityMode=False,
-                            gravity=.1000, #was 20, still seeing a straight line.
+                            gravity=10.00000, #was 20, still seeing a straight line.
 
                             # Log
-                            verbose=True)
+                            verbose=False)
     return forceatlas2
 
 def pos():
@@ -310,13 +309,13 @@ fig2.update_traces(marker=dict(size=20),
 '''
 dfcombo = df
 dfcombo['GEOID'] = dfcombo['GEOID'].astype(str)
-alpha = 1/6.0
-bravo = 1/6.0
-charlie = 1/6.0
-delta = 1/6.0
-echo = 1/6.0
-foxtrot = 1/6.0
-golf = 1/6.0
+alpha = 1/7.0
+bravo = 1/7.0
+charlie = 1/7.0
+delta = 1/7.0
+echo = 1/7.0
+foxtrot = 1/7.0
+golf = 1/7.0
 
 dfcombo['omega_13'] = (
         (alpha * dfcombo.white_pop_pct_2013z.fillna(0)) + \
@@ -438,9 +437,9 @@ def serve_layout():
             html.P('In the network model below, tracts that are closer together are more similar than those further apart.', className='description'),
             html.P('Edge weights are determined by minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income, and median monthly housing cost.', className='description'),
             html.Div([
-                html.H1('2010 vs 2018'),
+                html.H1('2013 vs 2018'),
                 html.P(
-                    'These maps compare the Displacement Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure. YOUR ANALYSIS HERE TO EXPLAIN WTF THIS IS',
+                    'These maps compare the Displacement Pressure (omega) in Seattle from 2013-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure. YOUR ANALYSIS HERE TO EXPLAIN WTF THIS IS',
                     className='description graph_title'),
 
             dcc.Graph(figure=fig,

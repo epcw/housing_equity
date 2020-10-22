@@ -559,19 +559,19 @@ gdf['median_housing_age_change_delta_2018'] = ((gdf.median_housing_age_2018z_a) 
 gdf['median_housing_age_change_delta_2018'] = gdf['median_housing_age_change_delta_2018'].fillna(0)
 
 #weight the edges
-alpha = 1/6.0
-bravo = 1/6.0
-charlie = 1/6.0
-delta = 1/6.0
-echo = 1/6.0
-foxtrot = 0
-golf = 0
+alpha = 1/7.0
+bravo = 1/7.0
+charlie = 1/7.0
+delta = 1/7.0
+echo = 1/7.0
+foxtrot = 1/7.0
+golf = 1/7.0
 hotel = 0
 
 threshold = 0
 
 #2013 + change version
-gdf['omega'] = (
+gdf['omega'] = 1/(
         (alpha * gdf.white_pop_pct_change_delta) + \
         (bravo * gdf.rent_25th_pctile_change_delta) + \
         (charlie * gdf.totpop_change_delta) + \
@@ -586,7 +586,7 @@ gdf['omega'] = (
 gdf = gdf[(gdf['omega'] >= threshold)]
 
 #2013 only version
-gdf['omega13'] = (
+gdf['omega13'] = 1/(
         (alpha * gdf.white_pop_pct_change_delta_2013) + \
         (bravo * gdf.rent_25th_pctile_change_delta_2013) + \
         (charlie * gdf.totpop_change_delta_2013) + \
@@ -599,7 +599,7 @@ gdf['omega13'] = (
 gdf = gdf[(gdf['omega13'] >= threshold)]
 
 #2018 only version
-gdf['omega18'] = (
+gdf['omega18'] = 1/(
         (alpha * gdf.white_pop_pct_change_delta_2018) + \
         (bravo * gdf.rent_25th_pctile_change_delta_2018) + \
         (charlie * gdf.totpop_change_delta_2018) + \
@@ -623,7 +623,7 @@ gdf['omega_bar'] = (
         (hotel * (((1-omicron) * gdf.median_housing_age_change_a) + (omicron * gdf.median_housing_age_2013z_a)))
 )
 gdf['omega_bar'] = gdf['omega_bar'].fillna(0) #deals with nan in dataframe, which was breaking the network
-gdf = gdf[(gdf['omega_bar'] >= threshold)]
+#gdf = gdf[(gdf['omega_bar'] >= threshold)]
 
 
 #gdf.loc[gdf.omega < 0, 'omega'] = None #corrects for the census having "2018" as an answer to some of these
@@ -746,7 +746,7 @@ for tract in wallingford_missing:
 wallingford_df = df[df['GEOID'].isin(wallingford_geoids)]
 wallingford_df['neighborhood'] = 'wallingford'
 
-#combine groupss for a comparison network
+#combine groups for a comparison network
 combo_geoids = wallingford_geoids + rainier_beach_geoids
 combo_gdf = gdf[(gdf['GEOID_a'].isin(combo_geoids)) & (gdf['GEOID_b'].isin(combo_geoids))]
 
@@ -799,7 +799,7 @@ def get_gdf(subset='all'):
         return subsets[subset]
     else:
         raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
-'''
+
 #DEBUG - CHECK FOR NaNs OR output dfs to csv for exporting
 nandf = df[df.isnull().any(axis=1)]
 #csv_filename = 'data_prep_tract-nan-check.csv'
@@ -808,4 +808,3 @@ combo_gdf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL
 csv_filename = 'data_prep_tract-combo_df.csv'
 combo_df.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
 print("Exporting csv...")
-'''
