@@ -325,7 +325,7 @@ dfcombo['omega_13'] = (
         (delta * dfcombo.rent_pct_income_2013z.fillna(0)) + \
         (echo * dfcombo.monthly_housing_cost_2013z.fillna(0)) + \
         (foxtrot * dfcombo.market_rate_units_per_cap_2013z.fillna(0)) + \
-        -(golf * dfcombo.median_tenancy_2013z.fillna(0))
+        (golf * dfcombo.median_tenancy_2013z.fillna(0))
 )
 
 dfcombo['omega_18'] = (
@@ -335,7 +335,7 @@ dfcombo['omega_18'] = (
         (delta * dfcombo.rent_pct_income_2018z.fillna(0)) + \
         (echo * dfcombo.monthly_housing_cost_2018z.fillna(0)) + \
         (foxtrot * dfcombo.market_rate_units_per_cap_2018z.fillna(0)) + \
-        -(golf * dfcombo.median_tenancy_2018z.fillna(0))
+        (golf * dfcombo.median_tenancy_2018z.fillna(0))
 )
 dfcombo['omega_change'] = dfcombo.omega_18 - dfcombo.omega_13
 #dfcombo = dfcombo.drop_duplicates()

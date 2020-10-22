@@ -158,7 +158,7 @@ df = df.merge(occupancydf13, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_N
 df['housing_age13'] = 2013 - df['housing_yr_built_2013']
 #df['housing_age_owned13'] = 2013 - df['housing_yr_built_owned_2013']
 #df['housing_age_rented13'] = 2013 - df['housing_yr_built_rented_2013']
-df['housing_tenure13'] = 2013 - df['housing_yr_movein_2013']
+df['housing_tenure13'] = df['housing_yr_movein_2013']
 #df['housing_tenure_owned13'] = 2013 - df['housing_yr_movein_owned_2013']
 #df['housing_tenure_rented13'] = 2013 - df['housing_yr_movein_rented_2013']
 
@@ -213,7 +213,7 @@ df = df.merge(occupancydf18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_N
 df['housing_age18'] = 2018 - df['housing_yr_built_2018']
 #df['housing_age_owned18'] = 2018 - df['housing_yr_built_owned_2018']
 #df['housing_age_rented18'] = 2018 - df['housing_yr_built_rented_2018']
-df['housing_tenure18'] = 2018 - df['housing_yr_movein_2018']
+df['housing_tenure18'] = df['housing_yr_movein_2018']
 #df['housing_tenure_owned18'] = 2018 - df['housing_yr_movein_owned_2018']
 #df['housing_tenure_rented18'] = 2018 - df['housing_yr_movein_rented_2018']
 
@@ -570,7 +570,6 @@ hotel = 0
 
 threshold = 0
 
-#TODO - Add in total-units-tract for denominator for affordablehousing and flip sign to get rid of negative
 #2013 + change version
 gdf['omega'] = (
         (alpha * gdf.white_pop_pct_change_delta) + \
@@ -579,7 +578,7 @@ gdf['omega'] = (
         (delta * gdf.rent_pct_income_change_delta) + \
         (echo * gdf.monthly_housing_cost_change_delta) + \
         (foxtrot * gdf.market_rate_units_per_cap_change_delta) + \
-        -(golf * gdf.median_tenancy_change_delta) + \
+        (golf * gdf.median_tenancy_change_delta) + \
         (hotel * gdf.median_housing_age_change_delta)
 )
 
@@ -594,7 +593,7 @@ gdf['omega13'] = (
         (delta * gdf.rent_pct_income_change_delta_2013) + \
         (echo * gdf.monthly_housing_cost_change_delta_2018) + \
         (foxtrot * gdf.market_rate_units_per_cap_change_delta_2013) + \
-        -(golf * gdf.median_tenancy_change_delta_2013) + \
+        (golf * gdf.median_tenancy_change_delta_2013) + \
         (hotel * gdf.median_housing_age_change_delta_2013)
 )
 gdf = gdf[(gdf['omega13'] >= threshold)]
@@ -607,7 +606,7 @@ gdf['omega18'] = (
         (delta * gdf.rent_pct_income_change_delta_2018) + \
         (echo * gdf.monthly_housing_cost_change_delta_2018) + \
         (foxtrot * gdf.market_rate_units_per_cap_change_delta_2018) + \
-        -(golf * gdf.median_tenancy_change_delta_2018) + \
+        (golf * gdf.median_tenancy_change_delta_2018) + \
         (hotel * gdf.median_housing_age_change_delta_2018)
 )
 gdf = gdf[(gdf['omega18'] >= threshold)]
@@ -620,7 +619,7 @@ gdf['omega_bar'] = (
         (delta * (((1-omicron) * gdf.rent_pct_income_change_a) + (omicron * gdf.rent_pct_income_2013z_a))) + \
         (echo * (((1-omicron) * gdf.monthly_housing_cost_change_a) + (omicron * gdf.monthly_housing_cost_2013z_a))) + \
         (foxtrot * (((1-omicron) * gdf.market_rate_units_per_cap_change_a) + (omicron * gdf.market_rate_units_per_cap_2013z_a))) + \
-        -(golf * (((1-omicron) * gdf.median_tenancy_change_a) + (omicron * gdf.median_tenancy_2013z_a))) + \
+        (golf * (((1-omicron) * gdf.median_tenancy_change_a) + (omicron * gdf.median_tenancy_2013z_a))) + \
         (hotel * (((1-omicron) * gdf.median_housing_age_change_a) + (omicron * gdf.median_housing_age_2013z_a)))
 )
 gdf['omega_bar'] = gdf['omega_bar'].fillna(0) #deals with nan in dataframe, which was breaking the network
