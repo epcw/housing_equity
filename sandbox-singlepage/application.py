@@ -319,7 +319,7 @@ foxtrot = 1/6.0
 golf = 1/6.0
 
 dfcombo['omega_13'] = (
-        -(alpha * dfcombo.minority_pop_pct_2013z.fillna(0)) + \
+        (alpha * dfcombo.white_pop_pct_2013z.fillna(0)) + \
         (bravo * dfcombo.rent_25th_pctile_2013z.fillna(0)) + \
         (charlie * dfcombo.totpop_2013z.fillna(0)) + \
         (delta * dfcombo.rent_pct_income_2013z.fillna(0)) + \
@@ -329,7 +329,7 @@ dfcombo['omega_13'] = (
 )
 
 dfcombo['omega_18'] = (
-        -(alpha * dfcombo.minority_pop_pct_2018z.fillna(0)) + \
+        (alpha * dfcombo.white_pop_pct_2018z.fillna(0)) + \
         (bravo * dfcombo.rent_25th_pctile_2018z.fillna(0)) + \
         (charlie * dfcombo.totpop_2018z.fillna(0)) + \
         (delta * dfcombo.rent_pct_income_2018z.fillna(0)) + \
