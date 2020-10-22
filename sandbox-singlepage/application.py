@@ -172,9 +172,8 @@ forceatlas2 = ForceAtlas2(
 for i in node_list:
     G.add_node(i)
 
-#gdf_combo = gdf_combo[(gdf_combo['omega'] > 0.05)] #filter to reduce connections by edge weight
-
-for i, row in gdf.iterrows():
+#Build the Edge list for the network graph
+for i, row in gdf_combo.iterrows():
     G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega13'])])
 
 #CACHE-USING VERSION
@@ -196,7 +195,7 @@ def query_forceatlas2():
                             # Tuning
                             scalingRatio=12,
                             strongGravityMode=False,
-                            gravity=10.00000, #was 20, still seeing a straight line.
+                            gravity=0.100000, #was 20, still seeing a straight line.
 
                             # Log
                             verbose=False)
@@ -427,24 +426,24 @@ fig6.update_layout(mapbox_style="open-street-map",
             mapbox_center=pikes_place)
 
 #here we make the graph a function called serve_layout(), which then allows us to have it run every time the page is loaded (unlike the normal which would just be app.layer = GRAPH CONTENT, which would run every time the app was started on the server (aka, once))
-
 def serve_layout():
     return html.Div([
         dcc.Link('Dashboard Home', href='/', id="app_menu"),
         html.Div([
             html.H1('EPCW pilot network model of Displacement Pressure in Seattle'),
             html.P('Our pilot network model compares change in equitable access to housing and displacement pressure in two Seattle neighborhoods over the years 2013 to 2018.  RICHS PITHY SUMMARY OF WHY MODELS ARE GOOD TOOLS HERE.', className='description'),
-            html.P('In the network model below, tracts that are closer together are more similar than those further apart.', className='description'),
+            html.P('In the network model below, tracts that are closer together are more similar than those further apart.  One can best think of this network as a comparison of SIMILARITY.  Nodes closer together have more similar demographic properties than those further apart.', className='description'),
             html.P('Edge weights are determined by minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income, and median monthly housing cost.', className='description'),
+            dcc.Graph(figure=fig,
+                      id='housing_networkx'
+                      ),
             html.Div([
                 html.H1('2013 vs 2018'),
                 html.P(
                     'These maps compare the Displacement Pressure (omega) in Seattle from 2013-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure. YOUR ANALYSIS HERE TO EXPLAIN WTF THIS IS',
                     className='description graph_title'),
-
-            dcc.Graph(figure=fig,
-                      id='housing_networkx'
-                      ),
+                html.P(['NOTE: these sliders are currently inactive, but when functional will allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
+                ]),
                 html.Div([
                     html.Div([
                         html.H4('Minority Population Percentage')], className='col-4'),
@@ -527,13 +526,13 @@ def serve_layout():
 #                      id='housing_bar'
 #                      ),
             html.H1('Change in displacement pressure'),
-            html.P('This scatterplot compares displacement pressure (omega) in each census block group.  Block groups exactly along the dashed line had no change in pressure from 2013-18. Block groups above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018. YOUR ANALYSIS HERE TO EXPLAIN WTF THIS IS', className='description'),
+            html.P('This scatterplot compares displacement pressure (what we are calling omega) in the census tract groups in the wealthier northern neighborhoods of Seattle (Wallingford) and the poorer Southeastern neighborhoods (Rainier Beach).  Tracts exactly along the dashed 1:1 line had no change in pressure from 2013-18. Tracts above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018.', className='description'),
             dcc.Graph(figure=fig3,
                       id='displacement_scatter'
                       ),
             html.Div([
                 html.H1('2010 vs 2018'),
-                html.P('These maps compare the Displacement Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure. YOUR ANALYSIS HERE TO EXPLAIN WTF THIS IS',
+                html.P('These maps compare the Displacement Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure.',
                        className='description graph_title'),
                 html.Div([
                     html.Div([
@@ -549,7 +548,7 @@ def serve_layout():
             ], className='container'),
             html.H1('Change in displacement pressure map'),
             html.P(
-                'This map compares displacement pressure (omega) in each census block group.  Red areas had INCREASING displacement pressure between 2013 and 2018. Green had decreasing. YOUR ANALYSIS HERE TO EXPLAIN WTF THIS IS',
+                'This map compares displacement pressure (omega) in each census tract.  Red areas had INCREASING displacement pressure between 2013 and 2018. Green had decreasing.',
                 className='description'),
             dcc.Graph(figure=fig4,
                 id='block_grp_map'
