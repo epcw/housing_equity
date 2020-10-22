@@ -627,16 +627,16 @@ def serve_layout():
             dcc.Graph(figure=fig4,
                 id='block_grp_map'
             ),
-             html.H1('Groupings'),
-             html.H4('Census Tracts', className='description'),
-            html.P('Group 0 - size: ' + str(grp0_length), className='description'),
-            generate_table(grp0),
-            html.P('Group 1 - size: ' + str(grp1_length), className='description'),
-            generate_table(grp1),
-            html.P('Group 2 - size: ' + str(grp2_length), className='description'),
-            generate_table(grp2),
-            html.P('Group 3 - size: ' + str(grp3_length), className='description'),
-            generate_table(grp3)
+#             html.H1('Groupings'),
+#             html.H4('Census Tracts', className='description'),
+#            html.P('Group 0 - size: ' + str(grp0_length), className='description'),
+#            generate_table(grp0),
+#            html.P('Group 1 - size: ' + str(grp1_length), className='description'),
+#            generate_table(grp1),
+#            html.P('Group 2 - size: ' + str(grp2_length), className='description'),
+#            generate_table(grp2),
+#            html.P('Group 3 - size: ' + str(grp3_length), className='description'),
+#            generate_table(grp3)
         ], className='container')
     ], id='sandbox')
 
