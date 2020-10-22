@@ -702,11 +702,13 @@ rainier_beach_gdf = rainier_beach_pair_df
 rainier_beach_geoids = list(rainier_beach_gdf['GEOID_a'].drop_duplicates()) + \
                      list(rainier_beach_gdf['GEOID_b'].drop_duplicates())
 #hacky-ass manual add to the geoids
-rainier_beach_missing = ['53033010401', '53033011200','53033011300','53033027200','53033026801']
+rainier_beach_missing = ['53033010401', '53033011200','53033011300','53033027200','53033026801','53033011001','53033011002','53033010001','53033011402']
 for tract in rainier_beach_missing:
     rainier_beach_geoids.append(tract)
 while '53033024602' in rainier_beach_geoids:
     rainier_beach_geoids.remove('53033024602')
+    rainier_beach_geoids.remove('53033024601')
+    rainier_beach_geoids.remove('53033025301')
 #for testing
 #rainier_beach_geoids = ['53033001701','53033010900']
 rainier_beach_df = df[df['GEOID'].isin(rainier_beach_geoids)]
@@ -736,7 +738,7 @@ wallingford_gdf = wallingford_pair_df
 wallingford_geoids = list(wallingford_gdf['GEOID_a'].drop_duplicates()) + \
                      list(wallingford_gdf['GEOID_b'].drop_duplicates())
 #hacky-ass manual add to the geoids
-wallingford_missing = ['53033005200']
+wallingford_missing = ['53033005200','53033002000','53033004302','53033001300']
 for tract in wallingford_missing:
     wallingford_geoids.append(tract)
 #for testing
@@ -797,7 +799,7 @@ def get_gdf(subset='all'):
         return subsets[subset]
     else:
         raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
-
+'''
 #DEBUG - CHECK FOR NaNs OR output dfs to csv for exporting
 nandf = df[df.isnull().any(axis=1)]
 #csv_filename = 'data_prep_tract-nan-check.csv'
@@ -806,3 +808,4 @@ combo_gdf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL
 csv_filename = 'data_prep_tract-combo_df.csv'
 combo_df.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
 print("Exporting csv...")
+'''

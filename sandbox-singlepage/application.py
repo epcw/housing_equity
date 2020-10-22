@@ -409,7 +409,7 @@ fig3.add_shape(
             )
 )
 
-fig4 = px.choropleth_mapbox(dfcombo,geojson=tracts,locations=dfcombo['GEOID_long'],featureidkey='properties.GEOID',color=dfcombo['omega_change'],
+fig4 = px.choropleth_mapbox(dfcombo,geojson=tracts,locations=dfcombo['GEOID_long'],featureidkey='properties.GEOID',color=dfcombo['omega'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig4.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,
