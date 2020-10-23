@@ -482,8 +482,9 @@ foxtrot = 1/7.0
 golf = 1/7.0
 hotel = 0
 
-threshold = 0
+#threshold = 0
 
+#NETWORK VERSIONS
 #2013 + change version
 gdf['omega'] = 1/(
         (alpha * gdf.white_pop_pct_change_delta) + \
@@ -497,7 +498,7 @@ gdf['omega'] = 1/(
 )
 
 #gdf.loc[gdf.omega < 0, 'omega'] = None #corrects for the census having "2018" as an answer to some of these
-gdf = gdf[(gdf['omega'] >= threshold)]
+#gdf = gdf[(gdf['omega'] >= threshold)]
 
 #2013 only version
 gdf['omega13'] = 1/(
@@ -510,7 +511,7 @@ gdf['omega13'] = 1/(
         (golf * gdf.median_tenancy_change_delta_2013) + \
         (hotel * gdf.median_housing_age_change_delta_2013)
 )
-gdf = gdf[(gdf['omega13'] >= threshold)]
+#gdf = gdf[(gdf['omega13'] >= threshold)]
 
 #2018 only version
 gdf['omega18'] = 1/(
@@ -523,7 +524,56 @@ gdf['omega18'] = 1/(
         (golf * gdf.median_tenancy_change_delta_2018) + \
         (hotel * gdf.median_housing_age_change_delta_2018)
 )
-gdf = gdf[(gdf['omega18'] >= threshold)]
+#gdf = gdf[(gdf['omega18'] >= threshold)]
+
+#SCATTERPLOT VERSION (not inverted since pressure is what we're looking at, not similarity)
+#2013 only version
+gdf['omega13_scatter'] = (
+        (alpha * gdf.white_pop_pct_change_delta_2013) + \
+        (bravo * gdf.rent_25th_pctile_change_delta_2013) + \
+        (charlie * gdf.totpop_change_delta_2013) + \
+        (delta * gdf.rent_pct_income_change_delta_2013) + \
+        (echo * gdf.monthly_housing_cost_change_delta_2018) + \
+        (foxtrot * gdf.market_rate_units_per_cap_change_delta_2013) + \
+        (golf * gdf.median_tenancy_change_delta_2013) + \
+        (hotel * gdf.median_housing_age_change_delta_2013)
+)
+#gdf = gdf[(gdf['omega13'] >= threshold)]
+
+#2018 only version
+gdf['omega18_scatter'] = (
+        (alpha * gdf.white_pop_pct_change_delta_2018) + \
+        (bravo * gdf.rent_25th_pctile_change_delta_2018) + \
+        (charlie * gdf.totpop_change_delta_2018) + \
+        (delta * gdf.rent_pct_income_change_delta_2018) + \
+        (echo * gdf.monthly_housing_cost_change_delta_2018) + \
+        (foxtrot * gdf.market_rate_units_per_cap_change_delta_2018) + \
+        (golf * gdf.median_tenancy_change_delta_2018) + \
+        (hotel * gdf.median_housing_age_change_delta_2018)
+)
+#gdf = gdf[(gdf['omega18'] >= threshold)]
+
+#MAP VERSIONS
+df['omega13'] = (
+        (alpha * df.white_pop_pct_2013z.fillna(0)) + \
+        (bravo * df.rent_25th_pctile_2013z.fillna(0)) + \
+        (charlie * df.totpop_2013z.fillna(0)) + \
+        (delta * df.rent_pct_income_2013z.fillna(0)) + \
+        (echo * df.monthly_housing_cost_2013z.fillna(0)) + \
+        (foxtrot * df.market_rate_units_per_cap_2013z.fillna(0)) + \
+        (golf * df.median_tenancy_2013z.fillna(0))
+)
+
+df['omega18'] = (
+        (alpha * df.white_pop_pct_2018z.fillna(0)) + \
+        (bravo * df.rent_25th_pctile_2018z.fillna(0)) + \
+        (charlie * df.totpop_2018z.fillna(0)) + \
+        (delta * df.rent_pct_income_2018z.fillna(0)) + \
+        (echo * df.monthly_housing_cost_2018z.fillna(0)) + \
+        (foxtrot * df.market_rate_units_per_cap_2018z.fillna(0)) + \
+        (golf * df.median_tenancy_2018z.fillna(0))
+)
+df['omega_change'] = df.omega18 - df.omega13
 
 
 import itertools
@@ -693,7 +743,7 @@ def get_gdf(subset='all'):
     else:
         raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
 
-'''
+
 #DEBUG - CHECK FOR NaNs OR output dfs to csv for exporting
 nandf = df[df.isnull().any(axis=1)]
 #csv_filename = 'data_prep_tract-nan-check.csv'
@@ -702,4 +752,3 @@ combo_gdf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL
 csv_filename = 'data_prep_tract-combo_df.csv'
 combo_df.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
 print("Exporting csv...")
-'''

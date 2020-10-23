@@ -29,10 +29,10 @@ TIMEOUT = 60
 
 #TRACT VERSION
 import data_prep_tract
-df_all = data_prep_tract.get_df()
-gdf_all = data_prep_tract.get_gdf()
-df = data_prep_tract.get_df(subset='wallingford')
-gdf = data_prep_tract.get_gdf(subset='wallingford')
+df = data_prep_tract.get_df()
+gdf = data_prep_tract.get_gdf()
+df_wallingford = data_prep_tract.get_df(subset='wallingford')
+gdf_wallingford = data_prep_tract.get_gdf(subset='wallingford')
 df_rb = data_prep_tract.get_df(subset='rainier_beach')
 gdf_rb = data_prep_tract.get_gdf(subset='rainier_beach')
 df_combo = data_prep_tract.get_df(subset='combo')
@@ -65,12 +65,12 @@ gdf['GEOID_long_a'] = gdf['GEOID_a']
 gdf['GEOID_long_b'] = gdf['GEOID_b']
 gdf['GEOID_a'] = gdf['GEOID_a'].str.replace("53033", "")
 gdf['GEOID_b'] = gdf['GEOID_b'].str.replace("53033", "")
-df_all['GEOID_long'] = df_all['GEOID']
-df_all['GEOID'] = df_all['GEOID'].str.replace("53033", "")
-gdf_all['GEOID_long_a'] = gdf_all['GEOID_a']
-gdf_all['GEOID_long_b'] = gdf_all['GEOID_b']
-gdf_all['GEOID_a'] = gdf_all['GEOID_a'].str.replace("53033", "")
-gdf_all['GEOID_b'] = gdf_all['GEOID_b'].str.replace("53033", "")
+df_wallingford['GEOID_long'] = df_wallingford['GEOID']
+df_wallingford['GEOID'] = df_wallingford['GEOID'].str.replace("53033", "")
+gdf_wallingford['GEOID_long_a'] = gdf_wallingford['GEOID_a']
+gdf_wallingford['GEOID_long_b'] = gdf_wallingford['GEOID_b']
+gdf_wallingford['GEOID_a'] = gdf_wallingford['GEOID_a'].str.replace("53033", "")
+gdf_wallingford['GEOID_b'] = gdf_wallingford['GEOID_b'].str.replace("53033", "")
 df_combo['GEOID_long'] = df_combo['GEOID']
 df_combo['GEOID'] = df_combo['GEOID'].str.replace("53033", "")
 gdf_combo['GEOID_long_a'] = gdf_combo['GEOID_a']
@@ -78,18 +78,15 @@ gdf_combo['GEOID_long_b'] = gdf_combo['GEOID_b']
 gdf_combo['GEOID_a'] = gdf_combo['GEOID_a'].str.replace("53033", "")
 gdf_combo['GEOID_b'] = gdf_combo['GEOID_b'].str.replace("53033", "")
 
-df = df.append(df_rb)
-gdf = gdf.append(gdf_rb)
-
 from data_prep_tract import tracts
 
 '''
 #BLOCK GROUP VERSION
 import data_prep_blockgrp
-df_all = data_prep_blockgrp.get_df()
-gdf_all = data_prep_blockgrp.get_gdf()
-df = data_prep_blockgrp.get_df(subset='wallingford')
-gdf = data_prep_blockgrp.get_gdf(subset='wallingford')
+df = data_prep_blockgrp.get_df()
+gdf = data_prep_blockgrp.get_gdf()
+df_wallingford = data_prep_blockgrp.get_df(subset='wallingford')
+gdf_wallingford = data_prep_blockgrp.get_gdf(subset='wallingford')
 df_rb = data_prep_blockgrp.get_df(subset='rainier_beach')
 gdf_rb = data_prep_blockgrp.get_gdf(subset='rainier_beach')
 df_mtbaker = data_prep_blockgrp.get_df(subset='mtbaker_station')
@@ -120,20 +117,12 @@ gdf['GEOID_long_a'] = gdf['GEOID_a']
 gdf['GEOID_long_b'] = gdf['GEOID_b']
 gdf['GEOID_a'] = gdf['GEOID_a'].str.replace("53033", "")
 gdf['GEOID_b'] = gdf['GEOID_b'].str.replace("53033", "")
-df_all['GEOID_long'] = df_all['GEOID']
-df_all['GEOID'] = df_all['GEOID'].str.replace("53033", "")
-gdf_all['GEOID_long_a'] = gdf_all['GEOID_a']
-gdf_all['GEOID_long_b'] = gdf_all['GEOID_b']
-gdf_all['GEOID_a'] = gdf_all['GEOID_a'].str.replace("53033", "")
-gdf_all['GEOID_b'] = gdf_all['GEOID_b'].str.replace("53033", "")
-
-df = df.append(df_rb)
-df = df.append(df_mtbaker)
-df = df.append(df_othello)
-
-gdf = gdf.append(gdf_rb)
-gdf = gdf.append(gdf_mtbaker)
-gdf = gdf.append(gdf_othello)
+df_wallingford['GEOID_long'] = df_wallingford['GEOID']
+df_wallingford['GEOID'] = df_wallingford['GEOID'].str.replace("53033", "")
+gdf_wallingford['GEOID_long_a'] = gdf_wallingford['GEOID_a']
+gdf_wallingford['GEOID_long_b'] = gdf_wallingford['GEOID_b']
+gdf_wallingford['GEOID_a'] = gdf_wallingford['GEOID_a'].str.replace("53033", "")
+gdf_wallingford['GEOID_b'] = gdf_wallingford['GEOID_b'].str.replace("53033", "")
 
 from data_prep_blockgrp import block_grp_geoids
 '''
@@ -331,16 +320,16 @@ for node in G2018.nodes():
     node_label2018 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"] #tract version
 
 df_combo['tract_index'] = df_combo['TRACT_NUM'].astype(int)
-df_combo['neighborhood_index'] = ''
-df_combo.loc[df_combo.neighborhood =='wallingford','neighborhood_index'] = '1'
-df_combo.loc[df_combo.neighborhood == 'rainier_beach','neighborhood_index'] = '100'
 
 #node_trace.marker.color = df_combo['tract_index']
 #node_trace.marker.size = node_adjacencies
 #node_trace.text = node_label
 
-node_trace2018.marker.color = df_combo['neighborhood_index'].astype(int)
-node_trace2018.marker.size = node_adjacencies2018
+colorsIndex = {'wallingford':'#ef553b','rainier_beach':'#636efa'} #manually assign colors
+colors = df_combo['neighborhood'].map(colorsIndex)
+node_trace2018.marker.color = colors
+#node_trace2018.marker.color = df_combo['neighborhood_index'].astype(int)
+node_trace2018.marker.size = (1.5 + df_combo.omega18) * 20
 node_trace2018.text = node_label2018
 
 #fig = go.Figure(data=[edge_trace, node_trace],
@@ -367,43 +356,12 @@ fig2 = go.Figure(data=[edge_trace2018, node_trace2018],
 
 fig2.update_traces(textfont_size=25)
 
-dfcombo = df
-dfcombo['GEOID'] = dfcombo['GEOID'].astype(str)
-alpha = 1/7.0
-bravo = 1/7.0
-charlie = 1/7.0
-delta = 1/7.0
-echo = 1/7.0
-foxtrot = 1/7.0
-golf = 1/7.0
-
-dfcombo['omega_13'] = (
-        (alpha * dfcombo.white_pop_pct_2013z.fillna(0)) + \
-        (bravo * dfcombo.rent_25th_pctile_2013z.fillna(0)) + \
-        (charlie * dfcombo.totpop_2013z.fillna(0)) + \
-        (delta * dfcombo.rent_pct_income_2013z.fillna(0)) + \
-        (echo * dfcombo.monthly_housing_cost_2013z.fillna(0)) + \
-        (foxtrot * dfcombo.market_rate_units_per_cap_2013z.fillna(0)) + \
-        (golf * dfcombo.median_tenancy_2013z.fillna(0))
-)
-
-dfcombo['omega_18'] = (
-        (alpha * dfcombo.white_pop_pct_2018z.fillna(0)) + \
-        (bravo * dfcombo.rent_25th_pctile_2018z.fillna(0)) + \
-        (charlie * dfcombo.totpop_2018z.fillna(0)) + \
-        (delta * dfcombo.rent_pct_income_2018z.fillna(0)) + \
-        (echo * dfcombo.monthly_housing_cost_2018z.fillna(0)) + \
-        (foxtrot * dfcombo.market_rate_units_per_cap_2018z.fillna(0)) + \
-        (golf * dfcombo.median_tenancy_2018z.fillna(0))
-)
-dfcombo['omega_change'] = dfcombo.omega_18 - dfcombo.omega_13
-
 '''
 #Kmeans clustering
-Y = dfcombo[['GEOID','omega_13','omega_18']]
-Y = Y[~Y['omega_13'].isnull()]
-Y = Y[~Y['omega_18'].isnull()]
-X = Y[['omega_13','omega_18']]
+Y = df_combo[['GEOID','omega18','omega18']]
+Y = Y[~Y['omega18'].isnull()]
+Y = Y[~Y['omega18'].isnull()]
+X = Y[['omega18','omega18']]
 K = 4
 kmeans = KMeans(n_clusters=K, random_state=0).fit(X)
 Y['labels'] = kmeans.labels_
@@ -414,31 +372,31 @@ for i in range(K):
     Y['center_{}'.format(i)] = c['center_{}'.format(i)]
 for i in range(K):
     Y.loc[Y['labels'] == i, 'd'] = Y['center_{}'.format(i)]
-#re-merge with gdfcombo
-dfcombo = dfcombo.merge(Y, how='left', left_on=['GEOID','omega_13','omega_18'], right_on=['GEOID','omega_13','omega_18'])
+#re-merge with gdf_combo
+df_combo = df_combo.merge(Y, how='left', left_on=['GEOID','omega18','omega18'], right_on=['GEOID','omega18','omega18'])
 
-grp0 = dfcombo[(dfcombo['labels'] == 0)].drop_duplicates()
-grp0 = grp0[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
+grp0 = df_combo[(df_combo['labels'] == 0)].drop_duplicates()
+grp0 = grp0[['GEOID','omega18','omega18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
 grp0_length = str(grp0.shape)
 grp0 = grp0.sort_values('omega_change')
 
-grp1 = dfcombo[(dfcombo['labels'] == 1)].drop_duplicates()
-grp1 = grp1[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
+grp1 = df_combo[(df_combo['labels'] == 1)].drop_duplicates()
+grp1 = grp1[['GEOID','omega18','omega18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
 grp1 = grp1.sort_values('omega_change')
 grp1_length = str(grp1.shape)
 
-grp2 = dfcombo[(dfcombo['labels'] == 2)].drop_duplicates()
-grp2 = grp2[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
+grp2 = df_combo[(df_combo['labels'] == 2)].drop_duplicates()
+grp2 = grp2[['GEOID','omega18','omega18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
 grp2_length = str(grp2.shape)
 grp2 = grp2.sort_values('omega_change')
 
-grp3 = dfcombo[(dfcombo['labels'] == 3)].drop_duplicates()
-grp3 = grp3[['GEOID','omega_13','omega_18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
+grp3 = df_combo[(df_combo['labels'] == 3)].drop_duplicates()
+grp3 = grp3[['GEOID','omega18','omega18','omega_change','RENT_AS_PCT_HOUSEHOLD_INCOME_2013','RENT_AS_PCT_HOUSEHOLD_INCOME_2018','RENT_25PCTILE_2013','RENT_25PCTILE_2018','TOT_POP_2013','TOT_POP_2018','minority_pop_pct_2013','minority_pop_pct_2018','MEDIAN_MONTHLY_HOUSING_COST_2013','sub_600_units_per_capita_2013','sub_600_units_per_capita_2018','housing_tenure13','housing_tenure18','labels']]
 grp3_length = str(grp3.shape)
 grp3 = grp3.sort_values('omega_change')
 '''
 
-fig3 = px.scatter(dfcombo, x="omega_13", y="omega_18",color='neighborhood',text='GEOID'
+fig3 = px.scatter(df_combo, x="omega13", y="omega18",color='neighborhood',text='GEOID'
 )
 fig3.update_yaxes(
     range=[-1.5, 1.5]
@@ -468,19 +426,19 @@ fig3.add_shape(
             )
 )
 
-fig4 = px.choropleth_mapbox(dfcombo,geojson=tracts,locations=dfcombo['GEOID_long'],featureidkey='properties.GEOID',color=dfcombo['omega_change'],
+fig4 = px.choropleth_mapbox(df_combo,geojson=tracts,locations=df_combo['GEOID_long'],featureidkey='properties.GEOID',color=df_combo['omega_change'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig4.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,
             mapbox_center=pikes_place)
 
-fig5 = px.choropleth_mapbox(dfcombo,geojson=tracts,locations=dfcombo['GEOID_long'],featureidkey='properties.GEOID',color=dfcombo['omega_13'],
+fig5 = px.choropleth_mapbox(df_combo,geojson=tracts,locations=df_combo['GEOID_long'],featureidkey='properties.GEOID',color=df_combo['omega13'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig5.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,
             mapbox_center=pikes_place)
 
-fig6 = px.choropleth_mapbox(dfcombo,geojson=tracts,locations=dfcombo['GEOID_long'],featureidkey='properties.GEOID',color=dfcombo['omega_18'],
+fig6 = px.choropleth_mapbox(df_combo,geojson=tracts,locations=df_combo['GEOID_long'],featureidkey='properties.GEOID',color=df_combo['omega18'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig6.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,
