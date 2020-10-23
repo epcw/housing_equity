@@ -7,7 +7,7 @@ import networkx as nx
 from fa2 import ForceAtlas2
 from flask_caching import Cache
 import plotly.express as px #version for maps
-from sklearn.cluster import KMeans
+#from sklearn.cluster import KMeans #commented out because hiding Kmeans clusters for now.
 
 #from dashbase import app, application #production version
 app = dash.Dash(__name__) #local
