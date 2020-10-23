@@ -2,11 +2,11 @@ import dash #comment out for production deployment
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
-import plotly.graph_objects as go
+import plotly.graph_objects as go #version for networkx
 import networkx as nx
 from fa2 import ForceAtlas2
 from flask_caching import Cache
-import plotly.express as px
+import plotly.express as px #version for maps
 from sklearn.cluster import KMeans
 
 #from dashbase import app, application #production version
@@ -217,7 +217,6 @@ for n, p in pos2018().items():
     G2018.nodes[n]['pos'] = p
 
 '''
-
 #NON-CACHE-USING VERSION
 pos = forceatlas2.forceatlas2_networkx_layout(G,pos=None, iterations=1000)
 
@@ -289,7 +288,7 @@ node_trace2018 = go.Scatter(
     customdata=df_combo['GEOID'],
     marker=dict(
         showscale=False,
-        colorscale='Edge',
+        colorscale='YlGnBu',
         reversescale=False,
         color=[],
         size=20,
@@ -334,13 +333,13 @@ for node in G2018.nodes():
 df_combo['tract_index'] = df_combo['TRACT_NUM'].astype(int)
 df_combo['neighborhood_index'] = ''
 df_combo.loc[df_combo.neighborhood =='wallingford','neighborhood_index'] = '1'
-df_combo.loc[df_combo.neighborhood == 'rainier_beach','neighborhood_index'] = '2'
+df_combo.loc[df_combo.neighborhood == 'rainier_beach','neighborhood_index'] = '100'
 
 #node_trace.marker.color = df_combo['tract_index']
 #node_trace.marker.size = node_adjacencies
 #node_trace.text = node_label
 
-node_trace2018.marker.color = df_combo['tract_index']
+node_trace2018.marker.color = df_combo['neighborhood_index'].astype(int)
 node_trace2018.marker.size = node_adjacencies2018
 node_trace2018.text = node_label2018
 
