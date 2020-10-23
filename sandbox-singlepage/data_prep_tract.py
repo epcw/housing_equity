@@ -106,6 +106,27 @@ df['over_600_units_per_capita_2018'] = (df['total_housing_units_per_capita_2018'
 df = df.merge(costs_13f, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 df = df.merge(costs_18df, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
 
+del costs_13f
+del costs_18df
+del costs_13f25
+del costs_13f50
+del costs_13f75
+del costs_13fmedcost
+del costs_13fpct
+del costs_18df25
+del costs_18df50
+del costs_18df75
+del costs_18dfmedcost
+del costs_18dfpct
+del housing_df
+del housing_data18
+del housing_df13
+del housing_df18
+del housing_df_totalunits
+del housing_data13
+del housing_df_raw
+del housing_details_raw
+
 #occupancy and housing age data
 occupancydf_built13 = housing_details13[(housing_details13['CENSUS_QUERY'] == 'B25037_001E')]
 occupancydf_built13['DATA'] = occupancydf_built13['DATA'].astype(float)
@@ -134,6 +155,19 @@ occupancydf18 = occupancydf_built18.merge(occupancydf_tenure18, how = 'inner', l
 df = df.merge(occupancydf18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM']).drop_duplicates()
 df['housing_age18'] = 2018 - df['housing_yr_built_2018']
 df['housing_tenure18'] = df['housing_yr_movein_2018']
+
+del df_raw
+del df18_raw
+del df13_raw
+del housing_details18
+del housingtotal_df18
+del housing_details13
+del occupancydf13
+del occupancydf18
+del occupancydf_built13
+del occupancydf_built18
+del occupancydf_tenure13
+del occupancydf_tenure18
 
 #displays missing data on house age as Nan instead of 0, to filter out erroneous results that claim houses were built in year "0"
 df.loc[df.housing_age13 > 100, 'housing_age13'] = None
@@ -221,6 +255,31 @@ racial18 = racial18.merge(multiracial18, how = 'inner', left_on = ['GEOID','COUN
 race_data18 = racial18[['GEOID','COUNTY','TRACT_NUM','pop_white_nonhisp_only_2018','pop_black_only_2018','pop_native_only_2018','pop_asian_only_2018','pop_polynesian_only_2018','pop_hispanic_2018','pop_other_only_2018','pop_multiracial_2018']]
 
 df = df.merge(race_data18, how = 'inner', left_on = ['GEOID','COUNTY','TRACT_NUM'], right_on = ['GEOID','COUNTY','TRACT_NUM'])
+
+del asian13
+del asian18
+del black13
+del black18
+del housingtotal_df13
+del latino13
+del latino18
+del multiracial13
+del multiracial18
+del native13
+del native18
+del other13
+del other18
+del polynesian13
+del polynesian18
+del race_data18
+del race_data13
+del racial13
+del racial18
+del rdf
+del rdf13
+del rdf18
+del white13
+del white18
 
 df['minority_pop_2013'] = df['TOT_POP_2013'] - df['pop_white_nonhisp_only_2013']
 df['minority_pop_pct_2013'] = df['minority_pop_2013'] / df['TOT_POP_2013']
@@ -405,6 +464,17 @@ gdf = gdf.rename(columns = {'median_housing_age_2018z':'median_housing_age_2018z
 gdf = gdf[['GEOID_a','GEOID_b','distance','minority_pop_pct_change_a','minority_pop_pct_change_b','minority_pop_pct_2013z_a','minority_pop_pct_2013z_b','minority_pop_pct_2018z_a','minority_pop_pct_2018z_b','rent_25th_pctile_change_a','rent_25th_pctile_2013z_a','rent_25th_pctile_2018z_a','rent_25th_pctile_change_b','rent_25th_pctile_2013z_b','rent_25th_pctile_2018z_b','totpop_change_a','totpop_2013z_a','totpop_2018z_a','totpop_change_b','totpop_2013z_b','totpop_2018z_b','rent_pct_income_change_a','rent_pct_income_2013z_a','rent_pct_income_2018z_a','rent_pct_income_change_b','rent_pct_income_2013z_b','rent_pct_income_2018z_b','monthly_housing_cost_change_a','monthly_housing_cost_2013z_a','monthly_housing_cost_2018z_a','monthly_housing_cost_change_b','monthly_housing_cost_2013z_b','monthly_housing_cost_2018z_b','affordable_units_per_cap_change_a','affordable_units_per_cap_2013z_a','affordable_units_per_cap_2018z_a','affordable_units_per_cap_change_b','affordable_units_per_cap_2013z_b','affordable_units_per_cap_2018z_b','median_tenancy_change_a','median_tenancy_2013z_a','median_tenancy_2018z_a','median_tenancy_change_b','median_tenancy_2013z_b','median_tenancy_2018z_b','median_housing_age_change_a','median_housing_age_2013z_a','median_housing_age_2018z_a','median_housing_age_change_b','median_housing_age_2013z_b','median_housing_age_2018z_b','white_pop_pct_change_a','white_pop_pct_2013z_a','white_pop_pct_2018z_a','white_pop_pct_change_b','white_pop_pct_2013z_b','white_pop_pct_2018z_b','market_rate_units_per_cap_change_a','market_rate_units_per_cap_2013z_a','market_rate_units_per_cap_2018z_a','market_rate_units_per_cap_change_b','market_rate_units_per_cap_2013z_b','market_rate_units_per_cap_2018z_b']]
 
 omicron = 1/3 #this is the vectored weighting factor of starting point (omicron) vs change (1-omicron)
+
+del affordable_units_per_cap
+del housing_age
+del lower_quartile_rent
+del market_rate_units_per_cap
+del minority
+del monthly_housing_costs
+del rent_pct_income
+del tenancy
+del totpop
+del white
 
 #calculate diff between the two tracts (and take absolute value since sign is meaningless here) - Delta taking into account starting point (2013) and change.
 gdf['minority_pop_pct_change_delta'] = ((((1-omicron) * gdf.minority_pop_pct_change_a) + (omicron * gdf.minority_pop_pct_2013z_a)) - (((1-omicron) * gdf.minority_pop_pct_change_b) + (omicron * gdf.minority_pop_pct_2013z_b))).abs()

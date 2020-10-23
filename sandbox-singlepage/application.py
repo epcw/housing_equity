@@ -449,8 +449,8 @@ def serve_layout():
     return html.Div([
         dcc.Link('Dashboard Home', href='/', id="app_menu"),
         html.Div([
-            html.H1('EPCW pilot network model of Gentrification Pressure in Seattle'),
-            html.P('Our pilot network model compares equitable access to housing and gentrification pressure in two Seattle neighborhoods in 2018.  RICHS PITHY SUMMARY OF WHY MODELS ARE GOOD TOOLS HERE.', className='description'),
+            html.H1('EPCW pilot network model of Displacement Pressure in Seattle'),
+            html.P("Our pilot network model compares equitable access to housing and displacement pressure in two Seattle neighborhoods in 2018.  Current evaluation tools, such as the City of Seattle's Displacement Risk Index are statistics computed over geographic regions and presented as map overlays. Geographic regions are related by adjacency. In contrast, the network model defines the strength of relationships between groups of people and revealing communities among these groups. Groups in the network model are related when they share access to resources. The network shows relationships between groups of people, not properties of a geography.", className='description'),
             html.P('In the network model below, tracts that are closer together are more similar than those further apart.  One can best think of this network as a comparison of SIMILARITY.  Nodes closer together have more similar demographic properties than those further apart.', className='description'),
             html.P('Edge weights are determined by racial minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income, and median monthly housing cost.', className='description'),
             html.Div([
@@ -472,7 +472,7 @@ def serve_layout():
 #                                  )], className='col-6')], className='multi-col'),
 #            ], className='container'),
             html.Div([
-                html.P(['NOTE: these sliders are currently inactive, but when functional will allow a user to tweak the factors used to measure gentrification pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
+                html.P(['NOTE: these sliders are currently inactive, but when functional will allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
                 ]),
                 html.Div([
                     html.Div([
@@ -555,30 +555,30 @@ def serve_layout():
 #            dcc.Graph(figure=fig2,
 #                      id='housing_bar'
 #                      ),
-            html.H1('Change in gentrification pressure'),
-            html.P('This scatterplot compares gentrification pressure (what we are calling omega) in the census tract groups in the wealthier northern neighborhoods of Seattle (Wallingford) and the poorer Southeastern neighborhoods (Rainier Beach).  Tracts exactly along the dashed 1:1 line had no change in pressure from 2013-18. Tracts above the line had a higher gentrification pressure in 2018; those below had a lower pressure in 2018.', className='description'),
+            html.H1('Change in displacement pressure'),
+            html.P('This scatterplot compares displacement pressure (what we are calling omega) in the census tract groups in the wealthier northern neighborhoods of Seattle (Wallingford) and the poorer Southeastern neighborhoods (Rainier Beach).  Tracts exactly along the dashed 1:1 line had no change in pressure from 2013-18. Tracts above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018.', className='description'),
             dcc.Graph(figure=fig3,
-                      id='gentrification_scatter'
+                      id='displacement_scatter'
                       ),
             html.Div([
                 html.H1('2010 vs 2018'),
-                html.P('These maps compare the gentrification Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH gentrification pressure; green have LOW gentrification pressure.',
+                html.P('These maps compare the displacement Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure.',
                        className='description graph_title'),
                 html.Div([
                     html.Div([
                         html.H2(className='graph_title', children='2013'),
                         dcc.Graph(figure=fig5,
-                            id='gentrification_2013'
+                            id='displacement_2013'
                         )], className='col-6'),
                     html.Div([
                         html.H2(className='graph_title', children='2018'),
                         dcc.Graph(figure=fig6,
-                            id='gentrification_2018'
+                            id='displacement_2018'
                         )], className='col-6')], className='multi-col'),
             ], className='container'),
-            html.H1('Change in gentrification pressure map'),
+            html.H1('Change in displacement pressure map'),
             html.P(
-                'This map compares gentrification pressure (omega) in each census tract.  Red areas had INCREASING gentrification pressure between 2013 and 2018. Green had decreasing.',
+                'This map compares displacement pressure (omega) in each census tract.  Red areas had INCREASING displacement pressure between 2013 and 2018. Green had decreasing.',
                 className='description'),
             dcc.Graph(figure=fig4,
                 id='block_grp_map'
