@@ -494,7 +494,7 @@ def serve_layout():
             html.H1('EPCW pilot network model of Gentrification Pressure in Seattle'),
             html.P('Our pilot network model compares equitable access to housing and gentrification pressure in two Seattle neighborhoods in 2018.  RICHS PITHY SUMMARY OF WHY MODELS ARE GOOD TOOLS HERE.', className='description'),
             html.P('In the network model below, tracts that are closer together are more similar than those further apart.  One can best think of this network as a comparison of SIMILARITY.  Nodes closer together have more similar demographic properties than those further apart.', className='description'),
-            html.P('Edge weights are determined by minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income, and median monthly housing cost.', className='description'),
+            html.P('Edge weights are determined by racial minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income, and median monthly housing cost.', className='description'),
             html.Div([
                 dcc.Graph(figure=fig2,
                           id='housing_networkx18',
@@ -518,7 +518,7 @@ def serve_layout():
                 ]),
                 html.Div([
                     html.Div([
-                        html.H4('Minority Population Percentage')], className='col-4'),
+                        html.H4('Racial Minority Population Percentage')], className='col-4'),
                     html.Div([
                         dcc.Slider(
                             id='alpha',
