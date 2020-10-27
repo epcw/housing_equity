@@ -1,6 +1,17 @@
 import networkx as nx
 from fa2 import ForceAtlas2
 import pandas as pd
+from flask_caching import Cache
+import plotly.graph_objects as go
+
+from application import application
+
+cache = Cache(application, config={
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': 'cache'
+})
+
+TIMEOUT = 60
 
 #TRACT VERSION
 import data_prep_tract
@@ -102,11 +113,63 @@ gdf_wallingford['GEOID_b'] = gdf_wallingford['GEOID_b'].str.replace("53033", "")
 from data_prep_blockgrp import block_grp_geoids
 '''
 
+#weight the edges
+alpha_one = 1/7.0
+alpha_half = .5/7.0
+alpha_zero = 0/7.0
+bravo = 1/7.0
+charlie = 1/7.0
+delta = 1/7.0
+echo = 1/7.0
+foxtrot = 1/7.0
+golf = 1/7.0
+hotel = 0
+
+#NETWORK VERSIONS
+#2013 + change version
+alpha = alpha_one
+antialpha = (1/7 - alpha)
+gdf_combo['omega_alpha_one'] = 1/(
+        (alpha * gdf.white_pop_pct_change_delta) + \
+        ((bravo + antialpha) * gdf.rent_25th_pctile_change_delta) + \
+        ((charlie + antialpha) * gdf.totpop_change_delta) + \
+        ((delta + antialpha) * gdf.rent_pct_income_change_delta) + \
+        ((echo + antialpha) * gdf.monthly_housing_cost_change_delta) + \
+        ((foxtrot + antialpha) * gdf.market_rate_units_per_cap_change_delta) + \
+        ((golf + antialpha) * gdf.median_tenancy_change_delta) + \
+        ((hotel + antialpha) * gdf.median_housing_age_change_delta)
+)
+
+#2013 only version
+gdf_combo['omega13_alpha_one'] = 1/(
+        (alpha_one * gdf.white_pop_pct_change_delta_2013) + \
+        ((bravo + antialpha) * gdf.rent_25th_pctile_change_delta_2013) + \
+        ((charlie + antialpha) * gdf.totpop_change_delta_2013) + \
+        ((delta + antialpha) * gdf.rent_pct_income_change_delta_2013) + \
+        ((echo + antialpha) * gdf.monthly_housing_cost_change_delta_2018) + \
+        ((foxtrot + antialpha) * gdf.market_rate_units_per_cap_change_delta_2013) + \
+        ((golf + antialpha) * gdf.median_tenancy_change_delta_2013) + \
+        ((hotel + antialpha) * gdf.median_housing_age_change_delta_2013)
+)
+
+#2018 only version
+gdf_combo['omega18_alpha_one'] = 1/(
+        (alpha_one * gdf.white_pop_pct_change_delta_2018) + \
+        ((bravo + antialpha) * gdf.rent_25th_pctile_change_delta_2018) + \
+        ((charlie + antialpha) * gdf.totpop_change_delta_2018) + \
+        ((delta + antialpha) * gdf.rent_pct_income_change_delta_2018) + \
+        ((echo + antialpha) * gdf.monthly_housing_cost_change_delta_2018) + \
+        ((foxtrot + antialpha) * gdf.market_rate_units_per_cap_change_delta_2018) + \
+        ((golf + antialpha) * gdf.median_tenancy_change_delta_2018) + \
+        ((hotel + antialpha) * gdf.median_housing_age_change_delta_2018)
+)
+
 #PLOT
 node_list = list(set(df_combo['GEOID']))
 #G = nx.Graph()
 G2018 = nx.Graph()
-
+G2018_half = nx.Graph()
+G2018_zero = nx.Graph()
 
 '''
 #normal version (no cache)
@@ -136,13 +199,15 @@ forceatlas2 = ForceAtlas2(
 for i in node_list:
 #    G.add_node(i)
     G2018.add_node(i)
-
+    G2018_half.add_node(i)
+    G2018_zero.add_node(i)
 
 #Build the Edge list for the network graph for 2013
 for i, row in gdf_combo.iterrows():
 #    G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega13'])])
-    G2018.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18'])])
-
+    G2018.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_one'])])
+    G2018_half.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_one'])])
+    G2018_zero.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_one'])])
 
 #CACHE-USING VERSION
 @cache.memoize(timeout=TIMEOUT)
@@ -177,6 +242,11 @@ def query_forceatlas2():
 def pos2018():
     return query_forceatlas2().forceatlas2_networkx_layout(G2018, pos=None, iterations=1000)
 
+def pos2018_half():
+    return query_forceatlas2().forceatlas2_networkx_layout(G2018_half, pos=None, iterations=1000)
+
+def pos2018_zero():
+    return query_forceatlas2().forceatlas2_networkx_layout(G2018_zero, pos=None, iterations=1000)
 
 #for n, p in pos().items():
 #    G.nodes[n]['pos'] = p
@@ -185,6 +255,11 @@ def pos2018():
 for n, p in pos2018().items():
     G2018.nodes[n]['pos'] = p
 
+for n, p in pos2018_half().items():
+    G2018_half.nodes[n]['pos'] = p
+
+for n, p in pos2018_zero().items():
+    G2018_zero.nodes[n]['pos'] = p
 
 '''
 #NON-CACHE-USING VERSION
@@ -205,8 +280,23 @@ for n, p in pos.items():
 #    mode='lines'
 #)
 
+edge_trace2018_one = go.Scatter(
+    x=[],
+    y=[],
+    line=dict(width=1, color='#c6c6c6'),
+    hoverinfo='text',
+    mode='lines'
+)
 
-edge_trace2018 = go.Scatter(
+edge_trace2018_half = go.Scatter(
+    x=[],
+    y=[],
+    line=dict(width=1, color='#c6c6c6'),
+    hoverinfo='text',
+    mode='lines'
+)
+
+edge_trace2018_zero= go.Scatter(
     x=[],
     y=[],
     line=dict(width=1, color='#c6c6c6'),
@@ -224,9 +314,20 @@ edge_trace2018 = go.Scatter(
 for edge in G2018.edges():
     x0, y0 = G2018.nodes[edge[0]]['pos']
     x1, y1 = G2018.nodes[edge[1]]['pos']
-    edge_trace2018['x'] += tuple([x0, x1, None])
-    edge_trace2018['y'] += tuple([y0, y1, None])
+    edge_trace2018_one['x'] += tuple([x0, x1, None])
+    edge_trace2018_one['y'] += tuple([y0, y1, None])
 
+for edge in G2018_half.edges():
+    x0, y0 = G2018_half.nodes[edge[0]]['pos']
+    x1, y1 = G2018_half.nodes[edge[1]]['pos']
+    edge_trace2018_half['x'] += tuple([x0, x1, None])
+    edge_trace2018_half['y'] += tuple([y0, y1, None])
+
+for edge in G2018_zero.edges():
+    x0, y0 = G2018_zero.nodes[edge[0]]['pos']
+    x1, y1 = G2018_zero.nodes[edge[1]]['pos']
+    edge_trace2018_zero['x'] += tuple([x0, x1, None])
+    edge_trace2018_zero['y'] += tuple([y0, y1, None])
 
 #node_trace = go.Scatter(
 #    x=[],
@@ -255,7 +356,7 @@ for edge in G2018.edges():
 #)
 
 
-node_trace2018 = go.Scatter(
+node_trace2018_one = go.Scatter(
     x=[],
     y=[],
    mode='markers+text',  #make markers+text to show labels
@@ -281,6 +382,57 @@ node_trace2018 = go.Scatter(
     marker_line_width=1
 )
 
+node_trace2018_half = go.Scatter(
+    x=[],
+    y=[],
+   mode='markers+text',  #make markers+text to show labels
+    text=[],
+    hoverinfo='text',
+    customdata=df_combo['GEOID'],
+    marker=dict(
+        showscale=False,
+        colorscale='YlGnBu',
+        reversescale=False,
+        color=[],
+        size=20,
+        opacity=0.8,
+        colorbar=dict(
+            thickness=10,
+            title='COLOR GROUP BY CENSUS TRACT NUMBER',
+            xanchor='left',
+            titleside='right'
+        ),
+        line=dict(width=0)
+    ),
+    showlegend=True,
+    marker_line_width=1
+)
+
+node_trace2018_zero = go.Scatter(
+    x=[],
+    y=[],
+   mode='markers+text',  #make markers+text to show labels
+    text=[],
+    hoverinfo='text',
+    customdata=df_combo['GEOID'],
+    marker=dict(
+        showscale=False,
+        colorscale='YlGnBu',
+        reversescale=False,
+        color=[],
+        size=20,
+        opacity=0.8,
+        colorbar=dict(
+            thickness=10,
+            title='COLOR GROUP BY CENSUS TRACT NUMBER',
+            xanchor='left',
+            titleside='right'
+        ),
+        line=dict(width=0)
+    ),
+    showlegend=True,
+    marker_line_width=1
+)
 
 #for node in G.nodes():
 #    x, y = G.nodes[node]['pos']
@@ -290,12 +442,23 @@ node_trace2018 = go.Scatter(
 
 for node in G2018.nodes():
     x, y = G2018.nodes[node]['pos']
-    node_trace2018['x'] += tuple([x])
-    node_trace2018['y'] += tuple([y])
+    node_trace2018_one['x'] += tuple([x])
+    node_trace2018_one['y'] += tuple([y])
 
+for node in G2018_half.nodes():
+    x, y = G2018_half.nodes[node]['pos']
+    node_trace2018_half['x'] += tuple([x])
+    node_trace2018_half['y'] += tuple([y])
+
+for node in G2018_zero.nodes():
+    x, y = G2018_zero.nodes[node]['pos']
+    node_trace2018_zero['x'] += tuple([x])
+    node_trace2018_zero['y'] += tuple([y])
 
 #node_adjacencies = []
-node_adjacencies2018 = []
+node_adjacencies2018_one = []
+node_adjacencies2018_half = []
+node_adjacencies2018_zero = []
 
 
 #for node, adjacencies in enumerate(G.adjacency()):
@@ -303,49 +466,42 @@ node_adjacencies2018 = []
 
 
 for node, adjacencies in enumerate(G2018.adjacency()):
-    node_adjacencies2018.append(len(adjacencies[1]))
+    node_adjacencies2018_one.append(len(adjacencies[1]))
 
+for node, adjacencies in enumerate(G2018_half.adjacency()):
+    node_adjacencies2018_half.append(len(adjacencies[1]))
+
+for node, adjacencies in enumerate(G2018_zero.adjacency()):
+    node_adjacencies2018_zero.append(len(adjacencies[1]))
 
 #for node in G.nodes():
 #    node_label = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
 
 for node in G2018.nodes():
-    node_label2018 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+    node_label2018_one = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
+for node in G2018_half.nodes():
+    node_label2018_half = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+
+for node in G2018_zero.nodes():
+    node_label2018_zero = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
 df_combo['tract_index'] = df_combo['TRACT_NUM'].astype(int)
-
 
 #node_trace.marker.color = df_combo['tract_index']
 #node_trace.marker.size = node_adjacencies
 #node_trace.text = node_label
 
-
 colorsIndex = {'wallingford':'#ef553b','rainier_beach':'#636efa'}  #manually assign colors
 colors = df_combo['neighborhood'].map(colorsIndex)
-node_trace2018.marker.color = colors
+node_trace2018_one.marker.color = colors
+node_trace2018_half.marker.color = colors
+node_trace2018_zero.marker.color = colors
 #node_trace2018.marker.color = df_combo['neighborhood_index'].astype(int)
-node_trace2018.marker.size = (1.5 + df_combo.omega18) * 20
-node_trace2018.text = node_label2018
-
-def get_node_trace(subset='all'):
-    subsets = {
-        'all': node_df,
-    }
-
-    if subset in subsets:
-        return subsets[subset]
-    else:
-        raise('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
-
-
-def get_node_trace(subset='all'):
-    subsets = {
-        'all': edge_df,
-    }
-
-    if subset in subsets:
-        return subsets[subset]
-    else:
-        raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
+node_trace2018_one.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_one.text = node_label2018_one
+node_trace2018_half.marker.size = (1.5 + df_combo.omega18) * 20 #TODO FIX DF VERSIONS OF OMEGA AS WELL - RESPONSIVE SLIDER IF POSSIBLE
+node_trace2018_half.text = node_label2018_half
+node_trace2018_zero.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_zero.text = node_label2018_zero

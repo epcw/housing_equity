@@ -136,15 +136,13 @@ the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
 import build_network
-node_trace = build_network.get_node_df()
-node_trace2018_one = node_trace['node_list2018_one']
-node_trace2018_half = node_trace['node_list2018_half']
-node_trace2018_zero = node_trace['node_list2018_zero']
+node_trace2018_one = build_network.node_trace2018_one
+node_trace2018_half = build_network.node_trace2018_half
+node_trace2018_zero = build_network.node_trace2018_zeru
 
-edge_trace = build_network.get_edge_df()
-edge_trace2018_one = edge_trace['edge_list2018_one']
-edge_trace2018_half = edge_trace['edge_list2018_half']
-edge_trace2018_zero = edge_trace['edge_list2018_zero']
+edge_trace2018_one = build_network.edge_trace2018_one
+edge_trace2018_half = build_network.edge_trace2018_half
+edge_trace2018_zero = build_network.edge_trace2018_zeru
 
 #fig = go.Figure(data=[edge_trace, node_trace],
 #             layout=go.Layout(
@@ -160,7 +158,7 @@ edge_trace2018_zero = edge_trace['edge_list2018_zero']
 #fig.update_traces(textfont_size=25)
 
 
-fig2 = go.Figure(data=[edge_trace2018, node_trace2018],
+fig2 = go.Figure(data=[edge_trace2018_one, node_trace2018_one],
              layout=go.Layout(
                 title='',
                 titlefont=dict(size=16),

@@ -554,48 +554,6 @@ hotel = 0
 
 #threshold = 0
 
-#NETWORK VERSIONS
-#2013 + change version
-gdf['omega'] = 1/(
-        (alpha * gdf.white_pop_pct_change_delta) + \
-        (bravo * gdf.rent_25th_pctile_change_delta) + \
-        (charlie * gdf.totpop_change_delta) + \
-        (delta * gdf.rent_pct_income_change_delta) + \
-        (echo * gdf.monthly_housing_cost_change_delta) + \
-        (foxtrot * gdf.market_rate_units_per_cap_change_delta) + \
-        (golf * gdf.median_tenancy_change_delta) + \
-        (hotel * gdf.median_housing_age_change_delta)
-)
-
-#gdf.loc[gdf.omega < 0, 'omega'] = None #corrects for the census having "2018" as an answer to some of these
-#gdf = gdf[(gdf['omega'] >= threshold)]
-
-#2013 only version
-gdf['omega13'] = 1/(
-        (alpha * gdf.white_pop_pct_change_delta_2013) + \
-        (bravo * gdf.rent_25th_pctile_change_delta_2013) + \
-        (charlie * gdf.totpop_change_delta_2013) + \
-        (delta * gdf.rent_pct_income_change_delta_2013) + \
-        (echo * gdf.monthly_housing_cost_change_delta_2018) + \
-        (foxtrot * gdf.market_rate_units_per_cap_change_delta_2013) + \
-        (golf * gdf.median_tenancy_change_delta_2013) + \
-        (hotel * gdf.median_housing_age_change_delta_2013)
-)
-#gdf = gdf[(gdf['omega13'] >= threshold)]
-
-#2018 only version
-gdf['omega18'] = 1/(
-        (alpha * gdf.white_pop_pct_change_delta_2018) + \
-        (bravo * gdf.rent_25th_pctile_change_delta_2018) + \
-        (charlie * gdf.totpop_change_delta_2018) + \
-        (delta * gdf.rent_pct_income_change_delta_2018) + \
-        (echo * gdf.monthly_housing_cost_change_delta_2018) + \
-        (foxtrot * gdf.market_rate_units_per_cap_change_delta_2018) + \
-        (golf * gdf.median_tenancy_change_delta_2018) + \
-        (hotel * gdf.median_housing_age_change_delta_2018)
-)
-#gdf = gdf[(gdf['omega18'] >= threshold)]
-
 #SCATTERPLOT VERSION (not inverted since pressure is what we're looking at, not similarity)
 #2013 only version
 gdf['omega13_scatter'] = (
