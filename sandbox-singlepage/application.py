@@ -3,8 +3,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objects as go  #version for networkx
-import networkx as nx
-from fa2 import ForceAtlas2
 from flask_caching import Cache
 import plotly.express as px  #version for maps
 #from sklearn.cluster import KMeans  #commented out because hiding Kmeans clusters for now.
@@ -133,239 +131,20 @@ gdf_wallingford['GEOID_b'] = gdf_wallingford['GEOID_b'].str.replace("53033", "")
 from data_prep_blockgrp import block_grp_geoids
 '''
 
-
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
+import build_network
+node_trace = build_network.get_node_df()
+node_trace2018_one = node_trace['node_list2018_one']
+node_trace2018_half = node_trace['node_list2018_half']
+node_trace2018_zero = node_trace['node_list2018_zero']
 
-#PLOT
-node_list = list(set(df_combo['GEOID']))
-#G = nx.Graph()
-G2018 = nx.Graph()
-
-
-'''
-#normal version (no cache)
-forceatlas2 = ForceAtlas2(
-                        # Behavior alternatives
-                        outboundAttractionDistribution=False,  # Dissuade hubs
-                        linLogMode=False,  # NOT IMPLEMENTED
-                        adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-                        edgeWeightInfluence=5.0,
-
-                        # Performance
-                        jitterTolerance=1.0,  # Tolerance
-                        barnesHutOptimize=True,
-                        barnesHutTheta=1.2,
-                        multiThreaded=False,  # NOT IMPLEMENTED
-
-                        # Tuning
-                        scalingRatio=2,
-                        strongGravityMode=True,
-                        gravity=20.0,
-
-                        # Log
-                        verbose=True)
-'''
-
-
-for i in node_list:
-#    G.add_node(i)
-    G2018.add_node(i)
-
-
-#Build the Edge list for the network graph for 2013
-for i, row in gdf_combo.iterrows():
-#    G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega13'])])
-    G2018.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18'])])
-
-
-#CACHE-USING VERSION
-@cache.memoize(timeout=TIMEOUT)
-def query_forceatlas2():
-    forceatlas2 = ForceAtlas2(
-                            # Behavior alternatives
-                            outboundAttractionDistribution=False,  # Dissuade hubs
-                            linLogMode=False,  # NOT IMPLEMENTED
-                            adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-                            edgeWeightInfluence=2,  #SUPER IMPORTANT - sets edge weights and distance between connected nodes
-
-                            # Performance
-                            jitterTolerance=1.0,  # Tolerance
-                            barnesHutOptimize=True,  #works better with this than the default
-                            barnesHutTheta=8.7,  #set around here seems like the right balance for this project
-                            multiThreaded=False,  # NOT IMPLEMENTED
-
-                            # Tuning
-                            scalingRatio=12,
-                            strongGravityMode=False,
-                            gravity=0.00100000,  #this prevents unconnected nodes from flying away due to node repulsion
-
-                            # Log
-                            verbose=False)
-    return forceatlas2
-
-
-#def pos():
-#    return query_forceatlas2().forceatlas2_networkx_layout(G, pos=None, iterations=1000)
-
-
-def pos2018():
-    return query_forceatlas2().forceatlas2_networkx_layout(G2018, pos=None, iterations=1000)
-
-
-#for n, p in pos().items():
-#    G.nodes[n]['pos'] = p
-
-
-for n, p in pos2018().items():
-    G2018.nodes[n]['pos'] = p
-
-
-'''
-#NON-CACHE-USING VERSION
-pos = forceatlas2.forceatlas2_networkx_layout(G,pos=None, iterations=1000)
-
-
-for n, p in pos.items():
-    G.nodes[n]['pos'] = p
-'''
-
-
-#plot this bad boy
-#edge_trace = go.Scatter(
-#    x=[],
-#    y=[],
-#    line=dict(width=1,color='#c6c6c6'),
-#    hoverinfo='text',
-#    mode='lines'
-#)
-
-
-edge_trace2018 = go.Scatter(
-    x=[],
-    y=[],
-    line=dict(width=1, color='#c6c6c6'),
-    hoverinfo='text',
-    mode='lines'
-)
-
-#for edge in G.edges():
-#    x0, y0 = G.nodes[edge[0]]['pos']
-#    x1, y1 = G.nodes[edge[1]]['pos']
-#    edge_trace['x'] += tuple([x0, x1, None])
-#    edge_trace['y'] += tuple([y0, y1, None])
-
-
-for edge in G2018.edges():
-    x0, y0 = G2018.nodes[edge[0]]['pos']
-    x1, y1 = G2018.nodes[edge[1]]['pos']
-    edge_trace2018['x'] += tuple([x0, x1, None])
-    edge_trace2018['y'] += tuple([y0, y1, None])
-
-
-#node_trace = go.Scatter(
-#    x=[],
-#    y=[],
-#    mode='markers+text', #make markers+text to show labels
-#    text=[],
-#    hoverinfo='text',
-#    customdata=df_combo['GEOID'],
-#    marker=dict(
-#        showscale=False,
-#        colorscale='Edge',
-#        reversescale=False,
-#        color=[],
-#        size=20,
-#        opacity=0.8,
-#        colorbar=dict(
-#            thickness=10,
-#            title='COLOR GROUP BY CENSUS TRACT NUMBER',
-#            xanchor='left',
-#            titleside='right'
-#        ),
-#        line=dict(width=0)
-#    ),
-#    showlegend=True,
-#    marker_line_width=1
-#)
-
-
-node_trace2018 = go.Scatter(
-    x=[],
-    y=[],
-   mode='markers+text',  #make markers+text to show labels
-    text=[],
-    hoverinfo='text',
-    customdata=df_combo['GEOID'],
-    marker=dict(
-        showscale=False,
-        colorscale='YlGnBu',
-        reversescale=False,
-        color=[],
-        size=20,
-        opacity=0.8,
-        colorbar=dict(
-            thickness=10,
-            title='COLOR GROUP BY CENSUS TRACT NUMBER',
-            xanchor='left',
-            titleside='right'
-        ),
-        line=dict(width=0)
-    ),
-    showlegend=True,
-    marker_line_width=1
-)
-
-
-#for node in G.nodes():
-#    x, y = G.nodes[node]['pos']
-#    node_trace['x'] += tuple([x])
-#    node_trace['y'] += tuple([y])
-
-
-for node in G2018.nodes():
-    x, y = G2018.nodes[node]['pos']
-    node_trace2018['x'] += tuple([x])
-    node_trace2018['y'] += tuple([y])
-
-
-#node_adjacencies = []
-node_adjacencies2018 = []
-
-
-#for node, adjacencies in enumerate(G.adjacency()):
-#    node_adjacencies.append(len(adjacencies[1]))
-
-
-for node, adjacencies in enumerate(G2018.adjacency()):
-    node_adjacencies2018.append(len(adjacencies[1]))
-
-
-#for node in G.nodes():
-#    node_label = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
-
-
-for node in G2018.nodes():
-    node_label2018 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
-
-
-df_combo['tract_index'] = df_combo['TRACT_NUM'].astype(int)
-
-
-#node_trace.marker.color = df_combo['tract_index']
-#node_trace.marker.size = node_adjacencies
-#node_trace.text = node_label
-
-
-colorsIndex = {'wallingford':'#ef553b','rainier_beach':'#636efa'}  #manually assign colors
-colors = df_combo['neighborhood'].map(colorsIndex)
-node_trace2018.marker.color = colors
-#node_trace2018.marker.color = df_combo['neighborhood_index'].astype(int)
-node_trace2018.marker.size = (1.5 + df_combo.omega18) * 20
-node_trace2018.text = node_label2018
-
+edge_trace = build_network.get_edge_df()
+edge_trace2018_one = edge_trace['edge_list2018_one']
+edge_trace2018_half = edge_trace['edge_list2018_half']
+edge_trace2018_zero = edge_trace['edge_list2018_zero']
 
 #fig = go.Figure(data=[edge_trace, node_trace],
 #             layout=go.Layout(
@@ -662,12 +441,30 @@ def generate_table(dataframe, max_rows=1422):
     ])
 
 
-#@app.callback(
-#    dash.dependencies.Output(component_id='data_table', component_property='children'),
-#    [dash.dependencies.Input(component_id='housing_networkx', component_property='customdata')])
-#def update_table(customdata):
-    #node_name = clickData['nodes'][0]['customdata']
-#    dff = df[(df['GEOID'] == 'customdata')]
+# callback for housing_change_map
+@app.callback(
+    Output('housing_networkx18', 'figure'),
+    [Input('alpha', 'value')])
+
+# updates graph based on user input
+def update_graph(alpha):
+    return {
+        'data': [
+            edge_trace2018_one if alpha == 1
+            else (edge_trace2018_half if alpha == 0.5
+            else edge_trace2018_zero ),
+            node_trace2018_one if alpha == 1
+            else (node_trace2018_half if alpha == 0.5
+                  else node_trace2018_zero )],
+        'layout': go.Layout(
+                title='',
+                titlefont=dict(size=16),
+                showlegend=False,
+                hovermode='closest',
+                margin=dict(b=20,l=5,r=5,t=40),
+                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
+    }
 
 #this calls the serve_layout function to run on app load.
 app.layout = serve_layout

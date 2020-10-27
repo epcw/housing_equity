@@ -813,7 +813,7 @@ def get_gdf(subset='all'):
     else:
         raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
 
-
+'''
 #DEBUG - CHECK FOR NaNs OR output dfs to csv for exporting
 nandf = df[df.isnull().any(axis=1)]
 #csv_filename = 'data_prep_tract-nan-check.csv'
@@ -822,3 +822,4 @@ combo_gdf.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL
 csv_filename = 'data_prep_tract-combo_df.csv'
 combo_df.to_csv(csv_filename, index = False,quotechar='"',quoting=csv.QUOTE_ALL)
 print("Exporting csv...")
+'''
