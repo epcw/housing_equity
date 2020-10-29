@@ -156,6 +156,44 @@ gdf_combo['omega18_alpha_one'] = 1/(
         ((hotel + antialpha) * gdf.median_housing_age_change_delta_2018)
 )
 
+#DF VERSIONS
+#combo
+df_combo['omega_alpha_one'] = 1/(
+        (alpha * df.white_pop_pct_change_delta) + \
+        ((bravo + antialpha) * df.rent_25th_pctile_change_delta) + \
+        ((charlie + antialpha) * df.totpop_change_delta) + \
+        ((delta + antialpha) * df.rent_pct_income_change_delta) + \
+        ((echo + antialpha) * df.monthly_housing_cost_change_delta) + \
+        ((foxtrot + antialpha) * df.market_rate_units_per_cap_change_delta) + \
+        ((golf + antialpha) * df.median_tenancy_change_delta) + \
+        ((hotel + antialpha) * df.median_housing_age_change_delta)
+)
+
+#2013 only version
+df_combo['omega13_alpha_one'] = 1/(
+        (alpha_one * df.white_pop_pct_change_delta_2013) + \
+        ((bravo + antialpha) * df.rent_25th_pctile_change_delta_2013) + \
+        ((charlie + antialpha) * df.totpop_change_delta_2013) + \
+        ((delta + antialpha) * df.rent_pct_income_change_delta_2013) + \
+        ((echo + antialpha) * df.monthly_housing_cost_change_delta_2018) + \
+        ((foxtrot + antialpha) * df.market_rate_units_per_cap_change_delta_2013) + \
+        ((golf + antialpha) * df.median_tenancy_change_delta_2013) + \
+        ((hotel + antialpha) * df.median_housing_age_change_delta_2013)
+)
+
+#2018 only version
+df_combo['omega18_alpha_one'] = 1/(
+        (alpha_one * df.white_pop_pct_change_delta_2018) + \
+        ((bravo + antialpha) * df.rent_25th_pctile_change_delta_2018) + \
+        ((charlie + antialpha) * df.totpop_change_delta_2018) + \
+        ((delta + antialpha) * df.rent_pct_income_change_delta_2018) + \
+        ((echo + antialpha) * df.monthly_housing_cost_change_delta_2018) + \
+        ((foxtrot + antialpha) * df.market_rate_units_per_cap_change_delta_2018) + \
+        ((golf + antialpha) * df.median_tenancy_change_delta_2018) + \
+        ((hotel + antialpha) * df.median_housing_age_change_delta_2018)
+)
+
+
 #PLOT
 node_list = list(set(df_combo['GEOID']))
 #G = nx.Graph()
