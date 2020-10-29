@@ -135,7 +135,7 @@ from data_prep_blockgrp import block_grp_geoids
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
-from build_network import get_nodes, get_edges
+from build_network import get_nodes, get_edges, get_maps
 node_trace2018_one = get_nodes(subset='one')
 node_trace2018_half = get_nodes(subset='half')
 node_trace2018_zero = get_nodes(subset='zero')
@@ -143,6 +143,8 @@ node_trace2018_zero = get_nodes(subset='zero')
 edge_trace2018_one = get_edges(subset='one')
 edge_trace2018_half = get_edges(subset='half')
 edge_trace2018_zero = get_edges(subset='zero')
+
+df_combo = get_maps(subset='one')
 
 #TODO: build / import df_combo version of variables
 #TODO: import cache application -> build_network
@@ -220,7 +222,7 @@ grp3 = grp3.sort_values('omega_change')
 '''
 
 
-fig3 = px.scatter(df_combo, x="omega13", y="omega18",color='neighborhood',text='GEOID'
+fig3 = px.scatter(df_combo, x="omega13df_alpha_one", y="omega18df_alpha_one",color='neighborhood',text='GEOID'
 )
 fig3.update_yaxes(
     range=[-1.5, 1.5]
@@ -255,21 +257,21 @@ fig3.add_shape(
 )
 
 
-fig4 = px.choropleth_mapbox(df_combo,geojson=tracts,locations=df_combo['GEOID_long'],featureidkey='properties.GEOID',color=df_combo['omega_change'],
+fig4 = px.choropleth_mapbox(df_combo,geojson=tracts,locations=df_combo['GEOID_long'],featureidkey='properties.GEOID',color=df_combo['omegadf_alpha_one'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig4.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,
             mapbox_center=pikes_place)
 
 
-fig5 = px.choropleth_mapbox(df_combo,geojson=tracts,locations=df_combo['GEOID_long'],featureidkey='properties.GEOID',color=df_combo['omega13'],
+fig5 = px.choropleth_mapbox(df_combo,geojson=tracts,locations=df_combo['GEOID_long'],featureidkey='properties.GEOID',color=df_combo['omega13df_alpha_one'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig5.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,
             mapbox_center=pikes_place)
 
 
-fig6 = px.choropleth_mapbox(df_combo,geojson=tracts,locations=df_combo['GEOID_long'],featureidkey='properties.GEOID',color=df_combo['omega18'],
+fig6 = px.choropleth_mapbox(df_combo,geojson=tracts,locations=df_combo['GEOID_long'],featureidkey='properties.GEOID',color=df_combo['omega18df_alpha_one'],
             opacity=0.7,color_continuous_scale='RdYlGn_r')
 fig6.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,

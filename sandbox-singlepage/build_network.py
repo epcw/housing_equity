@@ -156,43 +156,32 @@ gdf_combo['omega18_alpha_one'] = 1/(
         ((hotel + antialpha) * gdf.median_housing_age_change_delta_2018)
 )
 
-#DF VERSIONS
+#MAP VERSIONS
 #combo
-df_combo['omega_alpha_one'] = 1/(
-        (alpha * df.white_pop_pct_change_delta) + \
-        ((bravo + antialpha) * df.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha) * df.totpop_change_delta) + \
-        ((delta + antialpha) * df.rent_pct_income_change_delta) + \
-        ((echo + antialpha) * df.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha) * df.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha) * df.median_tenancy_change_delta) + \
-        ((hotel + antialpha) * df.median_housing_age_change_delta)
+df_combo['omega13df_alpha_one'] = (
+        (alpha * df_combo.white_pop_pct_2013z.fillna(0)) + \
+        ((bravo + antialpha) * df_combo.rent_25th_pctile_2013z.fillna(0)) + \
+        ((charlie + antialpha) * df_combo.totpop_2013z.fillna(0)) + \
+        ((delta + antialpha) * df_combo.rent_pct_income_2013z.fillna(0)) + \
+        ((echo + antialpha) * df_combo.monthly_housing_cost_2013z.fillna(0)) + \
+        ((foxtrot + antialpha) * df_combo.market_rate_units_per_cap_2013z.fillna(0)) + \
+        ((golf + antialpha) * df_combo.median_tenancy_2013z.fillna(0))
 )
 
-#2013 only version
-df_combo['omega13_alpha_one'] = 1/(
-        (alpha_one * df.white_pop_pct_change_delta_2013) + \
-        ((bravo + antialpha) * df.rent_25th_pctile_change_delta_2013) + \
-        ((charlie + antialpha) * df.totpop_change_delta_2013) + \
-        ((delta + antialpha) * df.rent_pct_income_change_delta_2013) + \
-        ((echo + antialpha) * df.monthly_housing_cost_change_delta_2018) + \
-        ((foxtrot + antialpha) * df.market_rate_units_per_cap_change_delta_2013) + \
-        ((golf + antialpha) * df.median_tenancy_change_delta_2013) + \
-        ((hotel + antialpha) * df.median_housing_age_change_delta_2013)
+df_combo['omega18df_alpha_one'] = (
+        (alpha * df_combo.white_pop_pct_2018z.fillna(0)) + \
+        ((bravo + antialpha) * df_combo.rent_25th_pctile_2018z.fillna(0)) + \
+        ((charlie + antialpha) * df_combo.totpop_2018z.fillna(0)) + \
+        ((delta + antialpha) * df_combo.rent_pct_income_2018z.fillna(0)) + \
+        ((echo + antialpha) * df_combo.monthly_housing_cost_2018z.fillna(0)) + \
+        ((foxtrot + antialpha) * df_combo.market_rate_units_per_cap_2018z.fillna(0)) + \
+        ((golf + antialpha) * df_combo.median_tenancy_2018z.fillna(0))
 )
+df_combo['omegadf_alpha_one'] = df_combo.omega18df_alpha_one - df_combo.omega13df_alpha_one
 
-#2018 only version
-df_combo['omega18_alpha_one'] = 1/(
-        (alpha_one * df.white_pop_pct_change_delta_2018) + \
-        ((bravo + antialpha) * df.rent_25th_pctile_change_delta_2018) + \
-        ((charlie + antialpha) * df.totpop_change_delta_2018) + \
-        ((delta + antialpha) * df.rent_pct_income_change_delta_2018) + \
-        ((echo + antialpha) * df.monthly_housing_cost_change_delta_2018) + \
-        ((foxtrot + antialpha) * df.market_rate_units_per_cap_change_delta_2018) + \
-        ((golf + antialpha) * df.median_tenancy_change_delta_2018) + \
-        ((hotel + antialpha) * df.median_housing_age_change_delta_2018)
-)
-
+#temp setting variables so they exist
+df_combo_half = df_combo
+df_combo_zero = df_combo
 
 #PLOT
 node_list = list(set(df_combo['GEOID']))
@@ -566,6 +555,19 @@ def get_edges(subset='one'):
         'one': edge_trace2018_one,
         'half': edge_trace2018_half,
         'zero': edge_trace2018_zero
+    }
+
+    if subset in subsets:
+        return subsets[subset]
+    else:
+        raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
+
+
+def get_maps(subset='one'):
+    subsets = {
+        'one': df_combo,
+        'half': df_combo_half,
+        'zero': df_combo_zero
     }
 
     if subset in subsets:
