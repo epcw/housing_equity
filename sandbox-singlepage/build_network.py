@@ -179,7 +179,7 @@ df_combo['omega18df_alpha_one'] = (
 )
 df_combo['omegadf_alpha_one'] = df_combo.omega18df_alpha_one - df_combo.omega13df_alpha_one
 
-#temp setting variables so they exist
+#temp setting variables so they exist.
 df_combo_half = df_combo
 df_combo_zero = df_combo
 

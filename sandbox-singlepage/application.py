@@ -27,127 +27,68 @@ cache = Cache(app.server, config={
 
 TIMEOUT = 60
 
-
-#TRACT VERSION
-import data_prep_tract
-df = data_prep_tract.get_df()
-gdf = data_prep_tract.get_gdf()
-df_wallingford = data_prep_tract.get_df(subset='wallingford')
-gdf_wallingford = data_prep_tract.get_gdf(subset='wallingford')
-df_rb = data_prep_tract.get_df(subset='rainier_beach')
-gdf_rb = data_prep_tract.get_gdf(subset='rainier_beach')
-df_combo = data_prep_tract.get_df(subset='combo')
-gdf_combo = data_prep_tract.get_gdf(subset='combo')
-#df_mtbaker = data_prep_tract.get_df(subset='mtbaker_station')
-#gdf_mtbaker = data_prep_tract.get_gdf(subset='mtbaker_station')
-#df_othello = data_prep_tract.get_df(subset='othello_station')
-#gdf_othello = data_prep_tract.get_gdf(subset='othello_station')
-df_rb['GEOID_long'] = df_rb['GEOID']
-df_rb['GEOID'] = df_rb['GEOID'].str.replace("53033", "")
-gdf_rb['GEOID_long_a'] = gdf_rb['GEOID_a']
-gdf_rb['GEOID_long_b'] = gdf_rb['GEOID_b']
-gdf_rb['GEOID_a'] = gdf_rb['GEOID_a'].str.replace("53033", "")
-gdf_rb['GEOID_b'] = gdf_rb['GEOID_b'].str.replace("53033", "")
-#df_mtbaker['GEOID_long'] = df_mtbaker['GEOID']
-#df_mtbaker['GEOID'] = df_mtbaker['GEOID'].str.replace("53033", "")
-#gdf_mtbaker['GEOID_long_a'] = gdf_mtbaker['GEOID_a']
-#gdf_mtbaker['GEOID_long_b'] = gdf_mtbaker['GEOID_b']
-#gdf_mtbaker['GEOID_a'] = gdf_mtbaker['GEOID_a'].str.replace("53033", "")
-#gdf_mtbaker['GEOID_b'] = gdf_mtbaker['GEOID_b'].str.replace("53033", "")
-#df_othello['GEOID_long'] = df_othello['GEOID']
-#df_othello['GEOID'] = df_othello['GEOID'].str.replace("53033", "")
-#gdf_othello['GEOID_long_a'] = gdf_othello['GEOID_a']
-#gdf_othello['GEOID_long_b'] = gdf_othello['GEOID_b']
-#gdf_othello['GEOID_a'] = gdf_othello['GEOID_a'].str.replace("53033", "")
-#gdf_othello['GEOID_b'] = gdf_othello['GEOID_b'].str.replace("53033", "")
-df['GEOID_long'] = df['GEOID']
-df['GEOID'] = df['GEOID'].str.replace("53033", "")
-gdf['GEOID_long_a'] = gdf['GEOID_a']
-gdf['GEOID_long_b'] = gdf['GEOID_b']
-gdf['GEOID_a'] = gdf['GEOID_a'].str.replace("53033", "")
-gdf['GEOID_b'] = gdf['GEOID_b'].str.replace("53033", "")
-df_wallingford['GEOID_long'] = df_wallingford['GEOID']
-df_wallingford['GEOID'] = df_wallingford['GEOID'].str.replace("53033", "")
-gdf_wallingford['GEOID_long_a'] = gdf_wallingford['GEOID_a']
-gdf_wallingford['GEOID_long_b'] = gdf_wallingford['GEOID_b']
-gdf_wallingford['GEOID_a'] = gdf_wallingford['GEOID_a'].str.replace("53033", "")
-gdf_wallingford['GEOID_b'] = gdf_wallingford['GEOID_b'].str.replace("53033", "")
-df_combo['GEOID_long'] = df_combo['GEOID']
-df_combo['GEOID'] = df_combo['GEOID'].str.replace("53033", "")
-gdf_combo['GEOID_long_a'] = gdf_combo['GEOID_a']
-gdf_combo['GEOID_long_b'] = gdf_combo['GEOID_b']
-gdf_combo['GEOID_a'] = gdf_combo['GEOID_a'].str.replace("53033", "")
-gdf_combo['GEOID_b'] = gdf_combo['GEOID_b'].str.replace("53033", "")
-
-
-from data_prep_tract import tracts
-
-
-'''
-#BLOCK GROUP VERSION
-import data_prep_blockgrp
-df = data_prep_blockgrp.get_df()
-gdf = data_prep_blockgrp.get_gdf()
-df_wallingford = data_prep_blockgrp.get_df(subset='wallingford')
-gdf_wallingford = data_prep_blockgrp.get_gdf(subset='wallingford')
-df_rb = data_prep_blockgrp.get_df(subset='rainier_beach')
-gdf_rb = data_prep_blockgrp.get_gdf(subset='rainier_beach')
-df_mtbaker = data_prep_blockgrp.get_df(subset='mtbaker_station')
-gdf_mtbaker = data_prep_blockgrp.get_gdf(subset='mtbaker_station')
-df_othello = data_prep_blockgrp.get_df(subset='othello_station')
-gdf_othello = data_prep_blockgrp.get_gdf(subset='othello_station')
-df_rb['GEOID_long'] = df_rb['GEOID']
-df_rb['GEOID'] = df_rb['GEOID'].str.replace("53033", "")
-gdf_rb['GEOID_long_a'] = gdf_rb['GEOID_a']
-gdf_rb['GEOID_long_b'] = gdf_rb['GEOID_b']
-gdf_rb['GEOID_a'] = gdf_rb['GEOID_a'].str.replace("53033", "")
-gdf_rb['GEOID_b'] = gdf_rb['GEOID_b'].str.replace("53033", "")
-df_mtbaker['GEOID_long'] = df_mtbaker['GEOID']
-df_mtbaker['GEOID'] = df_mtbaker['GEOID'].str.replace("53033", "")
-gdf_mtbaker['GEOID_long_a'] = gdf_mtbaker['GEOID_a']
-gdf_mtbaker['GEOID_long_b'] = gdf_mtbaker['GEOID_b']
-gdf_mtbaker['GEOID_a'] = gdf_mtbaker['GEOID_a'].str.replace("53033", "")
-gdf_mtbaker['GEOID_b'] = gdf_mtbaker['GEOID_b'].str.replace("53033", "")
-df_othello['GEOID_long'] = df_othello['GEOID']
-df_othello['GEOID'] = df_othello['GEOID'].str.replace("53033", "")
-gdf_othello['GEOID_long_a'] = gdf_othello['GEOID_a']
-gdf_othello['GEOID_long_b'] = gdf_othello['GEOID_b']
-gdf_othello['GEOID_a'] = gdf_othello['GEOID_a'].str.replace("53033", "")
-gdf_othello['GEOID_b'] = gdf_othello['GEOID_b'].str.replace("53033", "")
-df['GEOID_long'] = df['GEOID']
-df['GEOID'] = df['GEOID'].str.replace("53033", "")
-gdf['GEOID_long_a'] = gdf['GEOID_a']
-gdf['GEOID_long_b'] = gdf['GEOID_b']
-gdf['GEOID_a'] = gdf['GEOID_a'].str.replace("53033", "")
-gdf['GEOID_b'] = gdf['GEOID_b'].str.replace("53033", "")
-df_wallingford['GEOID_long'] = df_wallingford['GEOID']
-df_wallingford['GEOID'] = df_wallingford['GEOID'].str.replace("53033", "")
-gdf_wallingford['GEOID_long_a'] = gdf_wallingford['GEOID_a']
-gdf_wallingford['GEOID_long_b'] = gdf_wallingford['GEOID_b']
-gdf_wallingford['GEOID_a'] = gdf_wallingford['GEOID_a'].str.replace("53033", "")
-gdf_wallingford['GEOID_b'] = gdf_wallingford['GEOID_b'].str.replace("53033", "")
-
-
-from data_prep_blockgrp import block_grp_geoids
-'''
-
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
-from build_network import get_nodes, get_edges, get_maps
-node_trace2018_one = get_nodes(subset='one')
-node_trace2018_half = get_nodes(subset='half')
-node_trace2018_zero = get_nodes(subset='zero')
+from data_prep_tract import tracts
 
-edge_trace2018_one = get_edges(subset='one')
-edge_trace2018_half = get_edges(subset='half')
-edge_trace2018_zero = get_edges(subset='zero')
+@cache.memoize(timeout=TIMEOUT)
+def get_nodes_one():
+    from build_network import get_nodes
+    node_trace2018_one = get_nodes(subset='one')
+    return node_trace2018_one
 
-df_combo = get_maps(subset='one')
+node_trace2018_one = get_nodes_one()
 
-#TODO: build / import df_combo version of variables
-#TODO: import cache application -> build_network
+@cache.memoize(timeout=TIMEOUT)
+def get_nodes_half():
+    from build_network import get_nodes
+    node_trace2018_half = get_nodes(subset='half')
+    return node_trace2018_half
+
+node_trace2018_half = get_nodes_half()
+
+@cache.memoize(timeout=TIMEOUT)
+def get_nodes_zero():
+    from build_network import get_nodes
+    node_trace2018_zero = get_nodes(subset='zero')
+    return node_trace2018_zero
+
+node_trace2018_zero = get_nodes_zero()
+
+@cache.memoize(timeout=TIMEOUT)
+def get_maps():
+    from build_network import get_maps
+    df_combo = get_maps(subset='one')
+    return df_combo
+
+df_combo = get_maps()
+
+@cache.memoize(timeout=TIMEOUT)
+def get_edges_one():
+    from build_network import get_edges
+    edge_trace2018_one = get_edges(subset='one')
+    return edge_trace2018_one
+
+edge_trace2018_one = get_edges_one()
+
+@cache.memoize(timeout=TIMEOUT)
+def get_edges_half():
+    from build_network import get_edges
+    edge_trace2018_half = get_edges(subset='half')
+    return edge_trace2018_half
+
+edge_trace2018_half = get_edges_half()
+
+@cache.memoize(timeout=TIMEOUT)
+def get_edges_zero():
+    from build_network import get_edges
+    edge_trace2018_zero = get_edges(subset='zero')
+    return edge_trace2018_zero
+
+edge_trace2018_zero = get_edges_zero()
+
 
 #fig = go.Figure(data=[edge_trace, node_trace],
 #             layout=go.Layout(
