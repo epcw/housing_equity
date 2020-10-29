@@ -4,14 +4,6 @@ import pandas as pd
 from flask_caching import Cache
 import plotly.graph_objects as go
 
-from application import application
-
-cache = Cache(application, config={
-    'CACHE_TYPE': 'filesystem',
-    'CACHE_DIR': 'cache'
-})
-
-TIMEOUT = 60
 
 #TRACT VERSION
 import data_prep_tract
@@ -171,29 +163,29 @@ G2018 = nx.Graph()
 G2018_half = nx.Graph()
 G2018_zero = nx.Graph()
 
-'''
+
 #normal version (no cache)
 forceatlas2 = ForceAtlas2(
-                        # Behavior alternatives
-                        outboundAttractionDistribution=False,  # Dissuade hubs
-                        linLogMode=False,  # NOT IMPLEMENTED
-                        adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
-                        edgeWeightInfluence=5.0,
+                            # Behavior alternatives
+                            outboundAttractionDistribution=False,  # Dissuade hubs
+                            linLogMode=False,  # NOT IMPLEMENTED
+                            adjustSizes=False,  # Prevent overlap (NOT IMPLEMENTED)
+                            edgeWeightInfluence=2,  #SUPER IMPORTANT - sets edge weights and distance between connected nodes
 
-                        # Performance
-                        jitterTolerance=1.0,  # Tolerance
-                        barnesHutOptimize=True,
-                        barnesHutTheta=1.2,
-                        multiThreaded=False,  # NOT IMPLEMENTED
+                            # Performance
+                            jitterTolerance=1.0,  # Tolerance
+                            barnesHutOptimize=True,  #works better with this than the default
+                            barnesHutTheta=8.7,  #set around here seems like the right balance for this project
+                            multiThreaded=False,  # NOT IMPLEMENTED
 
-                        # Tuning
-                        scalingRatio=2,
-                        strongGravityMode=True,
-                        gravity=20.0,
+                            # Tuning
+                            scalingRatio=12,
+                            strongGravityMode=False,
+                            gravity=0.00100000,  #this prevents unconnected nodes from flying away due to node repulsion
 
-                        # Log
-                        verbose=True)
-'''
+                            # Log
+                            verbose=False)
+
 
 
 for i in node_list:
@@ -208,7 +200,7 @@ for i, row in gdf_combo.iterrows():
     G2018.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_one'])])
     G2018_half.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_one'])])
     G2018_zero.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_one'])])
-
+'''
 #CACHE-USING VERSION
 @cache.memoize(timeout=TIMEOUT)
 def query_forceatlas2():
@@ -263,13 +255,25 @@ for n, p in pos2018_zero().items():
 
 '''
 #NON-CACHE-USING VERSION
-pos = forceatlas2.forceatlas2_networkx_layout(G,pos=None, iterations=1000)
+#pos = forceatlas2.forceatlas2_networkx_layout(G,pos=None, iterations=1000)
 
+#for n, p in pos.items():
+#    G.nodes[n]['pos'] = p
 
-for n, p in pos.items():
-    G.nodes[n]['pos'] = p
-'''
+pos2018 = forceatlas2.forceatlas2_networkx_layout(G2018,pos=None, iterations=1000)
 
+for n, p in pos2018.items():
+    G2018.nodes[n]['pos2018'] = p
+
+pos2018_half = forceatlas2.forceatlas2_networkx_layout(G2018_half,pos=None, iterations=1000)
+
+for n, p in pos2018_half.items():
+    G2018_half.nodes[n]['pos2018_half'] = p
+
+pos2018_zero = forceatlas2.forceatlas2_networkx_layout(G2018_zero,pos=None, iterations=1000)
+
+for n, p in pos2018_zero.items():
+    G2018_zero.nodes[n]['pos2018_zero'] = p
 
 #plot this bad boy
 #edge_trace = go.Scatter(
@@ -312,20 +316,20 @@ edge_trace2018_zero= go.Scatter(
 
 
 for edge in G2018.edges():
-    x0, y0 = G2018.nodes[edge[0]]['pos']
-    x1, y1 = G2018.nodes[edge[1]]['pos']
+    x0, y0 = G2018.nodes[edge[0]]['pos2018']
+    x1, y1 = G2018.nodes[edge[1]]['pos2018']
     edge_trace2018_one['x'] += tuple([x0, x1, None])
     edge_trace2018_one['y'] += tuple([y0, y1, None])
 
 for edge in G2018_half.edges():
-    x0, y0 = G2018_half.nodes[edge[0]]['pos']
-    x1, y1 = G2018_half.nodes[edge[1]]['pos']
+    x0, y0 = G2018_half.nodes[edge[0]]['pos2018_half']
+    x1, y1 = G2018_half.nodes[edge[1]]['pos2018_half']
     edge_trace2018_half['x'] += tuple([x0, x1, None])
     edge_trace2018_half['y'] += tuple([y0, y1, None])
 
 for edge in G2018_zero.edges():
-    x0, y0 = G2018_zero.nodes[edge[0]]['pos']
-    x1, y1 = G2018_zero.nodes[edge[1]]['pos']
+    x0, y0 = G2018_zero.nodes[edge[0]]['pos2018_zero']
+    x1, y1 = G2018_zero.nodes[edge[1]]['pos2018_zero']
     edge_trace2018_zero['x'] += tuple([x0, x1, None])
     edge_trace2018_zero['y'] += tuple([y0, y1, None])
 
@@ -441,17 +445,17 @@ node_trace2018_zero = go.Scatter(
 
 
 for node in G2018.nodes():
-    x, y = G2018.nodes[node]['pos']
+    x, y = G2018.nodes[node]['pos2018']
     node_trace2018_one['x'] += tuple([x])
     node_trace2018_one['y'] += tuple([y])
 
 for node in G2018_half.nodes():
-    x, y = G2018_half.nodes[node]['pos']
+    x, y = G2018_half.nodes[node]['pos2018_half']
     node_trace2018_half['x'] += tuple([x])
     node_trace2018_half['y'] += tuple([y])
 
 for node in G2018_zero.nodes():
-    x, y = G2018_zero.nodes[node]['pos']
+    x, y = G2018_zero.nodes[node]['pos2018_zero']
     node_trace2018_zero['x'] += tuple([x])
     node_trace2018_zero['y'] += tuple([y])
 
@@ -505,3 +509,28 @@ node_trace2018_half.marker.size = (1.5 + df_combo.omega18) * 20 #TODO FIX DF VER
 node_trace2018_half.text = node_label2018_half
 node_trace2018_zero.marker.size = (1.5 + df_combo.omega18) * 20
 node_trace2018_zero.text = node_label2018_zero
+
+def get_nodes(subset='one'):
+    subsets = {
+        'one': node_trace2018_one,
+        'half': node_trace2018_half,
+        'zero': node_trace2018_zero
+    }
+
+    if subset in subsets:
+        return subsets[subset]
+    else:
+        raise('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
+
+
+def get_edges(subset='one'):
+    subsets = {
+        'one': edge_trace2018_one,
+        'half': edge_trace2018_half,
+        'zero': edge_trace2018_zero
+    }
+
+    if subset in subsets:
+        return subsets[subset]
+    else:
+        raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))

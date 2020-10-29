@@ -135,14 +135,17 @@ from data_prep_blockgrp import block_grp_geoids
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
-import build_network
-node_trace2018_one = build_network.node_trace2018_one
-node_trace2018_half = build_network.node_trace2018_half
-node_trace2018_zero = build_network.node_trace2018_zeru
+from build_network import get_nodes, get_edges
+node_trace2018_one = get_nodes(subset='one')
+node_trace2018_half = get_nodes(subset='half')
+node_trace2018_zero = get_nodes(subset='zero')
 
-edge_trace2018_one = build_network.edge_trace2018_one
-edge_trace2018_half = build_network.edge_trace2018_half
-edge_trace2018_zero = build_network.edge_trace2018_zeru
+edge_trace2018_one = get_edges(subset='one')
+edge_trace2018_half = get_edges(subset='half')
+edge_trace2018_zero = get_edges(subset='zero')
+
+#TODO: build / import df_combo version of variables
+#TODO: import cache application -> build_network
 
 #fig = go.Figure(data=[edge_trace, node_trace],
 #             layout=go.Layout(
@@ -438,12 +441,12 @@ def generate_table(dataframe, max_rows=1422):
         ])
     ])
 
-
+'''
 # callback for housing_change_map
 @app.callback(
     Output('housing_networkx18', 'figure'),
     [Input('alpha', 'value')])
-
+'''
 # updates graph based on user input
 def update_graph(alpha):
     return {
