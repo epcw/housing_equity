@@ -740,6 +740,8 @@ combo_pair_df = combo_pair_df[~combo_pair_df['distance'].isnull()]
 combo_gdf = combo_pair_df.drop_duplicates()
 combo_df = rainier_beach_df.append(wallingford_df)
 
+'''
+#integrated version
 def get_df(subset='all'):
     subsets = {
         'all': df,
@@ -770,7 +772,45 @@ def get_gdf(subset='all'):
         return subsets[subset]
     else:
         raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
+'''
+#spit out static csvs to save memory and not run this every time
+df_filename = ROOTBEER + 'data/df.csv'
+gdf_filename = ROOTBEER + 'data/gdf.csv'
+combo_df_filename = ROOTBEER + 'data/combo_df.csv'
+combo_gdf_filename = ROOTBEER + 'data/combo_gdf.csv'
+mtbaker_station_df_filename = ROOTBEER + 'data/mtbaker_station_df.csv'
+mtbaker_station_gdf_filename = ROOTBEER + 'data/mtbaker_station_gdf.csv'
+othello_station_df_filename = ROOTBEER + 'data/othello_station_df.csv'
+othello_station_gdf_filename = ROOTBEER + 'data/othello_station_gdf.csv'
+rainier_beach_df_filename = ROOTBEER + 'data/rainier_beach_df.csv'
+rainier_beach_gdf_filename = ROOTBEER + 'data/rainier_beach_gdf.csv'
+wallingford_df_filename = ROOTBEER + 'data/wallingford_df.csv'
+wallingford_gdf_filename = ROOTBEER + 'data/wallingford_gdf.csv'
 
+df.to_csv(df_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + df_filename)
+gdf.to_csv(gdf_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + gdf_filename)
+combo_df.to_csv(combo_df_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + combo_df_filename)
+combo_gdf.to_csv(combo_gdf_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + combo_gdf_filename)
+mtbaker_station_df.to_csv(mtbaker_station_df_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + mtbaker_station_df_filename)
+mtbaker_station_gdf.to_csv(mtbaker_station_gdf_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + mtbaker_station_gdf_filename)
+othello_station_df.to_csv(othello_station_df_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + othello_station_df_filename)
+othello_station_gdf.to_csv(othello_station_gdf_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + othello_station_gdf_filename)
+rainier_beach_df.to_csv(rainier_beach_df_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + rainier_beach_df_filename)
+rainier_beach_gdf.to_csv(rainier_beach_gdf_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + rainier_beach_gdf_filename)
+wallingford_df.to_csv(wallingford_df_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + wallingford_df_filename)
+wallingford_gdf.to_csv(wallingford_gdf_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+print("exporting " + wallingford_gdf_filename)
 '''
 #DEBUG - CHECK FOR NaNs OR output dfs to csv for exporting
 nandf = df[df.isnull().any(axis=1)]

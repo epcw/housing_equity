@@ -31,7 +31,7 @@ TIMEOUT = 60
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
-from data_prep_tract import tracts
+from build_network import tracts
 
 @cache.memoize(timeout=TIMEOUT)
 def get_nodes_one():

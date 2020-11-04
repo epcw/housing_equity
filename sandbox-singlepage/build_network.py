@@ -3,8 +3,54 @@ from fa2 import ForceAtlas2
 import pandas as pd
 from flask_caching import Cache
 import plotly.graph_objects as go
+import json
 
+#set root directory for data files
+#ROOTBEER = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
+ROOTBEER = '' #local
 
+with open(ROOTBEER + 'data/washingtongeo.json','r') as GeoJSON:
+    tracts = json.load(GeoJSON)
+
+#use static csvs instead of rebuilding the dfs in data_prep_tract every time
+df = pd.read_csv(ROOTBEER + 'data/df.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
+gdf = pd.read_csv(ROOTBEER + 'data/gdf.csv', dtype={"GEOID_a": str, "GEOID_b": str,"YEAR":str})
+df_combo = pd.read_csv(ROOTBEER + 'data/combo_df.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
+gdf_combo = pd.read_csv(ROOTBEER + 'data/combo_gdf.csv', dtype={"GEOID_a": str, "GEOID_b": str,"TRACT_NUM": str,"YEAR":str})
+df_mtbaker = pd.read_csv(ROOTBEER + 'data/mtbaker_station_df.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
+gdf_mtbaker = pd.read_csv(ROOTBEER + 'data/mtbaker_station_gdf.csv', dtype={"GEOID_a": str, "GEOID_b": str,"TRACT_NUM": str,"YEAR":str})
+df_othello = pd.read_csv(ROOTBEER + 'data/othello_station_df.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
+gdf_othello = pd.read_csv(ROOTBEER + 'data/othello_station_gdf.csv', dtype={"GEOID_a": str, "GEOID_b": str,"TRACT_NUM": str,"YEAR":str})
+df_rb = pd.read_csv(ROOTBEER + 'data/rainier_beach_df.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
+gdf_rb = pd.read_csv(ROOTBEER + 'data/rainier_beach_gdf.csv', dtype={"GEOID_a": str, "GEOID_b": str,"TRACT_NUM": str,"YEAR":str})
+df_wallingford = pd.read_csv(ROOTBEER + 'data/wallingford_df.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
+gdf_wallingford = pd.read_csv(ROOTBEER + 'data/wallingford_gdf.csv', dtype={"GEOID_a": str, "GEOID_b": str,"TRACT_NUM": str,"YEAR":str})
+df['GEOID_long'] = df['GEOID']
+df['GEOID'] = df['GEOID'].str.replace("53033", "")
+gdf['GEOID_long_a'] = gdf['GEOID_a']
+gdf['GEOID_long_b'] = gdf['GEOID_b']
+gdf['GEOID_a'] = gdf['GEOID_a'].str.replace("53033", "")
+gdf['GEOID_b'] = gdf['GEOID_b'].str.replace("53033", "")
+df_rb['GEOID_long'] = df_rb['GEOID']
+df_rb['GEOID'] = df_rb['GEOID'].str.replace("53033", "")
+gdf_rb['GEOID_long_a'] = gdf_rb['GEOID_a']
+gdf_rb['GEOID_long_b'] = gdf_rb['GEOID_b']
+gdf_rb['GEOID_a'] = gdf_rb['GEOID_a'].str.replace("53033", "")
+gdf_rb['GEOID_b'] = gdf_rb['GEOID_b'].str.replace("53033", "")
+df_wallingford['GEOID_long'] = df_wallingford['GEOID']
+df_wallingford['GEOID'] = df_wallingford['GEOID'].str.replace("53033", "")
+gdf_wallingford['GEOID_long_a'] = gdf_wallingford['GEOID_a']
+gdf_wallingford['GEOID_long_b'] = gdf_wallingford['GEOID_b']
+gdf_wallingford['GEOID_a'] = gdf_wallingford['GEOID_a'].str.replace("53033", "")
+gdf_wallingford['GEOID_b'] = gdf_wallingford['GEOID_b'].str.replace("53033", "")
+df_combo['GEOID_long'] = df_combo['GEOID']
+df_combo['GEOID'] = df_combo['GEOID'].str.replace("53033", "")
+gdf_combo['GEOID_long_a'] = gdf_combo['GEOID_a']
+gdf_combo['GEOID_long_b'] = gdf_combo['GEOID_b']
+gdf_combo['GEOID_a'] = gdf_combo['GEOID_a'].str.replace("53033", "")
+gdf_combo['GEOID_b'] = gdf_combo['GEOID_b'].str.replace("53033", "")
+
+'''
 #TRACT VERSION
 import data_prep_tract
 df = data_prep_tract.get_df()
@@ -55,7 +101,7 @@ gdf_combo['GEOID_long_a'] = gdf_combo['GEOID_a']
 gdf_combo['GEOID_long_b'] = gdf_combo['GEOID_b']
 gdf_combo['GEOID_a'] = gdf_combo['GEOID_a'].str.replace("53033", "")
 gdf_combo['GEOID_b'] = gdf_combo['GEOID_b'].str.replace("53033", "")
-
+'''
 
 '''
 #BLOCK GROUP VERSION
