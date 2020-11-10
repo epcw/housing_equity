@@ -51,59 +51,6 @@ gdf_combo['GEOID_a'] = gdf_combo['GEOID_a'].str.replace("53033", "")
 gdf_combo['GEOID_b'] = gdf_combo['GEOID_b'].str.replace("53033", "")
 
 '''
-#TRACT VERSION
-import data_prep_tract
-df = data_prep_tract.get_df()
-gdf = data_prep_tract.get_gdf()
-df_wallingford = data_prep_tract.get_df(subset='wallingford')
-gdf_wallingford = data_prep_tract.get_gdf(subset='wallingford')
-df_rb = data_prep_tract.get_df(subset='rainier_beach')
-gdf_rb = data_prep_tract.get_gdf(subset='rainier_beach')
-df_combo = data_prep_tract.get_df(subset='combo')
-gdf_combo = data_prep_tract.get_gdf(subset='combo')
-#df_mtbaker = data_prep_tract.get_df(subset='mtbaker_station')
-#gdf_mtbaker = data_prep_tract.get_gdf(subset='mtbaker_station')
-#df_othello = data_prep_tract.get_df(subset='othello_station')
-#gdf_othello = data_prep_tract.get_gdf(subset='othello_station')
-df_rb['GEOID_long'] = df_rb['GEOID']
-df_rb['GEOID'] = df_rb['GEOID'].str.replace("53033", "")
-gdf_rb['GEOID_long_a'] = gdf_rb['GEOID_a']
-gdf_rb['GEOID_long_b'] = gdf_rb['GEOID_b']
-gdf_rb['GEOID_a'] = gdf_rb['GEOID_a'].str.replace("53033", "")
-gdf_rb['GEOID_b'] = gdf_rb['GEOID_b'].str.replace("53033", "")
-#df_mtbaker['GEOID_long'] = df_mtbaker['GEOID']
-#df_mtbaker['GEOID'] = df_mtbaker['GEOID'].str.replace("53033", "")
-#gdf_mtbaker['GEOID_long_a'] = gdf_mtbaker['GEOID_a']
-#gdf_mtbaker['GEOID_long_b'] = gdf_mtbaker['GEOID_b']
-#gdf_mtbaker['GEOID_a'] = gdf_mtbaker['GEOID_a'].str.replace("53033", "")
-#gdf_mtbaker['GEOID_b'] = gdf_mtbaker['GEOID_b'].str.replace("53033", "")
-#df_othello['GEOID_long'] = df_othello['GEOID']
-#df_othello['GEOID'] = df_othello['GEOID'].str.replace("53033", "")
-#gdf_othello['GEOID_long_a'] = gdf_othello['GEOID_a']
-#gdf_othello['GEOID_long_b'] = gdf_othello['GEOID_b']
-#gdf_othello['GEOID_a'] = gdf_othello['GEOID_a'].str.replace("53033", "")
-#gdf_othello['GEOID_b'] = gdf_othello['GEOID_b'].str.replace("53033", "")
-df['GEOID_long'] = df['GEOID']
-df['GEOID'] = df['GEOID'].str.replace("53033", "")
-gdf['GEOID_long_a'] = gdf['GEOID_a']
-gdf['GEOID_long_b'] = gdf['GEOID_b']
-gdf['GEOID_a'] = gdf['GEOID_a'].str.replace("53033", "")
-gdf['GEOID_b'] = gdf['GEOID_b'].str.replace("53033", "")
-df_wallingford['GEOID_long'] = df_wallingford['GEOID']
-df_wallingford['GEOID'] = df_wallingford['GEOID'].str.replace("53033", "")
-gdf_wallingford['GEOID_long_a'] = gdf_wallingford['GEOID_a']
-gdf_wallingford['GEOID_long_b'] = gdf_wallingford['GEOID_b']
-gdf_wallingford['GEOID_a'] = gdf_wallingford['GEOID_a'].str.replace("53033", "")
-gdf_wallingford['GEOID_b'] = gdf_wallingford['GEOID_b'].str.replace("53033", "")
-df_combo['GEOID_long'] = df_combo['GEOID']
-df_combo['GEOID'] = df_combo['GEOID'].str.replace("53033", "")
-gdf_combo['GEOID_long_a'] = gdf_combo['GEOID_a']
-gdf_combo['GEOID_long_b'] = gdf_combo['GEOID_b']
-gdf_combo['GEOID_a'] = gdf_combo['GEOID_a'].str.replace("53033", "")
-gdf_combo['GEOID_b'] = gdf_combo['GEOID_b'].str.replace("53033", "")
-'''
-
-'''
 #BLOCK GROUP VERSION
 import data_prep_blockgrp
 df = data_prep_blockgrp.get_df()
@@ -165,69 +112,182 @@ hotel = 0
 
 #NETWORK VERSIONS
 #2013 + change version
-alpha = alpha_one
-antialpha = (1/7 - alpha)
+antialpha_one = (1/7 - alpha_one)
 gdf_combo['omega_alpha_one'] = 1/(
-        (alpha * gdf.white_pop_pct_change_delta) + \
-        ((bravo + antialpha) * gdf.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha) * gdf.totpop_change_delta) + \
-        ((delta + antialpha) * gdf.rent_pct_income_change_delta) + \
-        ((echo + antialpha) * gdf.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha) * gdf.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha) * gdf.median_tenancy_change_delta) + \
-        ((hotel + antialpha) * gdf.median_housing_age_change_delta)
+        (alpha_one * gdf.white_pop_pct_change_delta) + \
+        ((bravo + antialpha_one) * gdf.rent_25th_pctile_change_delta) + \
+        ((charlie + antialpha_one) * gdf.totpop_change_delta) + \
+        ((delta + antialpha_one) * gdf.rent_pct_income_change_delta) + \
+        ((echo + antialpha_one) * gdf.monthly_housing_cost_change_delta) + \
+        ((foxtrot + antialpha_one) * gdf.market_rate_units_per_cap_change_delta) + \
+        ((golf + antialpha_one) * gdf.median_tenancy_change_delta) + \
+        ((hotel + antialpha_one) * gdf.median_housing_age_change_delta)
 )
 
 #2013 only version
 gdf_combo['omega13_alpha_one'] = 1/(
         (alpha_one * gdf.white_pop_pct_change_delta_2013) + \
-        ((bravo + antialpha) * gdf.rent_25th_pctile_change_delta_2013) + \
-        ((charlie + antialpha) * gdf.totpop_change_delta_2013) + \
-        ((delta + antialpha) * gdf.rent_pct_income_change_delta_2013) + \
-        ((echo + antialpha) * gdf.monthly_housing_cost_change_delta_2018) + \
-        ((foxtrot + antialpha) * gdf.market_rate_units_per_cap_change_delta_2013) + \
-        ((golf + antialpha) * gdf.median_tenancy_change_delta_2013) + \
-        ((hotel + antialpha) * gdf.median_housing_age_change_delta_2013)
+        ((bravo + antialpha_one) * gdf.rent_25th_pctile_change_delta_2013) + \
+        ((charlie + antialpha_one) * gdf.totpop_change_delta_2013) + \
+        ((delta + antialpha_one) * gdf.rent_pct_income_change_delta_2013) + \
+        ((echo + antialpha_one) * gdf.monthly_housing_cost_change_delta_2018) + \
+        ((foxtrot + antialpha_one) * gdf.market_rate_units_per_cap_change_delta_2013) + \
+        ((golf + antialpha_one) * gdf.median_tenancy_change_delta_2013) + \
+        ((hotel + antialpha_one) * gdf.median_housing_age_change_delta_2013)
 )
 
 #2018 only version
 gdf_combo['omega18_alpha_one'] = 1/(
         (alpha_one * gdf.white_pop_pct_change_delta_2018) + \
-        ((bravo + antialpha) * gdf.rent_25th_pctile_change_delta_2018) + \
-        ((charlie + antialpha) * gdf.totpop_change_delta_2018) + \
-        ((delta + antialpha) * gdf.rent_pct_income_change_delta_2018) + \
-        ((echo + antialpha) * gdf.monthly_housing_cost_change_delta_2018) + \
-        ((foxtrot + antialpha) * gdf.market_rate_units_per_cap_change_delta_2018) + \
-        ((golf + antialpha) * gdf.median_tenancy_change_delta_2018) + \
-        ((hotel + antialpha) * gdf.median_housing_age_change_delta_2018)
+        ((bravo + antialpha_one) * gdf.rent_25th_pctile_change_delta_2018) + \
+        ((charlie + antialpha_one) * gdf.totpop_change_delta_2018) + \
+        ((delta + antialpha_one) * gdf.rent_pct_income_change_delta_2018) + \
+        ((echo + antialpha_one) * gdf.monthly_housing_cost_change_delta_2018) + \
+        ((foxtrot + antialpha_one) * gdf.market_rate_units_per_cap_change_delta_2018) + \
+        ((golf + antialpha_one) * gdf.median_tenancy_change_delta_2018) + \
+        ((hotel + antialpha_one) * gdf.median_housing_age_change_delta_2018)
 )
 
 #MAP VERSIONS
 #combo
 df_combo['omega13df_alpha_one'] = (
-        (alpha * df_combo.white_pop_pct_2013z.fillna(0)) + \
-        ((bravo + antialpha) * df_combo.rent_25th_pctile_2013z.fillna(0)) + \
-        ((charlie + antialpha) * df_combo.totpop_2013z.fillna(0)) + \
-        ((delta + antialpha) * df_combo.rent_pct_income_2013z.fillna(0)) + \
-        ((echo + antialpha) * df_combo.monthly_housing_cost_2013z.fillna(0)) + \
-        ((foxtrot + antialpha) * df_combo.market_rate_units_per_cap_2013z.fillna(0)) + \
-        ((golf + antialpha) * df_combo.median_tenancy_2013z.fillna(0))
+        (alpha_one * df_combo.white_pop_pct_2013z.fillna(0)) + \
+        ((bravo + antialpha_one) * df_combo.rent_25th_pctile_2013z.fillna(0)) + \
+        ((charlie + antialpha_one) * df_combo.totpop_2013z.fillna(0)) + \
+        ((delta + antialpha_one) * df_combo.rent_pct_income_2013z.fillna(0)) + \
+        ((echo + antialpha_one) * df_combo.monthly_housing_cost_2013z.fillna(0)) + \
+        ((foxtrot + antialpha_one) * df_combo.market_rate_units_per_cap_2013z.fillna(0)) + \
+        ((golf + antialpha_one) * df_combo.median_tenancy_2013z.fillna(0))
 )
 
 df_combo['omega18df_alpha_one'] = (
-        (alpha * df_combo.white_pop_pct_2018z.fillna(0)) + \
-        ((bravo + antialpha) * df_combo.rent_25th_pctile_2018z.fillna(0)) + \
-        ((charlie + antialpha) * df_combo.totpop_2018z.fillna(0)) + \
-        ((delta + antialpha) * df_combo.rent_pct_income_2018z.fillna(0)) + \
-        ((echo + antialpha) * df_combo.monthly_housing_cost_2018z.fillna(0)) + \
-        ((foxtrot + antialpha) * df_combo.market_rate_units_per_cap_2018z.fillna(0)) + \
-        ((golf + antialpha) * df_combo.median_tenancy_2018z.fillna(0))
+        (alpha_one * df_combo.white_pop_pct_2018z.fillna(0)) + \
+        ((bravo + antialpha_one) * df_combo.rent_25th_pctile_2018z.fillna(0)) + \
+        ((charlie + antialpha_one) * df_combo.totpop_2018z.fillna(0)) + \
+        ((delta + antialpha_one) * df_combo.rent_pct_income_2018z.fillna(0)) + \
+        ((echo + antialpha_one) * df_combo.monthly_housing_cost_2018z.fillna(0)) + \
+        ((foxtrot + antialpha_one) * df_combo.market_rate_units_per_cap_2018z.fillna(0)) + \
+        ((golf + antialpha_one) * df_combo.median_tenancy_2018z.fillna(0))
 )
 df_combo['omegadf_alpha_one'] = df_combo.omega18df_alpha_one - df_combo.omega13df_alpha_one
 
-#temp setting variables so they exist.
-df_combo_half = df_combo
-df_combo_zero = df_combo
+antialpha_half = (1/7 - alpha_half)
+gdf_combo['omega_alpha_half'] = 1/(
+        (alpha_half * gdf.white_pop_pct_change_delta) + \
+        ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta) + \
+        ((charlie + antialpha_half) * gdf.totpop_change_delta) + \
+        ((delta + antialpha_half) * gdf.rent_pct_income_change_delta) + \
+        ((echo + antialpha_half) * gdf.monthly_housing_cost_change_delta) + \
+        ((foxtrot + antialpha_half) * gdf.market_rate_units_per_cap_change_delta) + \
+        ((golf + antialpha_half) * gdf.median_tenancy_change_delta) + \
+        ((hotel + antialpha_half) * gdf.median_housing_age_change_delta)
+)
+
+#2013 only version
+gdf_combo['omega13_alpha_half'] = 1/(
+        (alpha_half * gdf.white_pop_pct_change_delta_2013) + \
+        ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta_2013) + \
+        ((charlie + antialpha_half) * gdf.totpop_change_delta_2013) + \
+        ((delta + antialpha_half) * gdf.rent_pct_income_change_delta_2013) + \
+        ((echo + antialpha_half) * gdf.monthly_housing_cost_change_delta_2018) + \
+        ((foxtrot + antialpha_half) * gdf.market_rate_units_per_cap_change_delta_2013) + \
+        ((golf + antialpha_half) * gdf.median_tenancy_change_delta_2013) + \
+        ((hotel + antialpha_half) * gdf.median_housing_age_change_delta_2013)
+)
+
+#2018 only version
+gdf_combo['omega18_alpha_half'] = 1/(
+        (alpha_half * gdf.white_pop_pct_change_delta_2018) + \
+        ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta_2018) + \
+        ((charlie + antialpha_half) * gdf.totpop_change_delta_2018) + \
+        ((delta + antialpha_half) * gdf.rent_pct_income_change_delta_2018) + \
+        ((echo + antialpha_half) * gdf.monthly_housing_cost_change_delta_2018) + \
+        ((foxtrot + antialpha_half) * gdf.market_rate_units_per_cap_change_delta_2018) + \
+        ((golf + antialpha_half) * gdf.median_tenancy_change_delta_2018) + \
+        ((hotel + antialpha_half) * gdf.median_housing_age_change_delta_2018)
+)
+
+#MAP VERSIONS
+#combo
+df_combo['omega13df_alpha_half'] = (
+        (alpha_half * df_combo.white_pop_pct_2013z.fillna(0)) + \
+        ((bravo + antialpha_half) * df_combo.rent_25th_pctile_2013z.fillna(0)) + \
+        ((charlie + antialpha_half) * df_combo.totpop_2013z.fillna(0)) + \
+        ((delta + antialpha_half) * df_combo.rent_pct_income_2013z.fillna(0)) + \
+        ((echo + antialpha_half) * df_combo.monthly_housing_cost_2013z.fillna(0)) + \
+        ((foxtrot + antialpha_half) * df_combo.market_rate_units_per_cap_2013z.fillna(0)) + \
+        ((golf + antialpha_half) * df_combo.median_tenancy_2013z.fillna(0))
+)
+
+df_combo['omega18df_alpha_half'] = (
+        (alpha_half * df_combo.white_pop_pct_2018z.fillna(0)) + \
+        ((bravo + antialpha_half) * df_combo.rent_25th_pctile_2018z.fillna(0)) + \
+        ((charlie + antialpha_half) * df_combo.totpop_2018z.fillna(0)) + \
+        ((delta + antialpha_half) * df_combo.rent_pct_income_2018z.fillna(0)) + \
+        ((echo + antialpha_half) * df_combo.monthly_housing_cost_2018z.fillna(0)) + \
+        ((foxtrot + antialpha_half) * df_combo.market_rate_units_per_cap_2018z.fillna(0)) + \
+        ((golf + antialpha_half) * df_combo.median_tenancy_2018z.fillna(0))
+)
+df_combo['omegadf_alpha_half'] = df_combo.omega18df_alpha_half - df_combo.omega13df_alpha_half
+
+antialpha_zero = (1/7 - alpha_zero)
+gdf_combo['omega_alpha_zero'] = 1/(
+        (alpha_zero * gdf.white_pop_pct_change_delta) + \
+        ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta) + \
+        ((charlie + antialpha_half) * gdf.totpop_change_delta) + \
+        ((delta + antialpha_half) * gdf.rent_pct_income_change_delta) + \
+        ((echo + antialpha_half) * gdf.monthly_housing_cost_change_delta) + \
+        ((foxtrot + antialpha_half) * gdf.market_rate_units_per_cap_change_delta) + \
+        ((golf + antialpha_half) * gdf.median_tenancy_change_delta) + \
+        ((hotel + antialpha_half) * gdf.median_housing_age_change_delta)
+)
+
+#2013 only version
+gdf_combo['omega13_alpha_zero'] = 1/(
+        (alpha_zero * gdf.white_pop_pct_change_delta_2013) + \
+        ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta_2013) + \
+        ((charlie + antialpha_half) * gdf.totpop_change_delta_2013) + \
+        ((delta + antialpha_half) * gdf.rent_pct_income_change_delta_2013) + \
+        ((echo + antialpha_half) * gdf.monthly_housing_cost_change_delta_2018) + \
+        ((foxtrot + antialpha_half) * gdf.market_rate_units_per_cap_change_delta_2013) + \
+        ((golf + antialpha_half) * gdf.median_tenancy_change_delta_2013) + \
+        ((hotel + antialpha_half) * gdf.median_housing_age_change_delta_2013)
+)
+
+#2018 only version
+gdf_combo['omega18_alpha_zero'] = 1/(
+        (alpha_zero * gdf.white_pop_pct_change_delta_2018) + \
+        ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta_2018) + \
+        ((charlie + antialpha_half) * gdf.totpop_change_delta_2018) + \
+        ((delta + antialpha_half) * gdf.rent_pct_income_change_delta_2018) + \
+        ((echo + antialpha_half) * gdf.monthly_housing_cost_change_delta_2018) + \
+        ((foxtrot + antialpha_half) * gdf.market_rate_units_per_cap_change_delta_2018) + \
+        ((golf + antialpha_half) * gdf.median_tenancy_change_delta_2018) + \
+        ((hotel + antialpha_half) * gdf.median_housing_age_change_delta_2018)
+)
+
+#MAP VERSIONS
+#combo
+df_combo['omega13df_alpha_zero'] = (
+        (alpha_half * df_combo.white_pop_pct_2013z.fillna(0)) + \
+        ((bravo + antialpha_half) * df_combo.rent_25th_pctile_2013z.fillna(0)) + \
+        ((charlie + antialpha_half) * df_combo.totpop_2013z.fillna(0)) + \
+        ((delta + antialpha_half) * df_combo.rent_pct_income_2013z.fillna(0)) + \
+        ((echo + antialpha_half) * df_combo.monthly_housing_cost_2013z.fillna(0)) + \
+        ((foxtrot + antialpha_half) * df_combo.market_rate_units_per_cap_2013z.fillna(0)) + \
+        ((golf + antialpha_half) * df_combo.median_tenancy_2013z.fillna(0))
+)
+
+df_combo['omega18df_alpha_zero'] = (
+        (alpha_half * df_combo.white_pop_pct_2018z.fillna(0)) + \
+        ((bravo + antialpha_half) * df_combo.rent_25th_pctile_2018z.fillna(0)) + \
+        ((charlie + antialpha_half) * df_combo.totpop_2018z.fillna(0)) + \
+        ((delta + antialpha_half) * df_combo.rent_pct_income_2018z.fillna(0)) + \
+        ((echo + antialpha_half) * df_combo.monthly_housing_cost_2018z.fillna(0)) + \
+        ((foxtrot + antialpha_half) * df_combo.market_rate_units_per_cap_2018z.fillna(0)) + \
+        ((golf + antialpha_half) * df_combo.median_tenancy_2018z.fillna(0))
+)
+df_combo['omegadf_alpha_zero'] = df_combo.omega18df_alpha_zero - df_combo.omega13df_alpha_zero
 
 #PLOT
 node_list = list(set(df_combo['GEOID']))
@@ -271,8 +331,8 @@ for i in node_list:
 for i, row in gdf_combo.iterrows():
 #    G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega13'])])
     G2018.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_one'])])
-    G2018_half.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_one'])])
-    G2018_zero.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_one'])])
+    G2018_half.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_half'])])
+    G2018_zero.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_zero'])])
 '''
 #CACHE-USING VERSION
 @cache.memoize(timeout=TIMEOUT)
@@ -612,8 +672,8 @@ def get_edges(subset='one'):
 def get_maps(subset='one'):
     subsets = {
         'one': df_combo,
-        'half': df_combo_half,
-        'zero': df_combo_zero
+        'half': df_combo,
+        'zero': df_combo
     }
 
     if subset in subsets:
