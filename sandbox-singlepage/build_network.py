@@ -113,7 +113,7 @@ hotel = 0
 #NETWORK VERSIONS
 #2013 + change version
 antialpha_one = (1/7 - alpha_one)
-gdf_combo['omega_alpha_one'] = 1/(
+gdf_combo['omega_a1b1c1d1e1f1g1'] = 1/(
         (alpha_one * gdf.white_pop_pct_change_delta) + \
         ((bravo + antialpha_one) * gdf.rent_25th_pctile_change_delta) + \
         ((charlie + antialpha_one) * gdf.totpop_change_delta) + \
@@ -125,7 +125,7 @@ gdf_combo['omega_alpha_one'] = 1/(
 )
 
 #2013 only version
-gdf_combo['omega13_alpha_one'] = 1/(
+gdf_combo['omega13_a1b1c1d1e1f1g1'] = 1/(
         (alpha_one * gdf.white_pop_pct_change_delta_2013) + \
         ((bravo + antialpha_one) * gdf.rent_25th_pctile_change_delta_2013) + \
         ((charlie + antialpha_one) * gdf.totpop_change_delta_2013) + \
@@ -137,7 +137,7 @@ gdf_combo['omega13_alpha_one'] = 1/(
 )
 
 #2018 only version
-gdf_combo['omega18_alpha_one'] = 1/(
+gdf_combo['omega18_a1b1c1d1e1f1g1'] = 1/(
         (alpha_one * gdf.white_pop_pct_change_delta_2018) + \
         ((bravo + antialpha_one) * gdf.rent_25th_pctile_change_delta_2018) + \
         ((charlie + antialpha_one) * gdf.totpop_change_delta_2018) + \
@@ -150,7 +150,7 @@ gdf_combo['omega18_alpha_one'] = 1/(
 
 #MAP VERSIONS
 #combo
-df_combo['omega13df_alpha_one'] = (
+df_combo['omega13df_a1b1c1d1e1f1g1'] = (
         (alpha_one * df_combo.white_pop_pct_2013z.fillna(0)) + \
         ((bravo + antialpha_one) * df_combo.rent_25th_pctile_2013z.fillna(0)) + \
         ((charlie + antialpha_one) * df_combo.totpop_2013z.fillna(0)) + \
@@ -160,7 +160,7 @@ df_combo['omega13df_alpha_one'] = (
         ((golf + antialpha_one) * df_combo.median_tenancy_2013z.fillna(0))
 )
 
-df_combo['omega18df_alpha_one'] = (
+df_combo['omega18df_a1b1c1d1e1f1g1'] = (
         (alpha_one * df_combo.white_pop_pct_2018z.fillna(0)) + \
         ((bravo + antialpha_one) * df_combo.rent_25th_pctile_2018z.fillna(0)) + \
         ((charlie + antialpha_one) * df_combo.totpop_2018z.fillna(0)) + \
@@ -169,10 +169,10 @@ df_combo['omega18df_alpha_one'] = (
         ((foxtrot + antialpha_one) * df_combo.market_rate_units_per_cap_2018z.fillna(0)) + \
         ((golf + antialpha_one) * df_combo.median_tenancy_2018z.fillna(0))
 )
-df_combo['omegadf_alpha_one'] = df_combo.omega18df_alpha_one - df_combo.omega13df_alpha_one
+df_combo['omegadf_a1b1c1d1e1f1g1'] = df_combo.omega18df_a1b1c1d1e1f1g1 - df_combo.omega13df_a1b1c1d1e1f1g1
 
 antialpha_half = (1/7 - alpha_half)
-gdf_combo['omega_alpha_half'] = 1/(
+gdf_combo['omega_a5b1c1d1e1f1g1'] = 1/(
         (alpha_half * gdf.white_pop_pct_change_delta) + \
         ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta) + \
         ((charlie + antialpha_half) * gdf.totpop_change_delta) + \
@@ -184,7 +184,7 @@ gdf_combo['omega_alpha_half'] = 1/(
 )
 
 #2013 only version
-gdf_combo['omega13_alpha_half'] = 1/(
+gdf_combo['omega13_a5b1c1d1e1f1g1'] = 1/(
         (alpha_half * gdf.white_pop_pct_change_delta_2013) + \
         ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta_2013) + \
         ((charlie + antialpha_half) * gdf.totpop_change_delta_2013) + \
@@ -196,7 +196,7 @@ gdf_combo['omega13_alpha_half'] = 1/(
 )
 
 #2018 only version
-gdf_combo['omega18_alpha_half'] = 1/(
+gdf_combo['omega18_a5b1c1d1e1f1g1'] = 1/(
         (alpha_half * gdf.white_pop_pct_change_delta_2018) + \
         ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta_2018) + \
         ((charlie + antialpha_half) * gdf.totpop_change_delta_2018) + \
@@ -209,7 +209,7 @@ gdf_combo['omega18_alpha_half'] = 1/(
 
 #MAP VERSIONS
 #combo
-df_combo['omega13df_alpha_half'] = (
+df_combo['omega13df_a5b1c1d1e1f1g1'] = (
         (alpha_half * df_combo.white_pop_pct_2013z.fillna(0)) + \
         ((bravo + antialpha_half) * df_combo.rent_25th_pctile_2013z.fillna(0)) + \
         ((charlie + antialpha_half) * df_combo.totpop_2013z.fillna(0)) + \
@@ -219,7 +219,7 @@ df_combo['omega13df_alpha_half'] = (
         ((golf + antialpha_half) * df_combo.median_tenancy_2013z.fillna(0))
 )
 
-df_combo['omega18df_alpha_half'] = (
+df_combo['omega18df_a5b1c1d1e1f1g1'] = (
         (alpha_half * df_combo.white_pop_pct_2018z.fillna(0)) + \
         ((bravo + antialpha_half) * df_combo.rent_25th_pctile_2018z.fillna(0)) + \
         ((charlie + antialpha_half) * df_combo.totpop_2018z.fillna(0)) + \
@@ -228,10 +228,10 @@ df_combo['omega18df_alpha_half'] = (
         ((foxtrot + antialpha_half) * df_combo.market_rate_units_per_cap_2018z.fillna(0)) + \
         ((golf + antialpha_half) * df_combo.median_tenancy_2018z.fillna(0))
 )
-df_combo['omegadf_alpha_half'] = df_combo.omega18df_alpha_half - df_combo.omega13df_alpha_half
+df_combo['omegadf_a5b1c1d1e1f1g1'] = df_combo.omega18df_a5b1c1d1e1f1g1 - df_combo.omega13df_a5b1c1d1e1f1g1
 
 antialpha_zero = (1/7 - alpha_zero)
-gdf_combo['omega_alpha_zero'] = 1/(
+gdf_combo['omega_a0b1c1d1e1f1g1'] = 1/(
         (alpha_zero * gdf.white_pop_pct_change_delta) + \
         ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta) + \
         ((charlie + antialpha_half) * gdf.totpop_change_delta) + \
@@ -243,7 +243,7 @@ gdf_combo['omega_alpha_zero'] = 1/(
 )
 
 #2013 only version
-gdf_combo['omega13_alpha_zero'] = 1/(
+gdf_combo['omega13_a0b1c1d1e1f1g1'] = 1/(
         (alpha_zero * gdf.white_pop_pct_change_delta_2013) + \
         ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta_2013) + \
         ((charlie + antialpha_half) * gdf.totpop_change_delta_2013) + \
@@ -255,7 +255,7 @@ gdf_combo['omega13_alpha_zero'] = 1/(
 )
 
 #2018 only version
-gdf_combo['omega18_alpha_zero'] = 1/(
+gdf_combo['omega18_a0b1c1d1e1f1g1'] = 1/(
         (alpha_zero * gdf.white_pop_pct_change_delta_2018) + \
         ((bravo + antialpha_half) * gdf.rent_25th_pctile_change_delta_2018) + \
         ((charlie + antialpha_half) * gdf.totpop_change_delta_2018) + \
@@ -268,7 +268,7 @@ gdf_combo['omega18_alpha_zero'] = 1/(
 
 #MAP VERSIONS
 #combo
-df_combo['omega13df_alpha_zero'] = (
+df_combo['omega13df_a0b1c1d1e1f1g1'] = (
         (alpha_half * df_combo.white_pop_pct_2013z.fillna(0)) + \
         ((bravo + antialpha_half) * df_combo.rent_25th_pctile_2013z.fillna(0)) + \
         ((charlie + antialpha_half) * df_combo.totpop_2013z.fillna(0)) + \
@@ -278,7 +278,7 @@ df_combo['omega13df_alpha_zero'] = (
         ((golf + antialpha_half) * df_combo.median_tenancy_2013z.fillna(0))
 )
 
-df_combo['omega18df_alpha_zero'] = (
+df_combo['omega18df_a0b1c1d1e1f1g1'] = (
         (alpha_half * df_combo.white_pop_pct_2018z.fillna(0)) + \
         ((bravo + antialpha_half) * df_combo.rent_25th_pctile_2018z.fillna(0)) + \
         ((charlie + antialpha_half) * df_combo.totpop_2018z.fillna(0)) + \
@@ -287,14 +287,14 @@ df_combo['omega18df_alpha_zero'] = (
         ((foxtrot + antialpha_half) * df_combo.market_rate_units_per_cap_2018z.fillna(0)) + \
         ((golf + antialpha_half) * df_combo.median_tenancy_2018z.fillna(0))
 )
-df_combo['omegadf_alpha_zero'] = df_combo.omega18df_alpha_zero - df_combo.omega13df_alpha_zero
+df_combo['omegadf_a0b1c1d1e1f1g1'] = df_combo.omega18df_a0b1c1d1e1f1g1 - df_combo.omega13df_a0b1c1d1e1f1g1
 
 #PLOT
 node_list = list(set(df_combo['GEOID']))
 #G = nx.Graph()
-G2018 = nx.Graph()
-G2018_half = nx.Graph()
-G2018_zero = nx.Graph()
+G2018_a1b1c1d1e1f1g1 = nx.Graph()
+G2018_a5b1c1d1e1f1g1 = nx.Graph()
+G2018_a0b1c1d1e1f1g1 = nx.Graph()
 
 
 #normal version (no cache)
@@ -323,16 +323,16 @@ forceatlas2 = ForceAtlas2(
 
 for i in node_list:
 #    G.add_node(i)
-    G2018.add_node(i)
-    G2018_half.add_node(i)
-    G2018_zero.add_node(i)
+    G2018_a1b1c1d1e1f1g1.add_node(i)
+    G2018_a5b1c1d1e1f1g1.add_node(i)
+    G2018_a0b1c1d1e1f1g1.add_node(i)
 
 #Build the Edge list for the network graph for 2013
 for i, row in gdf_combo.iterrows():
 #    G.add_weighted_edges_from([(row['GEOID_a'],row['GEOID_b'],row['omega13'])])
-    G2018.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_one'])])
-    G2018_half.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_half'])])
-    G2018_zero.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_alpha_zero'])])
+    G2018_a1b1c1d1e1f1g1.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_a1b1c1d1e1f1g1'])])
+    G2018_a5b1c1d1e1f1g1.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_a5b1c1d1e1f1g1'])])
+    G2018_a0b1c1d1e1f1g1.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_a0b1c1d1e1f1g1'])])
 '''
 #CACHE-USING VERSION
 @cache.memoize(timeout=TIMEOUT)
@@ -393,20 +393,20 @@ for n, p in pos2018_zero().items():
 #for n, p in pos.items():
 #    G.nodes[n]['pos'] = p
 
-pos2018 = forceatlas2.forceatlas2_networkx_layout(G2018,pos=None, iterations=1000)
+pos2018_a1b1c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a1b1c1d1e1f1g1,pos=None, iterations=1000)
 
-for n, p in pos2018.items():
-    G2018.nodes[n]['pos2018'] = p
+for n, p in pos2018_a1b1c1d1e1f1g1.items():
+    G2018_a1b1c1d1e1f1g1.nodes[n]['pos2018_a1b1c1d1e1f1g1'] = p
 
-pos2018_half = forceatlas2.forceatlas2_networkx_layout(G2018_half,pos=None, iterations=1000)
+pos2018_a5b1c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a5b1c1d1e1f1g1,pos=None, iterations=1000)
 
-for n, p in pos2018_half.items():
-    G2018_half.nodes[n]['pos2018_half'] = p
+for n, p in pos2018_a5b1c1d1e1f1g1.items():
+    G2018_a5b1c1d1e1f1g1.nodes[n]['pos2018_a5b1c1d1e1f1g1'] = p
 
-pos2018_zero = forceatlas2.forceatlas2_networkx_layout(G2018_zero,pos=None, iterations=1000)
+pos2018_a0b1c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a0b1c1d1e1f1g1,pos=None, iterations=1000)
 
-for n, p in pos2018_zero.items():
-    G2018_zero.nodes[n]['pos2018_zero'] = p
+for n, p in pos2018_a0b1c1d1e1f1g1.items():
+    G2018_a0b1c1d1e1f1g1.nodes[n]['pos2018_a0b1c1d1e1f1g1'] = p
 
 #plot this bad boy
 #edge_trace = go.Scatter(
@@ -417,7 +417,7 @@ for n, p in pos2018_zero.items():
 #    mode='lines'
 #)
 
-edge_trace2018_one = go.Scatter(
+edge_trace2018_a1b1c1d1e1f1g1 = go.Scatter(
     x=[],
     y=[],
     line=dict(width=1, color='#c6c6c6'),
@@ -425,7 +425,7 @@ edge_trace2018_one = go.Scatter(
     mode='lines'
 )
 
-edge_trace2018_half = go.Scatter(
+edge_trace2018_a5b1c1d1e1f1g1 = go.Scatter(
     x=[],
     y=[],
     line=dict(width=1, color='#c6c6c6'),
@@ -433,7 +433,7 @@ edge_trace2018_half = go.Scatter(
     mode='lines'
 )
 
-edge_trace2018_zero= go.Scatter(
+edge_trace2018_a0b1c1d1e1f1g1= go.Scatter(
     x=[],
     y=[],
     line=dict(width=1, color='#c6c6c6'),
@@ -448,23 +448,23 @@ edge_trace2018_zero= go.Scatter(
 #    edge_trace['y'] += tuple([y0, y1, None])
 
 
-for edge in G2018.edges():
-    x0, y0 = G2018.nodes[edge[0]]['pos2018']
-    x1, y1 = G2018.nodes[edge[1]]['pos2018']
-    edge_trace2018_one['x'] += tuple([x0, x1, None])
-    edge_trace2018_one['y'] += tuple([y0, y1, None])
+for edge in G2018_a1b1c1d1e1f1g1.edges():
+    x0, y0 = G2018_a1b1c1d1e1f1g1.nodes[edge[0]]['pos2018_a1b1c1d1e1f1g1']
+    x1, y1 = G2018_a1b1c1d1e1f1g1.nodes[edge[1]]['pos2018_a1b1c1d1e1f1g1']
+    edge_trace2018_a1b1c1d1e1f1g1['x'] += tuple([x0, x1, None])
+    edge_trace2018_a1b1c1d1e1f1g1['y'] += tuple([y0, y1, None])
 
-for edge in G2018_half.edges():
-    x0, y0 = G2018_half.nodes[edge[0]]['pos2018_half']
-    x1, y1 = G2018_half.nodes[edge[1]]['pos2018_half']
-    edge_trace2018_half['x'] += tuple([x0, x1, None])
-    edge_trace2018_half['y'] += tuple([y0, y1, None])
+for edge in G2018_a5b1c1d1e1f1g1.edges():
+    x0, y0 = G2018_a5b1c1d1e1f1g1.nodes[edge[0]]['pos2018_a5b1c1d1e1f1g1']
+    x1, y1 = G2018_a5b1c1d1e1f1g1.nodes[edge[1]]['pos2018_a5b1c1d1e1f1g1']
+    edge_trace2018_a5b1c1d1e1f1g1['x'] += tuple([x0, x1, None])
+    edge_trace2018_a5b1c1d1e1f1g1['y'] += tuple([y0, y1, None])
 
-for edge in G2018_zero.edges():
-    x0, y0 = G2018_zero.nodes[edge[0]]['pos2018_zero']
-    x1, y1 = G2018_zero.nodes[edge[1]]['pos2018_zero']
-    edge_trace2018_zero['x'] += tuple([x0, x1, None])
-    edge_trace2018_zero['y'] += tuple([y0, y1, None])
+for edge in G2018_a0b1c1d1e1f1g1.edges():
+    x0, y0 = G2018_a0b1c1d1e1f1g1.nodes[edge[0]]['pos2018_a0b1c1d1e1f1g1']
+    x1, y1 = G2018_a0b1c1d1e1f1g1.nodes[edge[1]]['pos2018_a0b1c1d1e1f1g1']
+    edge_trace2018_a0b1c1d1e1f1g1['x'] += tuple([x0, x1, None])
+    edge_trace2018_a0b1c1d1e1f1g1['y'] += tuple([y0, y1, None])
 
 #node_trace = go.Scatter(
 #    x=[],
@@ -493,7 +493,7 @@ for edge in G2018_zero.edges():
 #)
 
 
-node_trace2018_one = go.Scatter(
+node_trace2018_a1b1c1d1e1f1g1 = go.Scatter(
     x=[],
     y=[],
    mode='markers+text',  #make markers+text to show labels
@@ -519,7 +519,7 @@ node_trace2018_one = go.Scatter(
     marker_line_width=1
 )
 
-node_trace2018_half = go.Scatter(
+node_trace2018_a5b1c1d1e1f1g1 = go.Scatter(
     x=[],
     y=[],
    mode='markers+text',  #make markers+text to show labels
@@ -545,7 +545,7 @@ node_trace2018_half = go.Scatter(
     marker_line_width=1
 )
 
-node_trace2018_zero = go.Scatter(
+node_trace2018_a0b1c1d1e1f1g1 = go.Scatter(
     x=[],
     y=[],
    mode='markers+text',  #make markers+text to show labels
@@ -577,52 +577,51 @@ node_trace2018_zero = go.Scatter(
 #    node_trace['y'] += tuple([y])
 
 
-for node in G2018.nodes():
-    x, y = G2018.nodes[node]['pos2018']
-    node_trace2018_one['x'] += tuple([x])
-    node_trace2018_one['y'] += tuple([y])
+for node in G2018_a1b1c1d1e1f1g1.nodes():
+    x, y = G2018_a1b1c1d1e1f1g1.nodes[node]['pos2018_a1b1c1d1e1f1g1']
+    node_trace2018_a1b1c1d1e1f1g1['x'] += tuple([x])
+    node_trace2018_a1b1c1d1e1f1g1['y'] += tuple([y])
 
-for node in G2018_half.nodes():
-    x, y = G2018_half.nodes[node]['pos2018_half']
-    node_trace2018_half['x'] += tuple([x])
-    node_trace2018_half['y'] += tuple([y])
+for node in G2018_a5b1c1d1e1f1g1.nodes():
+    x, y = G2018_a5b1c1d1e1f1g1.nodes[node]['pos2018_a5b1c1d1e1f1g1']
+    node_trace2018_a5b1c1d1e1f1g1['x'] += tuple([x])
+    node_trace2018_a5b1c1d1e1f1g1['y'] += tuple([y])
 
-for node in G2018_zero.nodes():
-    x, y = G2018_zero.nodes[node]['pos2018_zero']
-    node_trace2018_zero['x'] += tuple([x])
-    node_trace2018_zero['y'] += tuple([y])
+for node in G2018_a0b1c1d1e1f1g1.nodes():
+    x, y = G2018_a0b1c1d1e1f1g1.nodes[node]['pos2018_a0b1c1d1e1f1g1']
+    node_trace2018_a0b1c1d1e1f1g1['x'] += tuple([x])
+    node_trace2018_a0b1c1d1e1f1g1['y'] += tuple([y])
 
 #node_adjacencies = []
-node_adjacencies2018_one = []
-node_adjacencies2018_half = []
-node_adjacencies2018_zero = []
-
+node_adjacencies2018_a1b1c1d1e1f1g1 = []
+node_adjacencies2018_a5b1c1d1e1f1g1 = []
+node_adjacencies2018_a0b1c1d1e1f1g1 = []
 
 #for node, adjacencies in enumerate(G.adjacency()):
 #    node_adjacencies.append(len(adjacencies[1]))
 
 
-for node, adjacencies in enumerate(G2018.adjacency()):
-    node_adjacencies2018_one.append(len(adjacencies[1]))
+for node, adjacencies in enumerate(G2018_a1b1c1d1e1f1g1.adjacency()):
+    node_adjacencies2018_a1b1c1d1e1f1g1.append(len(adjacencies[1]))
 
-for node, adjacencies in enumerate(G2018_half.adjacency()):
-    node_adjacencies2018_half.append(len(adjacencies[1]))
+for node, adjacencies in enumerate(G2018_a5b1c1d1e1f1g1.adjacency()):
+    node_adjacencies2018_a5b1c1d1e1f1g1.append(len(adjacencies[1]))
 
-for node, adjacencies in enumerate(G2018_zero.adjacency()):
-    node_adjacencies2018_zero.append(len(adjacencies[1]))
+for node, adjacencies in enumerate(G2018_a0b1c1d1e1f1g1.adjacency()):
+    node_adjacencies2018_a0b1c1d1e1f1g1.append(len(adjacencies[1]))
 
 #for node in G.nodes():
 #    node_label = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
 
-for node in G2018.nodes():
-    node_label2018_one = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+for node in G2018_a1b1c1d1e1f1g1.nodes():
+    node_label2018_a1b1c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
-for node in G2018_half.nodes():
-    node_label2018_half = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+for node in G2018_a5b1c1d1e1f1g1.nodes():
+    node_label2018_a5b1c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
-for node in G2018_zero.nodes():
-    node_label2018_zero = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+for node in G2018_a0b1c1d1e1f1g1.nodes():
+    node_label2018_a0b1c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
 df_combo['tract_index'] = df_combo['TRACT_NUM'].astype(int)
 
@@ -632,22 +631,22 @@ df_combo['tract_index'] = df_combo['TRACT_NUM'].astype(int)
 
 colorsIndex = {'wallingford':'#ef553b','rainier_beach':'#636efa'}  #manually assign colors
 colors = df_combo['neighborhood'].map(colorsIndex)
-node_trace2018_one.marker.color = colors
-node_trace2018_half.marker.color = colors
-node_trace2018_zero.marker.color = colors
+node_trace2018_a1b1c1d1e1f1g1.marker.color = colors
+node_trace2018_a5b1c1d1e1f1g1.marker.color = colors
+node_trace2018_a0b1c1d1e1f1g1.marker.color = colors
 #node_trace2018.marker.color = df_combo['neighborhood_index'].astype(int)
-node_trace2018_one.marker.size = (1.5 + df_combo.omega18) * 20
-node_trace2018_one.text = node_label2018_one
-node_trace2018_half.marker.size = (1.5 + df_combo.omega18) * 20 #TODO FIX DF VERSIONS OF OMEGA AS WELL - RESPONSIVE SLIDER IF POSSIBLE
-node_trace2018_half.text = node_label2018_half
-node_trace2018_zero.marker.size = (1.5 + df_combo.omega18) * 20
-node_trace2018_zero.text = node_label2018_zero
+node_trace2018_a1b1c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_a1b1c1d1e1f1g1.text = node_label2018_a1b1c1d1e1f1g1
+node_trace2018_a5b1c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_a5b1c1d1e1f1g1.text = node_label2018_a5b1c1d1e1f1g1
+node_trace2018_a0b1c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_a0b1c1d1e1f1g1.text = node_label2018_a0b1c1d1e1f1g1
 
-def get_nodes(subset='one'):
+def get_nodes(subset='a1b1c1d1e1f1g1'):
     subsets = {
-        'one': node_trace2018_one,
-        'half': node_trace2018_half,
-        'zero': node_trace2018_zero
+        'a1b1c1d1e1f1g1': node_trace2018_a1b1c1d1e1f1g1,
+        'a5b1c1d1e1f1g1': node_trace2018_a5b1c1d1e1f1g1,
+        'a0b1c1d1e1f1g1': node_trace2018_a0b1c1d1e1f1g1
     }
 
     if subset in subsets:
@@ -656,11 +655,11 @@ def get_nodes(subset='one'):
         raise('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
 
 
-def get_edges(subset='one'):
+def get_edges(subset='a1b1c1d1e1f1g1'):
     subsets = {
-        'one': edge_trace2018_one,
-        'half': edge_trace2018_half,
-        'zero': edge_trace2018_zero
+        'a1b1c1d1e1f1g1': edge_trace2018_a1b1c1d1e1f1g1,
+        'a5b1c1d1e1f1g1': edge_trace2018_a5b1c1d1e1f1g1,
+        'a0b1c1d1e1f1g1': edge_trace2018_a0b1c1d1e1f1g1
     }
 
     if subset in subsets:

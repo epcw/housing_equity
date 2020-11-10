@@ -32,28 +32,28 @@ pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 from build_network import tracts
 
 @cache.memoize(timeout=TIMEOUT)
-def get_nodes_one():
+def get_nodes_a1b1c1d1e1f1g1():
     from build_network import get_nodes
-    node_trace2018_one = get_nodes(subset='one')
-    return node_trace2018_one
+    node_trace2018_a1b1c1d1e1f1g1 = get_nodes(subset='a1b1c1d1e1f1g1')
+    return node_trace2018_a1b1c1d1e1f1g1
 
-node_trace2018_one = get_nodes_one()
+node_trace2018_a1b1c1d1e1f1g1 = get_nodes_a1b1c1d1e1f1g1()
 
 @cache.memoize(timeout=TIMEOUT)
-def get_nodes_half():
+def get_nodes_a5b1c1d1e1f1g1():
     from build_network import get_nodes
-    node_trace2018_half = get_nodes(subset='half')
-    return node_trace2018_half
+    node_trace2018_a5b1c1d1e1f1g1 = get_nodes(subset='a5b1c1d1e1f1g1')
+    return node_trace2018_a5b1c1d1e1f1g1
 
-node_trace2018_half = get_nodes_half()
+node_trace2018_a5b1c1d1e1f1g1 = get_nodes_a5b1c1d1e1f1g1()
 
 @cache.memoize(timeout=TIMEOUT)
-def get_nodes_zero():
+def get_nodes_a0b1c1d1e1f1g1():
     from build_network import get_nodes
-    node_trace2018_zero = get_nodes(subset='zero')
-    return node_trace2018_zero
+    node_trace2018_a0b1c1d1e1f1g1 = get_nodes(subset='a0b1c1d1e1f1g1')
+    return node_trace2018_a0b1c1d1e1f1g1
 
-node_trace2018_zero = get_nodes_zero()
+node_trace2018_a0b1c1d1e1f1g1 = get_nodes_a0b1c1d1e1f1g1()
 
 @cache.memoize(timeout=TIMEOUT)
 def get_maps():
@@ -64,28 +64,28 @@ def get_maps():
 df_combo = get_maps()
 
 @cache.memoize(timeout=TIMEOUT)
-def get_edges_one():
+def get_edges_a1b1c1d1e1f1g1():
     from build_network import get_edges
-    edge_trace2018_one = get_edges(subset='one')
-    return edge_trace2018_one
+    edge_trace2018_a1b1c1d1e1f1g1 = get_edges(subset='a1b1c1d1e1f1g1')
+    return edge_trace2018_a1b1c1d1e1f1g1
 
-edge_trace2018_one = get_edges_one()
+edge_trace2018_a1b1c1d1e1f1g1 = get_edges_a1b1c1d1e1f1g1()
 
 @cache.memoize(timeout=TIMEOUT)
-def get_edges_half():
+def get_edges_a5b1c1d1e1f1g1():
     from build_network import get_edges
-    edge_trace2018_half = get_edges(subset='half')
-    return edge_trace2018_half
+    edge_trace2018_a5b1c1d1e1f1g1 = get_edges(subset='a5b1c1d1e1f1g1')
+    return edge_trace2018_a5b1c1d1e1f1g1
 
-edge_trace2018_half = get_edges_half()
+edge_trace2018_a5b1c1d1e1f1g1 = get_edges_a5b1c1d1e1f1g1()
 
 @cache.memoize(timeout=TIMEOUT)
-def get_edges_zero():
+def get_edges_a0b1c1d1e1f1g1():
     from build_network import get_edges
-    edge_trace2018_zero = get_edges(subset='zero')
-    return edge_trace2018_zero
+    edge_trace2018_a0b1c1d1e1f1g1 = get_edges(subset='a0b1c1d1e1f1g1')
+    return edge_trace2018_a0b1c1d1e1f1g1
 
-edge_trace2018_zero = get_edges_zero()
+edge_trace2018_a0b1c1d1e1f1g1 = get_edges_a0b1c1d1e1f1g1()
 
 #fig = go.Figure(data=[edge_trace, node_trace],
 #             layout=go.Layout(
@@ -314,18 +314,19 @@ def generate_table(dataframe, max_rows=1422):
 # callback for network
 @app.callback(
     Output('housing_networkx18', 'figure'),
-    [Input('alpha_slider', 'value')])
+    [Input('alpha_slider', 'value'),
+     Input('beta_slider', 'value')])
 
 # updates graph based on user input
-def update_graph(alpha_slider):
+def update_graph(alpha_slider, beta_slider):
     return {
         'data': [
-            edge_trace2018_one if alpha_slider == 1
-            else (edge_trace2018_half if alpha_slider == 0.5
-            else edge_trace2018_zero ),
-            node_trace2018_one if alpha_slider == 1
-            else (node_trace2018_half if alpha_slider == 0.5
-                  else node_trace2018_zero )],
+            edge_trace2018_a1b1c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 1
+            else (edge_trace2018_a5b1c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 1
+            else edge_trace2018_a0b1c1d1e1f1g1),
+            node_trace2018_a1b1c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 1
+            else (node_trace2018_a5b1c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 1
+                  else node_trace2018_a0b1c1d1e1f1g1 )],
         'layout': go.Layout(
                 title='',
                 titlefont=dict(size=16),
@@ -338,13 +339,20 @@ def update_graph(alpha_slider):
 
 @app.callback(
     Output('block_grp_map', 'figure'),
-    [Input('alpha_slider', 'value')])
+    [Input('alpha_slider', 'value'),
+     Input('beta_slider', 'value')])
 
 # updates graph based on user input
-def update_change_map(alpha_slider):
-    fig4 = px.choropleth_mapbox(df_combo,geojson=tracts,locations=df_combo['GEOID_long'],featureidkey='properties.GEOID',color=df_combo['omegadf_alpha_one' if alpha_slider == 1 else ('omegadf_alpha_half' if alpha_slider == 0.5
-            else 'omegadf_alpha_zero')],
-            opacity=0.7,color_continuous_scale='RdYlGn_r')
+def update_change_map(alpha_slider, beta_slider):
+    fig4 = px.choropleth_mapbox(df_combo,
+                                geojson=tracts,
+                                locations=df_combo['GEOID_long'],
+                                featureidkey='properties.GEOID',
+                                color=df_combo['omegadf_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
+                                else ('omegadf_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
+                                else 'omegadf_a0b1c1d1e1f1g1')],
+                                opacity=0.7,
+                                color_continuous_scale='RdYlGn_r')
     fig4.update_layout(mapbox_style="open-street-map",
             mapbox_zoom=10.5,
             mapbox_center=pikes_place)
@@ -352,13 +360,20 @@ def update_change_map(alpha_slider):
 
 @app.callback(
     Output('displacement_scatter', 'figure'),
-    [Input('alpha_slider', 'value')])
+    [Input('alpha_slider', 'value'),
+     Input('beta_slider','value')])
 
 #updates scatterplot
-def update_scatter_plot(alpha_slider):
-    fig3 = px.scatter(df_combo, x="omega13df_alpha_one" if alpha_slider == 1 else ("omega13df_alpha_half" if alpha_slider == 0.5
-            else "omega13df_alpha_zero"), y="omega18df_alpha_one" if alpha_slider == 1 else ("omega18df_alpha_half" if alpha_slider == 0.5
-            else "omega18df_alpha_zero"), color='neighborhood', text='GEOID'
+def update_scatter_plot(alpha_slider, beta_slider):
+    fig3 = px.scatter(df_combo,
+                      x="omega13df_a1b1c1d1e1f1g1" if alpha_slider == 1 and beta_slider == 1
+                      else ("omega13df_a5b1c1d1e1f1g1" if alpha_slider == 0.5 and beta_slider == 1
+                      else "omega13df_a0b1c1d1e1f1g1"),
+                      y="omega18df_a1b1c1d1e1f1g1" if alpha_slider == 1 and beta_slider == 1
+                      else ("omega18df_a5b1c1d1e1f1g1" if alpha_slider == 0.5 and beta_slider == 1
+                      else "omega18df_a0b1c1d1e1f1g1"),
+                      color='neighborhood',
+                      text='GEOID'
                       )
     fig3.update_yaxes(
         range=[-1.5, 1.5]
@@ -394,21 +409,32 @@ def update_scatter_plot(alpha_slider):
 @app.callback([
     Output('displacement_2013', 'figure'),
     Output('displacement_2018', 'figure')],
-    [Input('alpha_slider', 'value')])
+    [Input('alpha_slider', 'value'),
+     Input('beta_slider','value')])
 
 # updates graph based on user input
-def update_displacement_maps(alpha_slider):
-    fig5 = px.choropleth_mapbox(df_combo, geojson=tracts, locations=df_combo['GEOID_long'],
-                                featureidkey='properties.GEOID', color=df_combo['omega13df_alpha_one' if alpha_slider == 1 else ('omega13df_alpha_half' if alpha_slider == 0.5
-            else 'omega13df_alpha_zero')],
-                                opacity=0.7, color_continuous_scale='RdYlGn_r')
+def update_displacement_maps(alpha_slider, beta_slider):
+    fig5 = px.choropleth_mapbox(df_combo,
+                                geojson=tracts,
+                                locations=df_combo['GEOID_long'],
+                                featureidkey='properties.GEOID',
+                                color=df_combo['omega13df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
+                                else ('omega13df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
+                                else 'omega13df_a0b1c1d1e1f1g1')],
+                                opacity=0.7,
+                                color_continuous_scale='RdYlGn_r')
     fig5.update_layout(mapbox_style="open-street-map",
                        mapbox_zoom=10.5,
                        mapbox_center=pikes_place)
-    fig6 = px.choropleth_mapbox(df_combo, geojson=tracts, locations=df_combo['GEOID_long'],
-                                featureidkey='properties.GEOID', color=df_combo['omega18df_alpha_one' if alpha_slider == 1 else ('omega18df_alpha_half' if alpha_slider == 0.5
-            else 'omega18df_alpha_zero')],
-                                opacity=0.7, color_continuous_scale='RdYlGn_r')
+    fig6 = px.choropleth_mapbox(df_combo,
+                                geojson=tracts,
+                                locations=df_combo['GEOID_long'],
+                                featureidkey='properties.GEOID',
+                                color=df_combo['omega18df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
+                                else ('omega18df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
+                                else 'omega18df_a0b1c1d1e1f1g1')],
+                                opacity=0.7,
+                                color_continuous_scale='RdYlGn_r')
     fig6.update_layout(mapbox_style="open-street-map",
                        mapbox_zoom=10.5,
                        mapbox_center=pikes_place)
