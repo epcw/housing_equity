@@ -8,18 +8,15 @@ import plotly.express as px  #version for maps
 #from sklearn.cluster import KMeans  #commented out because hiding Kmeans clusters for now.
 from dash.dependencies import Input, Output
 
-
 #from dashbase import app, application  #production version
 app = dash.Dash(__name__)  #local
 application = app.server  #local
-
 
 #this pulls in the header HTML from header.py
 from template import Template
 grid = Template()
 app.index_string = grid
 app.title = "Dashboards | EPCW"
-
 
 cache = Cache(app.server, config={
     'CACHE_TYPE': 'filesystem',
@@ -89,7 +86,6 @@ def get_edges_zero():
     return edge_trace2018_zero
 
 edge_trace2018_zero = get_edges_zero()
-
 
 #fig = go.Figure(data=[edge_trace, node_trace],
 #             layout=go.Layout(
