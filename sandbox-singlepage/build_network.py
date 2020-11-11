@@ -710,21 +710,51 @@ for n, p in pos2018_zero().items():
 
 #for n, p in pos.items():
 #    G.nodes[n]['pos'] = p
-#TODO: PICK UP HERE
+
 pos2018_a1b1c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a1b1c1d1e1f1g1,pos=None, iterations=1000)
 
 for n, p in pos2018_a1b1c1d1e1f1g1.items():
     G2018_a1b1c1d1e1f1g1.nodes[n]['pos2018_a1b1c1d1e1f1g1'] = p
+
+pos2018_a1b5c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a1b5c1d1e1f1g1,pos=None, iterations=1000)
+
+for n, p in pos2018_a1b5c1d1e1f1g1.items():
+    G2018_a1b5c1d1e1f1g1.nodes[n]['pos2018_a1b5c1d1e1f1g1'] = p
+    
+pos2018_a1b0c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a1b0c1d1e1f1g1,pos=None, iterations=1000)
+
+for n, p in pos2018_a1b0c1d1e1f1g1.items():
+    G2018_a1b0c1d1e1f1g1.nodes[n]['pos2018_a1b0c1d1e1f1g1'] = p
 
 pos2018_a5b1c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a5b1c1d1e1f1g1,pos=None, iterations=1000)
 
 for n, p in pos2018_a5b1c1d1e1f1g1.items():
     G2018_a5b1c1d1e1f1g1.nodes[n]['pos2018_a5b1c1d1e1f1g1'] = p
 
+pos2018_a5b5c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a5b5c1d1e1f1g1,pos=None, iterations=1000)
+
+for n, p in pos2018_a5b5c1d1e1f1g1.items():
+    G2018_a5b5c1d1e1f1g1.nodes[n]['pos2018_a5b5c1d1e1f1g1'] = p
+    
+pos2018_a5b0c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a5b0c1d1e1f1g1,pos=None, iterations=1000)
+
+for n, p in pos2018_a5b0c1d1e1f1g1.items():
+    G2018_a5b0c1d1e1f1g1.nodes[n]['pos2018_a5b0c1d1e1f1g1'] = p
+    
 pos2018_a0b1c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a0b1c1d1e1f1g1,pos=None, iterations=1000)
 
 for n, p in pos2018_a0b1c1d1e1f1g1.items():
     G2018_a0b1c1d1e1f1g1.nodes[n]['pos2018_a0b1c1d1e1f1g1'] = p
+
+pos2018_a0b5c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a0b5c1d1e1f1g1,pos=None, iterations=1000)
+
+for n, p in pos2018_a0b5c1d1e1f1g1.items():
+    G2018_a0b5c1d1e1f1g1.nodes[n]['pos2018_a0b5c1d1e1f1g1'] = p
+
+pos2018_a0b0c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a0b0c1d1e1f1g1,pos=None, iterations=1000)
+
+for n, p in pos2018_a0b0c1d1e1f1g1.items():
+    G2018_a0b0c1d1e1f1g1.nodes[n]['pos2018_a0b0c1d1e1f1g1'] = p
 
 #plot this bad boy
 #edge_trace = go.Scatter(
@@ -743,6 +773,22 @@ edge_trace2018_a1b1c1d1e1f1g1 = go.Scatter(
     mode='lines'
 )
 
+edge_trace2018_a1b5c1d1e1f1g1 = go.Scatter(
+    x=[],
+    y=[],
+    line=dict(width=1, color='#c6c6c6'),
+    hoverinfo='text',
+    mode='lines'
+)
+
+edge_trace2018_a1b0c1d1e1f1g1 = go.Scatter(
+    x=[],
+    y=[],
+    line=dict(width=1, color='#c6c6c6'),
+    hoverinfo='text',
+    mode='lines'
+)
+
 edge_trace2018_a5b1c1d1e1f1g1 = go.Scatter(
     x=[],
     y=[],
@@ -751,7 +797,39 @@ edge_trace2018_a5b1c1d1e1f1g1 = go.Scatter(
     mode='lines'
 )
 
+edge_trace2018_a5b5c1d1e1f1g1 = go.Scatter(
+    x=[],
+    y=[],
+    line=dict(width=1, color='#c6c6c6'),
+    hoverinfo='text',
+    mode='lines'
+)
+
+edge_trace2018_a5b0c1d1e1f1g1 = go.Scatter(
+    x=[],
+    y=[],
+    line=dict(width=1, color='#c6c6c6'),
+    hoverinfo='text',
+    mode='lines'
+)
+
 edge_trace2018_a0b1c1d1e1f1g1= go.Scatter(
+    x=[],
+    y=[],
+    line=dict(width=1, color='#c6c6c6'),
+    hoverinfo='text',
+    mode='lines'
+)
+
+edge_trace2018_a0b5c1d1e1f1g1= go.Scatter(
+    x=[],
+    y=[],
+    line=dict(width=1, color='#c6c6c6'),
+    hoverinfo='text',
+    mode='lines'
+)
+
+edge_trace2018_a0b0c1d1e1f1g1= go.Scatter(
     x=[],
     y=[],
     line=dict(width=1, color='#c6c6c6'),
@@ -772,17 +850,53 @@ for edge in G2018_a1b1c1d1e1f1g1.edges():
     edge_trace2018_a1b1c1d1e1f1g1['x'] += tuple([x0, x1, None])
     edge_trace2018_a1b1c1d1e1f1g1['y'] += tuple([y0, y1, None])
 
+for edge in G2018_a1b5c1d1e1f1g1.edges():
+    x0, y0 = G2018_a1b5c1d1e1f1g1.nodes[edge[0]]['pos2018_a1b5c1d1e1f1g1']
+    x1, y1 = G2018_a1b5c1d1e1f1g1.nodes[edge[1]]['pos2018_a1b5c1d1e1f1g1']
+    edge_trace2018_a1b5c1d1e1f1g1['x'] += tuple([x0, x1, None])
+    edge_trace2018_a1b5c1d1e1f1g1['y'] += tuple([y0, y1, None])
+
+for edge in G2018_a1b0c1d1e1f1g1.edges():
+    x0, y0 = G2018_a1b0c1d1e1f1g1.nodes[edge[0]]['pos2018_a1b0c1d1e1f1g1']
+    x1, y1 = G2018_a1b0c1d1e1f1g1.nodes[edge[1]]['pos2018_a1b0c1d1e1f1g1']
+    edge_trace2018_a1b0c1d1e1f1g1['x'] += tuple([x0, x1, None])
+    edge_trace2018_a1b0c1d1e1f1g1['y'] += tuple([y0, y1, None])
+
 for edge in G2018_a5b1c1d1e1f1g1.edges():
     x0, y0 = G2018_a5b1c1d1e1f1g1.nodes[edge[0]]['pos2018_a5b1c1d1e1f1g1']
     x1, y1 = G2018_a5b1c1d1e1f1g1.nodes[edge[1]]['pos2018_a5b1c1d1e1f1g1']
     edge_trace2018_a5b1c1d1e1f1g1['x'] += tuple([x0, x1, None])
     edge_trace2018_a5b1c1d1e1f1g1['y'] += tuple([y0, y1, None])
 
+for edge in G2018_a5b5c1d1e1f1g1.edges():
+    x0, y0 = G2018_a5b5c1d1e1f1g1.nodes[edge[0]]['pos2018_a5b5c1d1e1f1g1']
+    x1, y1 = G2018_a5b5c1d1e1f1g1.nodes[edge[1]]['pos2018_a5b5c1d1e1f1g1']
+    edge_trace2018_a5b5c1d1e1f1g1['x'] += tuple([x0, x1, None])
+    edge_trace2018_a5b5c1d1e1f1g1['y'] += tuple([y0, y1, None])
+
+for edge in G2018_a5b0c1d1e1f1g1.edges():
+    x0, y0 = G2018_a5b0c1d1e1f1g1.nodes[edge[0]]['pos2018_a5b0c1d1e1f1g1']
+    x1, y1 = G2018_a5b0c1d1e1f1g1.nodes[edge[1]]['pos2018_a5b0c1d1e1f1g1']
+    edge_trace2018_a5b0c1d1e1f1g1['x'] += tuple([x0, x1, None])
+    edge_trace2018_a5b0c1d1e1f1g1['y'] += tuple([y0, y1, None])
+
 for edge in G2018_a0b1c1d1e1f1g1.edges():
     x0, y0 = G2018_a0b1c1d1e1f1g1.nodes[edge[0]]['pos2018_a0b1c1d1e1f1g1']
     x1, y1 = G2018_a0b1c1d1e1f1g1.nodes[edge[1]]['pos2018_a0b1c1d1e1f1g1']
     edge_trace2018_a0b1c1d1e1f1g1['x'] += tuple([x0, x1, None])
     edge_trace2018_a0b1c1d1e1f1g1['y'] += tuple([y0, y1, None])
+
+for edge in G2018_a0b5c1d1e1f1g1.edges():
+    x0, y0 = G2018_a0b5c1d1e1f1g1.nodes[edge[0]]['pos2018_a0b5c1d1e1f1g1']
+    x1, y1 = G2018_a0b5c1d1e1f1g1.nodes[edge[1]]['pos2018_a0b5c1d1e1f1g1']
+    edge_trace2018_a0b5c1d1e1f1g1['x'] += tuple([x0, x1, None])
+    edge_trace2018_a0b5c1d1e1f1g1['y'] += tuple([y0, y1, None])
+
+for edge in G2018_a0b0c1d1e1f1g1.edges():
+    x0, y0 = G2018_a0b0c1d1e1f1g1.nodes[edge[0]]['pos2018_a0b0c1d1e1f1g1']
+    x1, y1 = G2018_a0b0c1d1e1f1g1.nodes[edge[1]]['pos2018_a0b0c1d1e1f1g1']
+    edge_trace2018_a0b0c1d1e1f1g1['x'] += tuple([x0, x1, None])
+    edge_trace2018_a0b0c1d1e1f1g1['y'] += tuple([y0, y1, None])
 
 #node_trace = go.Scatter(
 #    x=[],
@@ -837,7 +951,111 @@ node_trace2018_a1b1c1d1e1f1g1 = go.Scatter(
     marker_line_width=1
 )
 
+node_trace2018_a1b5c1d1e1f1g1 = go.Scatter(
+    x=[],
+    y=[],
+   mode='markers+text',  #make markers+text to show labels
+    text=[],
+    hoverinfo='text',
+    customdata=df_combo['GEOID'],
+    marker=dict(
+        showscale=False,
+        colorscale='YlGnBu',
+        reversescale=False,
+        color=[],
+        size=20,
+        opacity=0.8,
+        colorbar=dict(
+            thickness=10,
+            title='COLOR GROUP BY CENSUS TRACT NUMBER',
+            xanchor='left',
+            titleside='right'
+        ),
+        line=dict(width=0)
+    ),
+    showlegend=True,
+    marker_line_width=1
+)
+
+node_trace2018_a1b0c1d1e1f1g1 = go.Scatter(
+    x=[],
+    y=[],
+   mode='markers+text',  #make markers+text to show labels
+    text=[],
+    hoverinfo='text',
+    customdata=df_combo['GEOID'],
+    marker=dict(
+        showscale=False,
+        colorscale='YlGnBu',
+        reversescale=False,
+        color=[],
+        size=20,
+        opacity=0.8,
+        colorbar=dict(
+            thickness=10,
+            title='COLOR GROUP BY CENSUS TRACT NUMBER',
+            xanchor='left',
+            titleside='right'
+        ),
+        line=dict(width=0)
+    ),
+    showlegend=True,
+    marker_line_width=1
+)
+
 node_trace2018_a5b1c1d1e1f1g1 = go.Scatter(
+    x=[],
+    y=[],
+   mode='markers+text',  #make markers+text to show labels
+    text=[],
+    hoverinfo='text',
+    customdata=df_combo['GEOID'],
+    marker=dict(
+        showscale=False,
+        colorscale='YlGnBu',
+        reversescale=False,
+        color=[],
+        size=20,
+        opacity=0.8,
+        colorbar=dict(
+            thickness=10,
+            title='COLOR GROUP BY CENSUS TRACT NUMBER',
+            xanchor='left',
+            titleside='right'
+        ),
+        line=dict(width=0)
+    ),
+    showlegend=True,
+    marker_line_width=1
+)
+
+node_trace2018_a5b5c1d1e1f1g1 = go.Scatter(
+    x=[],
+    y=[],
+   mode='markers+text',  #make markers+text to show labels
+    text=[],
+    hoverinfo='text',
+    customdata=df_combo['GEOID'],
+    marker=dict(
+        showscale=False,
+        colorscale='YlGnBu',
+        reversescale=False,
+        color=[],
+        size=20,
+        opacity=0.8,
+        colorbar=dict(
+            thickness=10,
+            title='COLOR GROUP BY CENSUS TRACT NUMBER',
+            xanchor='left',
+            titleside='right'
+        ),
+        line=dict(width=0)
+    ),
+    showlegend=True,
+    marker_line_width=1
+)
+
+node_trace2018_a5b0c1d1e1f1g1 = go.Scatter(
     x=[],
     y=[],
    mode='markers+text',  #make markers+text to show labels
@@ -889,6 +1107,58 @@ node_trace2018_a0b1c1d1e1f1g1 = go.Scatter(
     marker_line_width=1
 )
 
+node_trace2018_a0b5c1d1e1f1g1 = go.Scatter(
+    x=[],
+    y=[],
+   mode='markers+text',  #make markers+text to show labels
+    text=[],
+    hoverinfo='text',
+    customdata=df_combo['GEOID'],
+    marker=dict(
+        showscale=False,
+        colorscale='YlGnBu',
+        reversescale=False,
+        color=[],
+        size=20,
+        opacity=0.8,
+        colorbar=dict(
+            thickness=10,
+            title='COLOR GROUP BY CENSUS TRACT NUMBER',
+            xanchor='left',
+            titleside='right'
+        ),
+        line=dict(width=0)
+    ),
+    showlegend=True,
+    marker_line_width=1
+)
+
+node_trace2018_a0b0c1d1e1f1g1 = go.Scatter(
+    x=[],
+    y=[],
+   mode='markers+text',  #make markers+text to show labels
+    text=[],
+    hoverinfo='text',
+    customdata=df_combo['GEOID'],
+    marker=dict(
+        showscale=False,
+        colorscale='YlGnBu',
+        reversescale=False,
+        color=[],
+        size=20,
+        opacity=0.8,
+        colorbar=dict(
+            thickness=10,
+            title='COLOR GROUP BY CENSUS TRACT NUMBER',
+            xanchor='left',
+            titleside='right'
+        ),
+        line=dict(width=0)
+    ),
+    showlegend=True,
+    marker_line_width=1
+)
+
 #for node in G.nodes():
 #    x, y = G.nodes[node]['pos']
 #    node_trace['x'] += tuple([x])
@@ -900,46 +1170,116 @@ for node in G2018_a1b1c1d1e1f1g1.nodes():
     node_trace2018_a1b1c1d1e1f1g1['x'] += tuple([x])
     node_trace2018_a1b1c1d1e1f1g1['y'] += tuple([y])
 
+for node in G2018_a1b5c1d1e1f1g1.nodes():
+    x, y = G2018_a1b5c1d1e1f1g1.nodes[node]['pos2018_a1b5c1d1e1f1g1']
+    node_trace2018_a1b5c1d1e1f1g1['x'] += tuple([x])
+    node_trace2018_a1b5c1d1e1f1g1['y'] += tuple([y])
+
+for node in G2018_a1b0c1d1e1f1g1.nodes():
+    x, y = G2018_a1b0c1d1e1f1g1.nodes[node]['pos2018_a1b0c1d1e1f1g1']
+    node_trace2018_a1b0c1d1e1f1g1['x'] += tuple([x])
+    node_trace2018_a1b0c1d1e1f1g1['y'] += tuple([y])
+
 for node in G2018_a5b1c1d1e1f1g1.nodes():
     x, y = G2018_a5b1c1d1e1f1g1.nodes[node]['pos2018_a5b1c1d1e1f1g1']
     node_trace2018_a5b1c1d1e1f1g1['x'] += tuple([x])
     node_trace2018_a5b1c1d1e1f1g1['y'] += tuple([y])
+
+for node in G2018_a5b5c1d1e1f1g1.nodes():
+    x, y = G2018_a5b5c1d1e1f1g1.nodes[node]['pos2018_a5b5c1d1e1f1g1']
+    node_trace2018_a5b5c1d1e1f1g1['x'] += tuple([x])
+    node_trace2018_a5b5c1d1e1f1g1['y'] += tuple([y])
+
+for node in G2018_a5b0c1d1e1f1g1.nodes():
+    x, y = G2018_a5b0c1d1e1f1g1.nodes[node]['pos2018_a5b0c1d1e1f1g1']
+    node_trace2018_a5b0c1d1e1f1g1['x'] += tuple([x])
+    node_trace2018_a5b0c1d1e1f1g1['y'] += tuple([y])
 
 for node in G2018_a0b1c1d1e1f1g1.nodes():
     x, y = G2018_a0b1c1d1e1f1g1.nodes[node]['pos2018_a0b1c1d1e1f1g1']
     node_trace2018_a0b1c1d1e1f1g1['x'] += tuple([x])
     node_trace2018_a0b1c1d1e1f1g1['y'] += tuple([y])
 
+for node in G2018_a0b5c1d1e1f1g1.nodes():
+    x, y = G2018_a0b5c1d1e1f1g1.nodes[node]['pos2018_a0b5c1d1e1f1g1']
+    node_trace2018_a0b5c1d1e1f1g1['x'] += tuple([x])
+    node_trace2018_a0b5c1d1e1f1g1['y'] += tuple([y])
+
+for node in G2018_a0b0c1d1e1f1g1.nodes():
+    x, y = G2018_a0b0c1d1e1f1g1.nodes[node]['pos2018_a0b0c1d1e1f1g1']
+    node_trace2018_a0b0c1d1e1f1g1['x'] += tuple([x])
+    node_trace2018_a0b0c1d1e1f1g1['y'] += tuple([y])
+
 #node_adjacencies = []
 node_adjacencies2018_a1b1c1d1e1f1g1 = []
+node_adjacencies2018_a1b5c1d1e1f1g1 = []
+node_adjacencies2018_a1b0c1d1e1f1g1 = []
 node_adjacencies2018_a5b1c1d1e1f1g1 = []
+node_adjacencies2018_a5b5c1d1e1f1g1 = []
+node_adjacencies2018_a5b0c1d1e1f1g1 = []
 node_adjacencies2018_a0b1c1d1e1f1g1 = []
+node_adjacencies2018_a0b5c1d1e1f1g1 = []
+node_adjacencies2018_a0b0c1d1e1f1g1 = []
 
 #for node, adjacencies in enumerate(G.adjacency()):
 #    node_adjacencies.append(len(adjacencies[1]))
 
-
 for node, adjacencies in enumerate(G2018_a1b1c1d1e1f1g1.adjacency()):
     node_adjacencies2018_a1b1c1d1e1f1g1.append(len(adjacencies[1]))
+
+for node, adjacencies in enumerate(G2018_a1b5c1d1e1f1g1.adjacency()):
+    node_adjacencies2018_a1b5c1d1e1f1g1.append(len(adjacencies[1]))
+
+for node, adjacencies in enumerate(G2018_a1b0c1d1e1f1g1.adjacency()):
+    node_adjacencies2018_a1b0c1d1e1f1g1.append(len(adjacencies[1]))
 
 for node, adjacencies in enumerate(G2018_a5b1c1d1e1f1g1.adjacency()):
     node_adjacencies2018_a5b1c1d1e1f1g1.append(len(adjacencies[1]))
 
+for node, adjacencies in enumerate(G2018_a5b5c1d1e1f1g1.adjacency()):
+    node_adjacencies2018_a5b5c1d1e1f1g1.append(len(adjacencies[1]))
+
+for node, adjacencies in enumerate(G2018_a5b0c1d1e1f1g1.adjacency()):
+    node_adjacencies2018_a5b0c1d1e1f1g1.append(len(adjacencies[1]))
+
 for node, adjacencies in enumerate(G2018_a0b1c1d1e1f1g1.adjacency()):
     node_adjacencies2018_a0b1c1d1e1f1g1.append(len(adjacencies[1]))
+
+for node, adjacencies in enumerate(G2018_a0b5c1d1e1f1g1.adjacency()):
+    node_adjacencies2018_a0b5c1d1e1f1g1.append(len(adjacencies[1]))
+
+for node, adjacencies in enumerate(G2018_a0b0c1d1e1f1g1.adjacency()):
+    node_adjacencies2018_a0b0c1d1e1f1g1.append(len(adjacencies[1]))
 
 #for node in G.nodes():
 #    node_label = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
-
 for node in G2018_a1b1c1d1e1f1g1.nodes():
     node_label2018_a1b1c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+
+for node in G2018_a1b5c1d1e1f1g1.nodes():
+    node_label2018_a1b5c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+
+for node in G2018_a1b0c1d1e1f1g1.nodes():
+    node_label2018_a1b0c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
 for node in G2018_a5b1c1d1e1f1g1.nodes():
     node_label2018_a5b1c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
+for node in G2018_a5b5c1d1e1f1g1.nodes():
+    node_label2018_a5b5c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+
+for node in G2018_a5b0c1d1e1f1g1.nodes():
+    node_label2018_a5b0c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+
 for node in G2018_a0b1c1d1e1f1g1.nodes():
     node_label2018_a0b1c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+
+for node in G2018_a0b5c1d1e1f1g1.nodes():
+    node_label2018_a0b5c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
+
+for node in G2018_a0b0c1d1e1f1g1.nodes():
+    node_label2018_a0b0c1d1e1f1g1 = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  #tract version
 
 df_combo['tract_index'] = df_combo['TRACT_NUM'].astype(int)
 
@@ -950,21 +1290,45 @@ df_combo['tract_index'] = df_combo['TRACT_NUM'].astype(int)
 colorsIndex = {'wallingford':'#ef553b','rainier_beach':'#636efa'}  #manually assign colors
 colors = df_combo['neighborhood'].map(colorsIndex)
 node_trace2018_a1b1c1d1e1f1g1.marker.color = colors
+node_trace2018_a1b5c1d1e1f1g1.marker.color = colors
+node_trace2018_a1b0c1d1e1f1g1.marker.color = colors
 node_trace2018_a5b1c1d1e1f1g1.marker.color = colors
+node_trace2018_a5b5c1d1e1f1g1.marker.color = colors
+node_trace2018_a5b0c1d1e1f1g1.marker.color = colors
 node_trace2018_a0b1c1d1e1f1g1.marker.color = colors
+node_trace2018_a0b5c1d1e1f1g1.marker.color = colors
+node_trace2018_a0b0c1d1e1f1g1.marker.color = colors
 #node_trace2018.marker.color = df_combo['neighborhood_index'].astype(int)
 node_trace2018_a1b1c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
 node_trace2018_a1b1c1d1e1f1g1.text = node_label2018_a1b1c1d1e1f1g1
+node_trace2018_a1b5c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_a1b5c1d1e1f1g1.text = node_label2018_a1b5c1d1e1f1g1
+node_trace2018_a1b0c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_a1b0c1d1e1f1g1.text = node_label2018_a1b0c1d1e1f1g1
 node_trace2018_a5b1c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
 node_trace2018_a5b1c1d1e1f1g1.text = node_label2018_a5b1c1d1e1f1g1
+node_trace2018_a5b5c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_a5b5c1d1e1f1g1.text = node_label2018_a5b5c1d1e1f1g1
+node_trace2018_a5b0c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_a5b0c1d1e1f1g1.text = node_label2018_a5b0c1d1e1f1g1
 node_trace2018_a0b1c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
 node_trace2018_a0b1c1d1e1f1g1.text = node_label2018_a0b1c1d1e1f1g1
+node_trace2018_a0b5c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_a0b5c1d1e1f1g1.text = node_label2018_a0b5c1d1e1f1g1
+node_trace2018_a0b0c1d1e1f1g1.marker.size = (1.5 + df_combo.omega18) * 20
+node_trace2018_a0b0c1d1e1f1g1.text = node_label2018_a0b0c1d1e1f1g1
 
 def get_nodes(subset='a1b1c1d1e1f1g1'):
     subsets = {
         'a1b1c1d1e1f1g1': node_trace2018_a1b1c1d1e1f1g1,
+        'a1b5c1d1e1f1g1': node_trace2018_a1b5c1d1e1f1g1,
+        'a1b0c1d1e1f1g1': node_trace2018_a1b0c1d1e1f1g1,
         'a5b1c1d1e1f1g1': node_trace2018_a5b1c1d1e1f1g1,
-        'a0b1c1d1e1f1g1': node_trace2018_a0b1c1d1e1f1g1
+        'a5b5c1d1e1f1g1': node_trace2018_a5b5c1d1e1f1g1,
+        'a5b0c1d1e1f1g1': node_trace2018_a5b0c1d1e1f1g1,
+        'a0b1c1d1e1f1g1': node_trace2018_a0b1c1d1e1f1g1,
+        'a0b5c1d1e1f1g1': node_trace2018_a0b5c1d1e1f1g1,
+        'a0b0c1d1e1f1g1': node_trace2018_a0b0c1d1e1f1g1
     }
 
     if subset in subsets:
@@ -976,8 +1340,14 @@ def get_nodes(subset='a1b1c1d1e1f1g1'):
 def get_edges(subset='a1b1c1d1e1f1g1'):
     subsets = {
         'a1b1c1d1e1f1g1': edge_trace2018_a1b1c1d1e1f1g1,
+        'a1b5c1d1e1f1g1': edge_trace2018_a1b5c1d1e1f1g1,
+        'a1b0c1d1e1f1g1': edge_trace2018_a1b0c1d1e1f1g1,
         'a5b1c1d1e1f1g1': edge_trace2018_a5b1c1d1e1f1g1,
-        'a0b1c1d1e1f1g1': edge_trace2018_a0b1c1d1e1f1g1
+        'a5b5c1d1e1f1g1': edge_trace2018_a5b5c1d1e1f1g1,
+        'a5b0c1d1e1f1g1': edge_trace2018_a5b0c1d1e1f1g1,
+        'a0b1c1d1e1f1g1': edge_trace2018_a0b1c1d1e1f1g1,
+        'a0b5c1d1e1f1g1': edge_trace2018_a0b5c1d1e1f1g1,
+        'a0b0c1d1e1f1g1': edge_trace2018_a0b0c1d1e1f1g1
     }
 
     if subset in subsets:
