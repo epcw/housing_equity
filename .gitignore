@@ -14,3 +14,4 @@ sandbox-singlepage/cache*
 interactive-map/cache*
 click-test/data*
 *nan-check.csv
+/sandbox-singlepage/data/json/

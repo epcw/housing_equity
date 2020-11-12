@@ -1,9 +1,11 @@
 import networkx as nx
+from networkx.readwrite import json_graph
 from fa2 import ForceAtlas2
 import pandas as pd
 from flask_caching import Cache
 import plotly.graph_objects as go
 import json
+import glob
 
 #set root directory for data files
 #ROOTBEER = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
@@ -756,6 +758,31 @@ pos2018_a0b0c1d1e1f1g1 = forceatlas2.forceatlas2_networkx_layout(G2018_a0b0c1d1e
 for n, p in pos2018_a0b0c1d1e1f1g1.items():
     G2018_a0b0c1d1e1f1g1.nodes[n]['pos2018_a0b0c1d1e1f1g1'] = p
 
+#export to json
+json_dict = {}
+json_dict['G2018_a1b1c1d1e1f1g1'] = json_graph.node_link_data(G2018_a1b1c1d1e1f1g1)
+
+for name, value in json_dict.items():
+    filename = ROOTBEER + 'data/json/' + name + '.json'
+    with open (filename,'w') as outfile:
+        json.dump(value, outfile)
+
+#TODO SPLIT FILE HERE
+#set directory for graph jsons
+json_dir = ROOTBEER + 'data/json/*'
+graphs_dict = {} #set a dictionary to hold graphs
+for file in glob.iglob(json_dir):
+    with open (file) as json_file:
+        graph_name = str(file).split('.')[0] #this removes the graph name from the filename
+        graph_name = str(graph_name).split('/')[-1]
+        graph = json.load(json_file)
+        graphs_dict['graph_name'] = graph_name #sets a key called graph name
+        graphs_dict['graph'] = json_graph.node_link_graph(graph) #sets a value that consists of the networkx graph
+
+#loop over graph_dict to write all the variables for the graph
+for graph_name, graph in graphs_dict.items():
+    graph_name = graph
+
 #plot this bad boy
 #edge_trace = go.Scatter(
 #    x=[],
@@ -764,6 +791,7 @@ for n, p in pos2018_a0b0c1d1e1f1g1.items():
 #    hoverinfo='text',
 #    mode='lines'
 #)
+
 
 edge_trace2018_a1b1c1d1e1f1g1 = go.Scatter(
     x=[],
@@ -897,6 +925,7 @@ for edge in G2018_a0b0c1d1e1f1g1.edges():
     x1, y1 = G2018_a0b0c1d1e1f1g1.nodes[edge[1]]['pos2018_a0b0c1d1e1f1g1']
     edge_trace2018_a0b0c1d1e1f1g1['x'] += tuple([x0, x1, None])
     edge_trace2018_a0b0c1d1e1f1g1['y'] += tuple([y0, y1, None])
+
 
 #node_trace = go.Scatter(
 #    x=[],
