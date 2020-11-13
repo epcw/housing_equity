@@ -7,6 +7,7 @@ from flask_caching import Cache
 import plotly.express as px  #version for maps
 #from sklearn.cluster import KMeans  #commented out because hiding Kmeans clusters for now.
 from dash.dependencies import Input, Output
+import itertools
 
 #from dashbase import app, application  #production version
 app = dash.Dash(__name__)  #local
@@ -27,24 +28,39 @@ TIMEOUT = 60
 
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
-pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
-
-slider_values = {
-    'alpha': [0,1,5],
-    'bravo': [0, 1, 5],
-    'charlie': [0, 1, 5],
-    'delta': [0, 1, 5],
-    'echo': [0, 1, 5],
-    'foxtrot': [0, 1, 5],
-    'golf': [0, 1, 5],
-}
-
-#master loop function for slider variables
-def leppard(slider_values):
-
+pikes_place = {"lat": 47.6145537,"lon": -122.3497373}
 
 from build_network import tracts
 
+@cache.memoize(timeout=TIMEOUT)
+def get_maps():
+    from build_network import get_maps
+    df_combo = get_maps(subset='one')
+    return df_combo
+
+df_combo = get_maps()
+
+#master loop function for slider variables
+slider_names = ('alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot','golf') #IF YOU CHANGE THIS, also change the networkx_var dict inside update_network below. And don't forget to add a slider in the HTML.
+slider_values_list = [dict(zip(slider_names, p)) for p in itertools.product([0,1,5], repeat=len(slider_names))]
+
+def leppard(slider_values):
+    luggage_code = 'a{alpha}b{bravo}c{charlie}d{delta}e{echo}f{foxtrot}g{golf}'.format(**slider_values)
+    return luggage_code
+
+slider_keys = [leppard(slider_values) for slider_values in slider_values_list]
+
+node_trace2018 = {}
+edge_trace2018 = {}
+
+from build_network import get_nodes, get_edges
+
+for slider_key in slider_keys:
+    node_trace2018[slider_key] = get_nodes(subset=slider_key)
+    edge_trace2018[slider_key] = get_edges(subset=slider_key)
+
+
+'''
 @cache.memoize(timeout=TIMEOUT)
 def get_nodes_a1b1c1d1e1f1g1():
     from build_network import get_nodes
@@ -116,13 +132,6 @@ def get_nodes_a0b0c1d1e1f1g1():
 
 node_trace2018_a0b0c1d1e1f1g1 = get_nodes_a0b0c1d1e1f1g1()
 
-@cache.memoize(timeout=TIMEOUT)
-def get_maps():
-    from build_network import get_maps
-    df_combo = get_maps(subset='one')
-    return df_combo
-
-df_combo = get_maps()
 
 @cache.memoize(timeout=TIMEOUT)
 def get_edges_a1b1c1d1e1f1g1():
@@ -195,7 +204,7 @@ def get_edges_a0b0c1d1e1f1g1():
     return edge_trace2018_a0b0c1d1e1f1g1
 
 edge_trace2018_a0b0c1d1e1f1g1 = get_edges_a0b0c1d1e1f1g1()
-
+'''
 '''
 #Kmeans clustering
 Y = df_combo[['GEOID','omega18','omega18']]
@@ -395,30 +404,35 @@ def generate_table(dataframe, max_rows=1422):
 @app.callback(
     Output('housing_networkx18', 'figure'),
     [Input('alpha_slider', 'value'),
-     Input('bravo_slider', 'value')])
+     Input('bravo_slider','value'),
+     Input('charlie_slider','value'),
+     Input('delta_slider','value'),
+     Input('echo_slider','value'),
+     Input('foxtrot_slider','value'),
+     Input('golf_slider','value')])
+
+def key_code(value):
+   return 1 if value == 1 else 5 if value == 0.5 else 0
+
+def get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
+    networkx_var = {'alpha': key_code(alpha_slider),
+                    'bravo': key_code(bravo_slider),
+                    'charlie': key_code(charlie_slider),
+                    'delta': key_code(delta_slider),
+                    'echo': key_code(echo_slider),
+                    'foxtrot': key_code(foxtrot_slider),
+                    'golf': key_code(golf_slider),
+                    }
+    key = leppard(networkx_var)
+    return key
 
 # updates graph based on user input
-def update_graph(alpha_slider, bravo_slider):
+def update_graph(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
     return {
         'data': [
-            edge_trace2018_a0b0c1d1e1f1g1 if alpha_slider == 0 and bravo_slider == 0
-            else (edge_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0 and bravo_slider == 0.5
-            else (edge_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 0
-            else (edge_trace2018_a5b5c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 0.5
-            else (edge_trace2018_a1b0c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 0
-            else (edge_trace2018_a1b5c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 0.5
-            else (edge_trace2018_a1b1c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 1
-            else (edge_trace2018_a5b1c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 1
-            else edge_trace2018_a0b1c1d1e1f1g1))))))),
-            node_trace2018_a0b0c1d1e1f1g1 if alpha_slider == 0 and bravo_slider == 0
-            else (node_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0 and bravo_slider == 0.5
-            else (node_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 0
-            else (node_trace2018_a5b5c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 0.5
-            else (node_trace2018_a1b0c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 0
-            else (node_trace2018_a1b5c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 0.5
-            else (node_trace2018_a1b1c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 1
-            else (node_trace2018_a5b1c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 1
-            else node_trace2018_a0b1c1d1e1f1g1)))))))],
+            edge_trace2018[get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)],
+            node_trace2018[get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)]
+                ],
         'layout': go.Layout(
                 title='',
                 titlefont=dict(size=16),
@@ -432,23 +446,21 @@ def update_graph(alpha_slider, bravo_slider):
 @app.callback(
     Output('block_grp_map', 'figure'),
     [Input('alpha_slider', 'value'),
-     Input('bravo_slider', 'value')])
+     Input('bravo_slider','value'),
+     Input('charlie_slider','value'),
+     Input('delta_slider','value'),
+     Input('echo_slider','value'),
+     Input('foxtrot_slider','value'),
+     Input('golf_slider','value')])
 
 # updates graph based on user input
-def update_change_map(alpha_slider, bravo_slider):
+def update_change_map(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
+    key = get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)
     fig4 = px.choropleth_mapbox(df_combo,
                                 geojson=tracts,
                                 locations=df_combo['GEOID_long'],
                                 featureidkey='properties.GEOID',
-                                color=df_combo['omegadf_a0b0c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0
-                                else ('omegadf_a0b5c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0.5
-                                else ('omegadf_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0
-                                else ('omegadf_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0.5
-                                else ('omegadf_a1b0c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0
-                                else ('omegadf_a1b5c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0.5
-                                else ('omegadf_a1b1c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 1
-                                else ('omegadf_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 1
-                                else 'omegadf_a0b1c1d1e1f1g1')))))))],
+                                color=df_combo['omegadf_{keys}'.format(keys=key)],
                                 opacity=0.7,
                                 color_continuous_scale='RdYlGn_r')
     fig4.update_layout(mapbox_style="open-street-map",
@@ -459,29 +471,19 @@ def update_change_map(alpha_slider, bravo_slider):
 @app.callback(
     Output('displacement_scatter', 'figure'),
     [Input('alpha_slider', 'value'),
-     Input('bravo_slider','value')])
+     Input('bravo_slider','value'),
+     Input('charlie_slider','value'),
+     Input('delta_slider','value'),
+     Input('echo_slider','value'),
+     Input('foxtrot_slider','value'),
+     Input('golf_slider','value')])
 
 #updates scatterplot
-def update_scatter_plot(alpha_slider, bravo_slider):
+def update_scatter_plot(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
+    key = get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)
     fig3 = px.scatter(df_combo,
-                      x='omega13df_a0b0c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0
-                      else ('omega13df_a0b5c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0.5
-                      else ('omega13df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0
-                      else ('omega13df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0.5
-                      else ('omega13df_a1b0c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0
-                      else ('omega13df_a1b5c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0.5
-                      else ('omega13df_a1b1c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 1
-                      else ('omega13df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 1
-                      else 'omega13df_a0b1c1d1e1f1g1'))))))),
-                      y='omega18df_a0b0c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0
-                      else ('omega18df_a0b5c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0.5
-                      else ('omega18df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0
-                      else ('omega18df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0.5
-                      else ('omega18df_a1b0c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0
-                      else ('omega18df_a1b5c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0.5
-                      else ('omega18df_a1b1c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 1
-                      else ('omega18df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 1
-                      else 'omega18df_a0b1c1d1e1f1g1'))))))),
+                      x='omega13df_{keys}'.format(keys=key),
+                      y='omega18df_{keys}'.format(keys=key),
                       color='neighborhood',
                       text='GEOID'
                       )
@@ -523,20 +525,13 @@ def update_scatter_plot(alpha_slider, bravo_slider):
      Input('bravo_slider','value')])
 
 # updates graph based on user input
-def update_displacement_maps(alpha_slider, bravo_slider):
+def update_displacement_maps(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
+    key = get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)
     fig5 = px.choropleth_mapbox(df_combo,
                                 geojson=tracts,
                                 locations=df_combo['GEOID_long'],
                                 featureidkey='properties.GEOID',
-                                color=df_combo['omega13df_a0b0c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0
-                                else ('omega13df_a0b5c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0.5
-                                else ('omega13df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0
-                                else ('omega13df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0.5
-                                else ('omega13df_a1b0c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0
-                                else ('omega13df_a1b5c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0.5
-                                else ('omega13df_a1b1c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 1
-                                else ('omega13df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 1
-                                else 'omega13df_a0b1c1d1e1f1g1')))))))],
+                                color=df_combo['omega13df_{keys}'.format(keys=key)],
                                 opacity=0.7,
                                 color_continuous_scale='RdYlGn_r')
     fig5.update_layout(mapbox_style="open-street-map",
@@ -546,15 +541,7 @@ def update_displacement_maps(alpha_slider, bravo_slider):
                                 geojson=tracts,
                                 locations=df_combo['GEOID_long'],
                                 featureidkey='properties.GEOID',
-                                color=df_combo['omega18df_a0b0c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0
-                                else ('omega18df_a0b5c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0.5
-                                else ('omega18df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0
-                                else ('omega18df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0.5
-                                else ('omega18df_a1b0c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0
-                                else ('omega18df_a1b5c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0.5
-                                else ('omega18df_a1b1c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 1
-                                else ('omega18df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 1
-                                else 'omega18df_a0b1c1d1e1f1g1')))))))],
+                                color=df_combo['omega18df_{keys}'.format(keys=key)],
                                 opacity=0.7,
                                 color_continuous_scale='RdYlGn_r')
     fig6.update_layout(mapbox_style="open-street-map",
