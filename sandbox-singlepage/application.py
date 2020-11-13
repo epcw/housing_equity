@@ -29,11 +29,28 @@ TIMEOUT = 60
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
+slider_values = {
+    'alpha': [0,1,5],
+    'bravo': [0, 1, 5],
+    'charlie': [0, 1, 5],
+    'delta': [0, 1, 5],
+    'echo': [0, 1, 5],
+    'foxtrot': [0, 1, 5],
+    'golf': [0, 1, 5],
+}
+
+#master loop function for slider variables
+def leppard(slider_values):
+
+
 from build_network import tracts
 
+@cache.memoize(timeout=TIMEOUT)
+def get_nodes_a1b1c1d1e1f1g1():
+    from build_network import get_nodes
+    node_trace2018_a1b1c1d1e1f1g1 = get_nodes(subset='a1b1c1d1e1f1g1')
 
-from build_network import get_nodes
-node_trace2018_a1b1c1d1e1f1g1 = get_nodes(subset='a1b1c1d1e1f1g1')
+node_trace2018_a1b1c1d1e1f1g1 = get_nodes_a1b1c1d1e1f1g1()
 
 @cache.memoize(timeout=TIMEOUT)
 def get_nodes_a1b5c1d1e1f1g1():
