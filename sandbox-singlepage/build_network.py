@@ -6,6 +6,7 @@ from flask_caching import Cache
 import plotly.graph_objects as go
 import json
 import glob
+import os
 
 #set root directory for data files
 #ROOTBEER = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
@@ -767,21 +768,23 @@ for name, value in json_dict.items():
     with open (filename,'w') as outfile:
         json.dump(value, outfile)
 
+G2018_a1b1c1d1e1f1g1_old = G2018_a1b1c1d1e1f1g1
+del G2018_a1b1c1d1e1f1g1
+
 #TODO SPLIT FILE HERE
 #set directory for graph jsons
 json_dir = ROOTBEER + 'data/json/*'
 graphs_dict = {} #set a dictionary to hold graphs
 for file in glob.iglob(json_dir):
     with open (file) as json_file:
-        graph_name = str(file).split('.')[0] #this removes the graph name from the filename
-        graph_name = str(graph_name).split('/')[-1]
+        graph_name = os.path.basename(file)
+        graph_name = graph_name.rstrip('.json')
         graph = json.load(json_file)
-        graphs_dict['graph_name'] = graph_name #sets a key called graph name
-        graphs_dict['graph'] = json_graph.node_link_graph(graph) #sets a value that consists of the networkx graph
+        graphs_dict[graph_name] = json_graph.node_link_graph(graph) #sets a value that consists of the networkx graph
 
 #loop over graph_dict to write all the variables for the graph
 for graph_name, graph in graphs_dict.items():
-    graph_name = graph
+    exec(graph_name + '=graph')
 
 #plot this bad boy
 #edge_trace = go.Scatter(

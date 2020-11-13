@@ -272,7 +272,7 @@ def serve_layout():
                           )
             ]),
             html.Div([
-                html.P(['NOTE: ONLY THE RACIAL MINORITY slider currently functions, but when functional the rest will allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
+                html.P(['NOTE: ONLY THE RACIAL MINORITY and 25TH %ILE RENT sliders currently function, but, when working, the rest will allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
                 ]),
                 html.Div([
                     html.Div([
@@ -417,18 +417,24 @@ def generate_table(dataframe, max_rows=1422):
 def update_graph(alpha_slider, beta_slider):
     return {
         'data': [
-            edge_trace2018_a5b5c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 0.5
+            edge_trace2018_a0b0c1d1e1f1g1 if alpha_slider == 0 and beta_slider == 0
+            else (edge_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0 and beta_slider == 0.5
+            else (edge_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 0
+            else (edge_trace2018_a5b5c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 0.5
             else (edge_trace2018_a1b0c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 0
             else (edge_trace2018_a1b5c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 0.5
             else (edge_trace2018_a1b1c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 1
             else (edge_trace2018_a5b1c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 1
-            else edge_trace2018_a0b1c1d1e1f1g1)))),
-            node_trace2018_a5b5c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 0.5
+            else edge_trace2018_a0b1c1d1e1f1g1))))))),
+            node_trace2018_a0b0c1d1e1f1g1 if alpha_slider == 0 and beta_slider == 0
+            else (node_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0 and beta_slider == 0.5
+            else (node_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 0
+            else (node_trace2018_a5b5c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 0.5
             else (node_trace2018_a1b0c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 0
             else (node_trace2018_a1b5c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 0.5
             else (node_trace2018_a1b1c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 1
             else (node_trace2018_a5b1c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 1
-            else node_trace2018_a0b1c1d1e1f1g1))))],
+            else node_trace2018_a0b1c1d1e1f1g1)))))))],
         'layout': go.Layout(
                 title='',
                 titlefont=dict(size=16),
@@ -450,12 +456,15 @@ def update_change_map(alpha_slider, beta_slider):
                                 geojson=tracts,
                                 locations=df_combo['GEOID_long'],
                                 featureidkey='properties.GEOID',
-                                color=df_combo['omegadf_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
+                                color=df_combo['omegadf_a0b0c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0
+                                else ('omegadf_a0b5c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0.5
+                                else ('omegadf_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0
+                                else ('omegadf_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
                                 else ('omegadf_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
                                 else ('omegadf_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
                                 else ('omegadf_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
                                 else ('omegadf_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
-                                else 'omegadf_a0b1c1d1e1f1g1'))))],
+                                else 'omegadf_a0b1c1d1e1f1g1')))))))],
                                 opacity=0.7,
                                 color_continuous_scale='RdYlGn_r')
     fig4.update_layout(mapbox_style="open-street-map",
@@ -471,18 +480,24 @@ def update_change_map(alpha_slider, beta_slider):
 #updates scatterplot
 def update_scatter_plot(alpha_slider, beta_slider):
     fig3 = px.scatter(df_combo,
-                      x='omega13df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
+                      x='omega13df_a0b0c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0
+                      else ('omega13df_a0b5c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0.5
+                      else ('omega13df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0
+                      else ('omega13df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
                       else ('omega13df_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
                       else ('omega13df_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
                       else ('omega13df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
                       else ('omega13df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
-                      else 'omega13df_a0b1c1d1e1f1g1')))),
-                      y='omega18df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
+                      else 'omega13df_a0b1c1d1e1f1g1'))))))),
+                      y='omega18df_a0b0c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0
+                      else ('omega18df_a0b5c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0.5
+                      else ('omega18df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0
+                      else ('omega18df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
                       else ('omega18df_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
                       else ('omega18df_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
                       else ('omega18df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
                       else ('omega18df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
-                      else 'omega18df_a0b1c1d1e1f1g1')))),
+                      else 'omega18df_a0b1c1d1e1f1g1'))))))),
                       color='neighborhood',
                       text='GEOID'
                       )
@@ -529,12 +544,15 @@ def update_displacement_maps(alpha_slider, beta_slider):
                                 geojson=tracts,
                                 locations=df_combo['GEOID_long'],
                                 featureidkey='properties.GEOID',
-                                color=df_combo['omega13df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
-                                    else ('omega13df_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
-                                    else ('omega13df_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
-                                    else ('omega13df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
-                                    else ('omega13df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
-                                    else 'omega13df_a0b1c1d1e1f1g1'))))],
+                                color=df_combo['omega13df_a0b0c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0
+                                else ('omega13df_a0b5c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0.5
+                                else ('omega13df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0
+                                else ('omega13df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
+                                else ('omega13df_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
+                                else ('omega13df_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
+                                else ('omega13df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
+                                else ('omega13df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
+                                else 'omega13df_a0b1c1d1e1f1g1')))))))],
                                 opacity=0.7,
                                 color_continuous_scale='RdYlGn_r')
     fig5.update_layout(mapbox_style="open-street-map",
@@ -544,18 +562,22 @@ def update_displacement_maps(alpha_slider, beta_slider):
                                 geojson=tracts,
                                 locations=df_combo['GEOID_long'],
                                 featureidkey='properties.GEOID',
-                                color=df_combo['omega18df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
-                                    else ('omega18df_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
-                                    else ('omega18df_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
-                                    else ('omega18df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
-                                    else ('omega18df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
-                                    else 'omega18df_a0b1c1d1e1f1g1'))))],
+                                color=df_combo['omega18df_a0b0c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0
+                                else ('omega18df_a0b5c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0.5
+                                else ('omega18df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0
+                                else ('omega18df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
+                                else ('omega18df_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
+                                else ('omega18df_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
+                                else ('omega18df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
+                                else ('omega18df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
+                                else 'omega18df_a0b1c1d1e1f1g1')))))))],
                                 opacity=0.7,
                                 color_continuous_scale='RdYlGn_r')
     fig6.update_layout(mapbox_style="open-street-map",
                        mapbox_zoom=10.5,
                        mapbox_center=pikes_place)
     return fig5, fig6
+
 
 #this calls the serve_layout function to run on app load.
 app.layout = serve_layout
