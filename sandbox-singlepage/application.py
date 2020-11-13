@@ -272,7 +272,7 @@ def serve_layout():
                           )
             ]),
             html.Div([
-                html.P(['NOTE: ONLY THE RACIAL MINORITY and the 25TH %ILE RENT sliders currently function, but, when integrated, the rest will allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
+                html.P(['NOTE: ONLY THE RACIAL MINORITY and 25TH %ILE RENT sliders currently function, but, when working, the rest will allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
                 ]),
                 html.Div([
                     html.Div([
