@@ -31,13 +31,9 @@ pikes_place = {"lat": 47.6145537,"lon": -122.3497373,}
 
 from build_network import tracts
 
-@cache.memoize(timeout=TIMEOUT)
-def get_nodes_a1b1c1d1e1f1g1():
-    from build_network import get_nodes
-    node_trace2018_a1b1c1d1e1f1g1 = get_nodes(subset='a1b1c1d1e1f1g1')
-    return node_trace2018_a1b1c1d1e1f1g1
 
-node_trace2018_a1b1c1d1e1f1g1 = get_nodes_a1b1c1d1e1f1g1()
+from build_network import get_nodes
+node_trace2018_a1b1c1d1e1f1g1 = get_nodes(subset='a1b1c1d1e1f1g1')
 
 @cache.memoize(timeout=TIMEOUT)
 def get_nodes_a1b5c1d1e1f1g1():
@@ -183,19 +179,6 @@ def get_edges_a0b0c1d1e1f1g1():
 
 edge_trace2018_a0b0c1d1e1f1g1 = get_edges_a0b0c1d1e1f1g1()
 
-#fig = go.Figure(data=[edge_trace, node_trace],
-#             layout=go.Layout(
-#                title='',
-#                titlefont=dict(size=16),
-#                showlegend=False,
-#                hovermode='closest',
-#                margin=dict(b=20,l=5,r=5,t=40),
-#                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-#                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
-
-
-#fig.update_traces(textfont_size=25)
-
 '''
 #Kmeans clustering
 Y = df_combo[['GEOID','omega18','omega18']]
@@ -290,7 +273,7 @@ def serve_layout():
                         html.H4('Rent cost of 25th percentile')], className='col-4'),
                     html.Div([
                         dcc.Slider(
-                            id='beta_slider',
+                            id='bravo_slider',
                             min=0,
                             max=1,
                             step=0.5,
@@ -359,22 +342,6 @@ def serve_layout():
             dcc.Graph(
                 id='block_grp_map'
             ),
-#            html.Div([
-#                html.Div([
-#                    html.Div([
-#                        html.H2(className='graph_title', children='2013'),
-#                        dcc.Graph(figure=fig,
-#                                  id='housing_networkx'
-#                                  )], className='col-6'),
-#                    html.Div([
-#                        html.H2(className='graph_title', children='2018'),
-#                        dcc.Graph(figure=fig2,
-#                                  id='housing_networkx18'
-#                                  )], className='col-6')], className='multi-col'),
-#            ], className='container'),
-#            dcc.Graph(figure=fig2,
-#                      id='housing_bar'
-#                      ),
             html.H1('Change in displacement pressure'),
             html.P('This scatterplot compares displacement pressure (what we are calling omega) in the census tract groups in the wealthier northern neighborhoods of Seattle (Wallingford) and the poorer Southeastern neighborhoods (Rainier Beach).  Tracts exactly along the dashed 1:1 line had no change in pressure from 2013-18. Tracts above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018.', className='description'),
             dcc.Graph(
@@ -411,29 +378,29 @@ def generate_table(dataframe, max_rows=1422):
 @app.callback(
     Output('housing_networkx18', 'figure'),
     [Input('alpha_slider', 'value'),
-     Input('beta_slider', 'value')])
+     Input('bravo_slider', 'value')])
 
 # updates graph based on user input
-def update_graph(alpha_slider, beta_slider):
+def update_graph(alpha_slider, bravo_slider):
     return {
         'data': [
-            edge_trace2018_a0b0c1d1e1f1g1 if alpha_slider == 0 and beta_slider == 0
-            else (edge_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0 and beta_slider == 0.5
-            else (edge_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 0
-            else (edge_trace2018_a5b5c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 0.5
-            else (edge_trace2018_a1b0c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 0
-            else (edge_trace2018_a1b5c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 0.5
-            else (edge_trace2018_a1b1c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 1
-            else (edge_trace2018_a5b1c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 1
+            edge_trace2018_a0b0c1d1e1f1g1 if alpha_slider == 0 and bravo_slider == 0
+            else (edge_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0 and bravo_slider == 0.5
+            else (edge_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 0
+            else (edge_trace2018_a5b5c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 0.5
+            else (edge_trace2018_a1b0c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 0
+            else (edge_trace2018_a1b5c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 0.5
+            else (edge_trace2018_a1b1c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 1
+            else (edge_trace2018_a5b1c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 1
             else edge_trace2018_a0b1c1d1e1f1g1))))))),
-            node_trace2018_a0b0c1d1e1f1g1 if alpha_slider == 0 and beta_slider == 0
-            else (node_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0 and beta_slider == 0.5
-            else (node_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 0
-            else (node_trace2018_a5b5c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 0.5
-            else (node_trace2018_a1b0c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 0
-            else (node_trace2018_a1b5c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 0.5
-            else (node_trace2018_a1b1c1d1e1f1g1 if alpha_slider == 1 and beta_slider == 1
-            else (node_trace2018_a5b1c1d1e1f1g1 if alpha_slider == 0.5 and beta_slider == 1
+            node_trace2018_a0b0c1d1e1f1g1 if alpha_slider == 0 and bravo_slider == 0
+            else (node_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0 and bravo_slider == 0.5
+            else (node_trace2018_a5b0c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 0
+            else (node_trace2018_a5b5c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 0.5
+            else (node_trace2018_a1b0c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 0
+            else (node_trace2018_a1b5c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 0.5
+            else (node_trace2018_a1b1c1d1e1f1g1 if alpha_slider == 1 and bravo_slider == 1
+            else (node_trace2018_a5b1c1d1e1f1g1 if alpha_slider == 0.5 and bravo_slider == 1
             else node_trace2018_a0b1c1d1e1f1g1)))))))],
         'layout': go.Layout(
                 title='',
@@ -448,22 +415,22 @@ def update_graph(alpha_slider, beta_slider):
 @app.callback(
     Output('block_grp_map', 'figure'),
     [Input('alpha_slider', 'value'),
-     Input('beta_slider', 'value')])
+     Input('bravo_slider', 'value')])
 
 # updates graph based on user input
-def update_change_map(alpha_slider, beta_slider):
+def update_change_map(alpha_slider, bravo_slider):
     fig4 = px.choropleth_mapbox(df_combo,
                                 geojson=tracts,
                                 locations=df_combo['GEOID_long'],
                                 featureidkey='properties.GEOID',
-                                color=df_combo['omegadf_a0b0c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0
-                                else ('omegadf_a0b5c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0.5
-                                else ('omegadf_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0
-                                else ('omegadf_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
-                                else ('omegadf_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
-                                else ('omegadf_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
-                                else ('omegadf_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
-                                else ('omegadf_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
+                                color=df_combo['omegadf_a0b0c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0
+                                else ('omegadf_a0b5c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0.5
+                                else ('omegadf_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0
+                                else ('omegadf_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0.5
+                                else ('omegadf_a1b0c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0
+                                else ('omegadf_a1b5c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0.5
+                                else ('omegadf_a1b1c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 1
+                                else ('omegadf_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 1
                                 else 'omegadf_a0b1c1d1e1f1g1')))))))],
                                 opacity=0.7,
                                 color_continuous_scale='RdYlGn_r')
@@ -475,28 +442,28 @@ def update_change_map(alpha_slider, beta_slider):
 @app.callback(
     Output('displacement_scatter', 'figure'),
     [Input('alpha_slider', 'value'),
-     Input('beta_slider','value')])
+     Input('bravo_slider','value')])
 
 #updates scatterplot
-def update_scatter_plot(alpha_slider, beta_slider):
+def update_scatter_plot(alpha_slider, bravo_slider):
     fig3 = px.scatter(df_combo,
-                      x='omega13df_a0b0c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0
-                      else ('omega13df_a0b5c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0.5
-                      else ('omega13df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0
-                      else ('omega13df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
-                      else ('omega13df_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
-                      else ('omega13df_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
-                      else ('omega13df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
-                      else ('omega13df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
+                      x='omega13df_a0b0c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0
+                      else ('omega13df_a0b5c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0.5
+                      else ('omega13df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0
+                      else ('omega13df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0.5
+                      else ('omega13df_a1b0c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0
+                      else ('omega13df_a1b5c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0.5
+                      else ('omega13df_a1b1c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 1
+                      else ('omega13df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 1
                       else 'omega13df_a0b1c1d1e1f1g1'))))))),
-                      y='omega18df_a0b0c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0
-                      else ('omega18df_a0b5c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0.5
-                      else ('omega18df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0
-                      else ('omega18df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
-                      else ('omega18df_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
-                      else ('omega18df_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
-                      else ('omega18df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
-                      else ('omega18df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
+                      y='omega18df_a0b0c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0
+                      else ('omega18df_a0b5c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0.5
+                      else ('omega18df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0
+                      else ('omega18df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0.5
+                      else ('omega18df_a1b0c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0
+                      else ('omega18df_a1b5c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0.5
+                      else ('omega18df_a1b1c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 1
+                      else ('omega18df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 1
                       else 'omega18df_a0b1c1d1e1f1g1'))))))),
                       color='neighborhood',
                       text='GEOID'
@@ -536,22 +503,22 @@ def update_scatter_plot(alpha_slider, beta_slider):
     Output('displacement_2013', 'figure'),
     Output('displacement_2018', 'figure')],
     [Input('alpha_slider', 'value'),
-     Input('beta_slider','value')])
+     Input('bravo_slider','value')])
 
 # updates graph based on user input
-def update_displacement_maps(alpha_slider, beta_slider):
+def update_displacement_maps(alpha_slider, bravo_slider):
     fig5 = px.choropleth_mapbox(df_combo,
                                 geojson=tracts,
                                 locations=df_combo['GEOID_long'],
                                 featureidkey='properties.GEOID',
-                                color=df_combo['omega13df_a0b0c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0
-                                else ('omega13df_a0b5c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0.5
-                                else ('omega13df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0
-                                else ('omega13df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
-                                else ('omega13df_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
-                                else ('omega13df_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
-                                else ('omega13df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
-                                else ('omega13df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
+                                color=df_combo['omega13df_a0b0c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0
+                                else ('omega13df_a0b5c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0.5
+                                else ('omega13df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0
+                                else ('omega13df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0.5
+                                else ('omega13df_a1b0c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0
+                                else ('omega13df_a1b5c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0.5
+                                else ('omega13df_a1b1c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 1
+                                else ('omega13df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 1
                                 else 'omega13df_a0b1c1d1e1f1g1')))))))],
                                 opacity=0.7,
                                 color_continuous_scale='RdYlGn_r')
@@ -562,14 +529,14 @@ def update_displacement_maps(alpha_slider, beta_slider):
                                 geojson=tracts,
                                 locations=df_combo['GEOID_long'],
                                 featureidkey='properties.GEOID',
-                                color=df_combo['omega18df_a0b0c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0
-                                else ('omega18df_a0b5c1d1e1f1g1' if alpha_slider == 0 and beta_slider == 0.5
-                                else ('omega18df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0
-                                else ('omega18df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 0.5
-                                else ('omega18df_a1b0c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0
-                                else ('omega18df_a1b5c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 0.5
-                                else ('omega18df_a1b1c1d1e1f1g1' if alpha_slider == 1 and beta_slider == 1
-                                else ('omega18df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and beta_slider == 1
+                                color=df_combo['omega18df_a0b0c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0
+                                else ('omega18df_a0b5c1d1e1f1g1' if alpha_slider == 0 and bravo_slider == 0.5
+                                else ('omega18df_a5b0c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0
+                                else ('omega18df_a5b5c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 0.5
+                                else ('omega18df_a1b0c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0
+                                else ('omega18df_a1b5c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 0.5
+                                else ('omega18df_a1b1c1d1e1f1g1' if alpha_slider == 1 and bravo_slider == 1
+                                else ('omega18df_a5b1c1d1e1f1g1' if alpha_slider == 0.5 and bravo_slider == 1
                                 else 'omega18df_a0b1c1d1e1f1g1')))))))],
                                 opacity=0.7,
                                 color_continuous_scale='RdYlGn_r')
