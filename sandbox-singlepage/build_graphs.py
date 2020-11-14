@@ -6,12 +6,11 @@ from flask_caching import Cache
 import plotly.graph_objects as go
 import json
 import csv
+import itertools
 
 # set root directory for data files
 # ROOTBEER = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
 ROOTBEER = ''  # local
-
-#TODO: programatically produce variables for the different slider permutations
 
 # use static csvs instead of rebuilding the dfs in data_prep_tract every time
 df = pd.read_csv(ROOTBEER + 'data/df.csv', dtype={"GEOID": str, "TRACT_NUM": str, "YEAR": str})
@@ -104,25 +103,73 @@ gdf_wallingford['GEOID_b'] = gdf_wallingford['GEOID_b'].str.replace("53033", "")
 from data_prep_blockgrp import block_grp_geoids
 '''
 
-# weight the edges
-alpha_one = 1 / 7.0
-alpha_half = .5 / 7.0
-alpha_zero = 0 / 7.0
-bravo_one = 1 / 7.0
-bravo_half = .5 / 7.0
-bravo_zero = 0 / 7.0
-bravo = bravo_one
-charlie = 1 / 7.0
-delta = 1 / 7.0
-echo = 1 / 7.0
-foxtrot = 1 / 7.0
-golf = 1 / 7.0
-hotel = 0
+one = 1 / 7.0
+half = .5 / 7.0
+zero = 0 / 7.0
+antione = ((1 / 7) - one)/6
+antihalf = ((1 / 7) - half)/6
+antizero = ((1 / 7) - zero)/6
+
+weight_keys = {
+    'alpha_1': one,
+    'alpha_5' : half,
+    'alpha_0' : zero,
+    'antialpha_1': antione,
+    'antialpha_5': antihalf,
+    'antialpha_0': antizero,
+    'bravo_1': one,
+    'bravo_5' : half,
+    'bravo_0' : zero,
+    'antibravo_1': antione,
+    'antibravo_5': antihalf,
+    'antibravo_0': antizero,
+    'charlie_1': one,
+    'charlie_5' : half,
+    'charlie_0' : zero,
+    'anticharlie_1': antione,
+    'anticharlie_5': antihalf,
+    'anticharlie_0': antizero,
+    'delta_1': one,
+    'delta_5' : half,
+    'delta_0' : zero,
+    'antidelta_1': antione,
+    'antidelta_5': antihalf,
+    'antidelta_0': antizero,
+    'echo_1': one,
+    'echo_5' : half,
+    'echo_0' : zero,
+    'antiecho_1': antione,
+    'antiecho_5': antihalf,
+    'antiecho_0': antizero,
+    'foxtrot_1': one,
+    'foxtrot_5' : half,
+    'foxtrot_0' : zero,
+    'antifoxtrot_1': antione,
+    'antifoxtrot_5': antihalf,
+    'antifoxtrot_0': antizero,
+    'golf_1': one,
+    'golf_5' : half,
+    'golf_0' : zero,
+    'antigolf_1': antione,
+    'antigolf_5': antihalf,
+    'antigolf_0': antizero
+}
+
+slider_names = ('alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot','golf')
+slider_values_list = [dict(zip(slider_names, p)) for p in itertools.product([0,1,5], repeat=len(slider_names))]
+
+#TODO need to find some way to loop over a conditional, where if the value for alpha in slider_values_list is 0, then pick alpha_0 from weights_list.
+#Should create a dict that has each luggage code associated with 12 other values: the correct weights (and antiweights)
+#could probably get a way with a 1 + 6 structure and just pull the antiweight from that.
+
+def leppard(slider_values):
+    luggage_code = 'a{alpha}b{bravo}c{charlie}d{delta}e{echo}f{foxtrot}g{golf}'.format(**slider_values)
+    return luggage_code
+
+slider_keys = [leppard(slider_values) for slider_values in slider_values_list]
 
 # NETWORK VERSIONS
 # 2013 + change version
-antialpha_one = (1 / 7 - alpha_one)
-antibravo_one = (1 / 7 - bravo_one)
 gdf_combo['omega_a1b1c1d1e1f1g1'] = 1 / (
         ((alpha_one + antibravo_one) * gdf.white_pop_pct_change_delta) + \
         ((bravo_one + antialpha_one) * gdf.rent_25th_pctile_change_delta) + \
