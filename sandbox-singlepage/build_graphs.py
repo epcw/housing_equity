@@ -133,9 +133,6 @@ def normalize(x):
 
 slider_values_list = [symbol for symbol in slider_symbols_list]
 
-#TODO need to find some way to loop over a conditional, where if the value for alpha in slider_values_list is 0, then pick alpha_0 from weights_list.
-#Should create a dict that has each luggage code associated with 7 values: the correct weights
-
 # NETWORK VERSIONS
 # 2013 + change version
 for symbols in slider_symbols_list:
@@ -219,11 +216,13 @@ for symbols in slider_symbols_list:
         )
     )
 
+#TODO get the looping to work on variable names, not just strings (aka things outside of dataframes)
+
 for symbols in slider_symbols_list:
     key = leppard(symbols)
     values_dict = dict([(name, value_code(symbol)) for name, symbol in symbols.items()])
     z = normalize(list(values_dict.values()))
-    df_combo['omegadf_{key}'.format(key=key)] = df_combo.omega18df_{key}.format(key=key) - df_combo.omega13df_{key}.format(key=key)
+    df_combo['omegadf_{key}'.format(key=key)] = df_combo['omega18df_{key}'.format(key=key)] - df_combo['omega13df_{key}'.format(key=key)]
 
 # PLOT
 node_list = list(set(df_combo['GEOID']))
