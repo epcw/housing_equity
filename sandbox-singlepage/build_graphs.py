@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 import json
 import csv
 import itertools
+import numpy
 
 # set root directory for data files
 # ROOTBEER = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
@@ -103,105 +104,54 @@ gdf_wallingford['GEOID_b'] = gdf_wallingford['GEOID_b'].str.replace("53033", "")
 from data_prep_blockgrp import block_grp_geoids
 '''
 
-one = 1 / 7.0
-half = .5 / 7.0
-zero = 0 / 7.0
-antione = ((1 / 7) - one)/6
-antihalf = ((1 / 7) - half)/6
-antizero = ((1 / 7) - zero)/6
-
-weight_keys = {
-    'alpha_1': one,
-    'alpha_5' : half,
-    'alpha_0' : zero,
-    'antialpha_1': antione,
-    'antialpha_5': antihalf,
-    'antialpha_0': antizero,
-    'bravo_1': one,
-    'bravo_5' : half,
-    'bravo_0' : zero,
-    'antibravo_1': antione,
-    'antibravo_5': antihalf,
-    'antibravo_0': antizero,
-    'charlie_1': one,
-    'charlie_5' : half,
-    'charlie_0' : zero,
-    'anticharlie_1': antione,
-    'anticharlie_5': antihalf,
-    'anticharlie_0': antizero,
-    'delta_1': one,
-    'delta_5' : half,
-    'delta_0' : zero,
-    'antidelta_1': antione,
-    'antidelta_5': antihalf,
-    'antidelta_0': antizero,
-    'echo_1': one,
-    'echo_5' : half,
-    'echo_0' : zero,
-    'antiecho_1': antione,
-    'antiecho_5': antihalf,
-    'antiecho_0': antizero,
-    'foxtrot_1': one,
-    'foxtrot_5' : half,
-    'foxtrot_0' : zero,
-    'antifoxtrot_1': antione,
-    'antifoxtrot_5': antihalf,
-    'antifoxtrot_0': antizero,
-    'golf_1': one,
-    'golf_5' : half,
-    'golf_0' : zero,
-    'antigolf_1': antione,
-    'antigolf_5': antihalf,
-    'antigolf_0': antizero
-}
-
 slider_names = ('alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot','golf')
-slider_values_list = [dict(zip(slider_names, p)) for p in itertools.product([0,1,5], repeat=len(slider_names))]
-
-#TODO need to find some way to loop over a conditional, where if the value for alpha in slider_values_list is 0, then pick alpha_0 from weights_list.
-#Should create a dict that has each luggage code associated with 12 other values: the correct weights (and antiweights)
-#could probably get a way with a 1 + 6 structure and just pull the antiweight from that.
+slider_symbols_list = [dict(zip(slider_names, p)) for p in itertools.product([0,1,5], repeat=len(slider_names))]
 
 def leppard(slider_values):
     luggage_code = 'a{alpha}b{bravo}c{charlie}d{delta}e{echo}f{foxtrot}g{golf}'.format(**slider_values)
     return luggage_code
 
-slider_keys = [leppard(slider_values) for slider_values in slider_values_list]
+slider_keys = [leppard(slider_values) for slider_values in slider_symbols_list]
+
+def value_code(symbol):
+    if symbol == 1:
+        value = 1
+    elif symbol == 5:
+        value = 0.5
+    elif symbol == 0:
+        value = 0
+    else:
+        raise ValueError
+    return value
+
+def normalize(x):
+    try:
+        z = 1.0/(numpy.sum(x))
+    except ZeroDivisionError:
+        z = 1.0/len(x)
+    return z
+
+slider_values_list = [symbol for symbol in slider_symbols_list]
+
+#TODO need to find some way to loop over a conditional, where if the value for alpha in slider_values_list is 0, then pick alpha_0 from weights_list.
+#Should create a dict that has each luggage code associated with 7 values: the correct weights
 
 # NETWORK VERSIONS
 # 2013 + change version
-gdf_combo['omega_a1b1c1d1e1f1g1'] = 1 / (
-        ((alpha_one + antibravo_one) * gdf.white_pop_pct_change_delta) + \
-        ((bravo_one + antialpha_one) * gdf.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha_one + antibravo_one) * gdf.totpop_change_delta) + \
-        ((delta + antialpha_one + antibravo_one) * gdf.rent_pct_income_change_delta) + \
-        ((echo + antialpha_one + antibravo_one) * gdf.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha_one + antibravo_one) * gdf.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha_one + antibravo_one) * gdf.median_tenancy_change_delta) + \
-        ((hotel + antialpha_one + antibravo_one) * gdf.median_housing_age_change_delta)
-)
-antibravo_half = (1 / 7 - bravo_half)
-gdf_combo['omega_a1b5c1d1e1f1g1'] = 1 / (
-        ((alpha_one + antibravo_half) * gdf.white_pop_pct_change_delta) + \
-        ((bravo_half + antialpha_one) * gdf.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha_one + antibravo_half) * gdf.totpop_change_delta) + \
-        ((delta + antialpha_one + antibravo_half) * gdf.rent_pct_income_change_delta) + \
-        ((echo + antialpha_one + antibravo_half) * gdf.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha_one + antibravo_half) * gdf.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha_one + antibravo_half) * gdf.median_tenancy_change_delta) + \
-        ((hotel + antialpha_one + antibravo_half) * gdf.median_housing_age_change_delta)
-)
-antibravo_zero = (1 / 7 - bravo_zero)
-gdf_combo['omega_a1b0c1d1e1f1g1'] = 1 / (
-        ((alpha_one + antibravo_zero) * gdf.white_pop_pct_change_delta) + \
-        ((bravo_zero + antialpha_one) * gdf.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha_one + antibravo_zero) * gdf.totpop_change_delta) + \
-        ((delta + antialpha_one + antibravo_zero) * gdf.rent_pct_income_change_delta) + \
-        ((echo + antialpha_one + antibravo_zero) * gdf.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha_one + antibravo_zero) * gdf.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha_one + antibravo_zero) * gdf.median_tenancy_change_delta) + \
-        ((hotel + antialpha_one + antibravo_zero) * gdf.median_housing_age_change_delta)
-)
+for symbols in slider_symbols_list:
+    key = leppard(symbols)
+    values_dict = dict([(name, value_code(symbol)) for name, symbol in symbols.items()])
+    z = normalize(list(values_dict.values()))
+    gdf_combo['omega_{key}'.format(key=key)] = 1.0 / ( z * (
+        (values_dict['alpha'] * gdf.white_pop_pct_change_delta) + \
+        (values_dict['bravo'] * gdf.rent_25th_pctile_change_delta) + \
+        (values_dict['charlie'] * gdf.totpop_change_delta) + \
+        (values_dict['delta'] * gdf.rent_pct_income_change_delta) + \
+        (values_dict['echo'] * gdf.monthly_housing_cost_change_delta) + \
+        (values_dict['foxtrot'] * gdf.market_rate_units_per_cap_change_delta) + \
+        (values_dict['golf'] * gdf.median_tenancy_change_delta)
+        )
+    )
 
 # 2013 only version
 gdf_combo['omega13_a1b1c1d1e1f1g1'] = 1 / (
@@ -328,38 +278,6 @@ df_combo['omegadf_a1b1c1d1e1f1g1'] = df_combo.omega18df_a1b1c1d1e1f1g1 - df_comb
 df_combo['omegadf_a1b5c1d1e1f1g1'] = df_combo.omega18df_a1b5c1d1e1f1g1 - df_combo.omega13df_a1b5c1d1e1f1g1
 df_combo['omegadf_a1b0c1d1e1f1g1'] = df_combo.omega18df_a1b0c1d1e1f1g1 - df_combo.omega13df_a1b0c1d1e1f1g1
 
-antialpha_half = (1 / 7 - alpha_half)
-gdf_combo['omega_a5b1c1d1e1f1g1'] = 1 / (
-        ((alpha_half + antibravo_one) * gdf.white_pop_pct_change_delta) + \
-        ((bravo_one + antialpha_half) * gdf.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha_half + antibravo_one) * gdf.totpop_change_delta) + \
-        ((delta + antialpha_half + antibravo_one) * gdf.rent_pct_income_change_delta) + \
-        ((echo + antialpha_half + antibravo_one) * gdf.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha_half + antibravo_one) * gdf.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha_half + antibravo_one) * gdf.median_tenancy_change_delta) + \
-        ((hotel + antialpha_half + antibravo_one) * gdf.median_housing_age_change_delta)
-)
-gdf_combo['omega_a5b5c1d1e1f1g1'] = 1 / (
-        ((alpha_half + antibravo_half) * gdf.white_pop_pct_change_delta) + \
-        ((bravo_half + antialpha_half) * gdf.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha_half + antibravo_half) * gdf.totpop_change_delta) + \
-        ((delta + antialpha_half + antibravo_half) * gdf.rent_pct_income_change_delta) + \
-        ((echo + antialpha_half + antibravo_half) * gdf.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha_half + antibravo_half) * gdf.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha_half + antibravo_half) * gdf.median_tenancy_change_delta) + \
-        ((hotel + antialpha_half + antibravo_half) * gdf.median_housing_age_change_delta)
-)
-gdf_combo['omega_a5b0c1d1e1f1g1'] = 1 / (
-        ((alpha_half + antibravo_zero) * gdf.white_pop_pct_change_delta) + \
-        ((bravo_zero + antialpha_half) * gdf.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha_half + antibravo_zero) * gdf.totpop_change_delta) + \
-        ((delta + antialpha_half + antibravo_zero) * gdf.rent_pct_income_change_delta) + \
-        ((echo + antialpha_half + antibravo_zero) * gdf.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha_half + antibravo_zero) * gdf.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha_half + antibravo_zero) * gdf.median_tenancy_change_delta) + \
-        ((hotel + antialpha_half + antibravo_zero) * gdf.median_housing_age_change_delta)
-)
-
 # 2013 only version
 gdf_combo['omega13_a5b1c1d1e1f1g1'] = 1 / (
         ((alpha_half + antibravo_one) * gdf.white_pop_pct_change_delta_2013) + \
@@ -485,38 +403,6 @@ df_combo['omega18df_a5b0c1d1e1f1g1'] = (
 df_combo['omegadf_a5b1c1d1e1f1g1'] = df_combo.omega18df_a5b1c1d1e1f1g1 - df_combo.omega13df_a5b1c1d1e1f1g1
 df_combo['omegadf_a5b5c1d1e1f1g1'] = df_combo.omega18df_a5b5c1d1e1f1g1 - df_combo.omega13df_a5b5c1d1e1f1g1
 df_combo['omegadf_a5b0c1d1e1f1g1'] = df_combo.omega18df_a5b0c1d1e1f1g1 - df_combo.omega13df_a5b0c1d1e1f1g1
-
-antialpha_zero = (1 / 7 - alpha_zero)
-gdf_combo['omega_a0b1c1d1e1f1g1'] = 1 / (
-        ((alpha_zero + antibravo_one) * gdf.white_pop_pct_change_delta) + \
-        ((bravo_one + antialpha_zero) * gdf.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha_zero + antibravo_one) * gdf.totpop_change_delta) + \
-        ((delta + antialpha_zero + antibravo_one) * gdf.rent_pct_income_change_delta) + \
-        ((echo + antialpha_zero + antibravo_one) * gdf.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha_zero + antibravo_one) * gdf.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha_zero + antibravo_one) * gdf.median_tenancy_change_delta) + \
-        ((hotel + antialpha_zero + antibravo_one) * gdf.median_housing_age_change_delta)
-)
-gdf_combo['omega_a0b5c1d1e1f1g1'] = 1 / (
-        ((alpha_zero + antibravo_half) * gdf.white_pop_pct_change_delta) + \
-        ((bravo_half + antialpha_zero) * gdf.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha_zero + antibravo_half) * gdf.totpop_change_delta) + \
-        ((delta + antialpha_zero + antibravo_half) * gdf.rent_pct_income_change_delta) + \
-        ((echo + antialpha_zero + antibravo_half) * gdf.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha_zero + antibravo_half) * gdf.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha_zero + antibravo_half) * gdf.median_tenancy_change_delta) + \
-        ((hotel + antialpha_zero + antibravo_half) * gdf.median_housing_age_change_delta)
-)
-gdf_combo['omega_a0b0c1d1e1f1g1'] = 1 / (
-        ((alpha_zero + antibravo_zero) * gdf.white_pop_pct_change_delta) + \
-        ((bravo_zero + antialpha_zero) * gdf.rent_25th_pctile_change_delta) + \
-        ((charlie + antialpha_zero + antibravo_zero) * gdf.totpop_change_delta) + \
-        ((delta + antialpha_zero + antibravo_zero) * gdf.rent_pct_income_change_delta) + \
-        ((echo + antialpha_zero + antibravo_zero) * gdf.monthly_housing_cost_change_delta) + \
-        ((foxtrot + antialpha_zero + antibravo_zero) * gdf.market_rate_units_per_cap_change_delta) + \
-        ((golf + antialpha_zero + antibravo_zero) * gdf.median_tenancy_change_delta) + \
-        ((hotel + antialpha_zero + antibravo_zero) * gdf.median_housing_age_change_delta)
-)
 
 # 2013 only version
 gdf_combo['omega13_a0b1c1d1e1f1g1'] = 1 / (
