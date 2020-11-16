@@ -109,7 +109,7 @@ for graph_name in graphs_dict:
                         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
 
-    with open(os.path.join(network_dir, 'network_{key}'.format(key=key)), 'w') as network_file:
+    with open(os.path.join(network_dir, 'network_{key}.json'.format(key=key)), 'w') as network_file:
         fig.write_json(network_file)
 
     break
