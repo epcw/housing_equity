@@ -135,6 +135,7 @@ slider_values_list = [symbol for symbol in slider_symbols_list]
 
 # NETWORK VERSIONS
 # 2013 + change version
+print ('calculating network 2013 v 2018 dfs')
 for symbols in slider_symbols_list:
     key = leppard(symbols)
     values_dict = dict([(name, value_code(symbol)) for name, symbol in symbols.items()])
@@ -149,7 +150,7 @@ for symbols in slider_symbols_list:
         (values_dict['golf'] * gdf.median_tenancy_change_delta)
         )
     )
-
+print ('calculating network 2013 dfs')
 # 2013 only version
 for symbols in slider_symbols_list:
     key = leppard(symbols)
@@ -166,7 +167,7 @@ for symbols in slider_symbols_list:
         )
     )
 
-
+print ('calculating network 2018 dfs')
 # 2018 only version
 for symbols in slider_symbols_list:
     key = leppard(symbols)
@@ -186,6 +187,7 @@ for symbols in slider_symbols_list:
 
 # MAP VERSIONS
 # combo
+print ('calculating 2013 dfs')
 for symbols in slider_symbols_list:
     key = leppard(symbols)
     values_dict = dict([(name, value_code(symbol)) for name, symbol in symbols.items()])
@@ -200,7 +202,7 @@ for symbols in slider_symbols_list:
         (values_dict['golf'] * df_combo.median_tenancy_2013z.fillna(0))
         )
     )
-
+print ('calculating 2018 dfs')
 for symbols in slider_symbols_list:
     key = leppard(symbols)
     values_dict = dict([(name, value_code(symbol)) for name, symbol in symbols.items()])
@@ -215,21 +217,22 @@ for symbols in slider_symbols_list:
         (values_dict['golf'] * df_combo.median_tenancy_2018z.fillna(0))
         )
     )
-
-#TODO get the looping to work on variable names, not just strings (aka things outside of dataframes)
-
+print ('calculating 2013 v 2018 dfs')
 for symbols in slider_symbols_list:
     key = leppard(symbols)
     values_dict = dict([(name, value_code(symbol)) for name, symbol in symbols.items()])
     z = normalize(list(values_dict.values()))
     df_combo['omegadf_{key}'.format(key=key)] = df_combo['omega18df_{key}'.format(key=key)] - df_combo['omega13df_{key}'.format(key=key)]
 
+slider_keys = [leppard(symbols) for symbols in slider_symbols_list]
+
 # PLOT
 node_list = list(set(df_combo['GEOID']))
-# G = nx.Graph()
-for symbols in slider_symbols_list:
-    key = leppard(symbols)
-    G2018_{key}.format(key=key) = nx.Graph()
+
+graph_list = {}
+print('creating graph objects')
+for slider in slider_keys:
+    graph_list['G2018_' + str(slider)] = nx.Graph()
 
 # normal version (no cache)
 forceatlas2 = ForceAtlas2(
@@ -253,44 +256,18 @@ forceatlas2 = ForceAtlas2(
     # Log
     verbose=False)
 
-'''
-G2018_a1b1c1d1e1f1g1 = nx.Graph()
-G2018_a1b5c1d1e1f1g1 = nx.Graph()
-G2018_a1b0c1d1e1f1g1 = nx.Graph()
-G2018_a5b1c1d1e1f1g1 = nx.Graph()
-G2018_a5b5c1d1e1f1g1 = nx.Graph()
-G2018_a5b0c1d1e1f1g1 = nx.Graph()
-G2018_a0b1c1d1e1f1g1 = nx.Graph()
-G2018_a0b5c1d1e1f1g1 = nx.Graph()
-G2018_a0b0c1d1e1f1g1 = nx.Graph()
-'''
-
+print('Adding nodes to network')
 for i in node_list:
-    #    G.add_node(i)
-    for symbols in slider_symbols_list:
-        key = leppard(symbols)
-        G2018_
-        {key}.format(key=key).add_node(i)
-'''
-    G2018_a1b1c1d1e1f1g1.add_node(i)
-    G2018_a1b5c1d1e1f1g1.add_node(i)
-    G2018_a1b0c1d1e1f1g1.add_node(i)
-    G2018_a5b1c1d1e1f1g1.add_node(i)
-    G2018_a5b5c1d1e1f1g1.add_node(i)
-    G2018_a5b0c1d1e1f1g1.add_node(i)
-    G2018_a0b1c1d1e1f1g1.add_node(i)
-    G2018_a0b5c1d1e1f1g1.add_node(i)
-    G2018_a0b0c1d1e1f1g1.add_node(i)
-'''
+    for graph in graph_list:
+        graph_list[graph].add_node(i)
+
+print('building network edges')
 # Build the Edge list for the network graph for 2013
 for i, row in gdf_combo.iterrows():
-    for symbols in slider_symbols_list:
-        key = leppard(symbols)
-        G2018_{key}.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_{key}'])]).format(key=key)
-'''    G2018_a0b1c1d1e1f1g1.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_a0b1c1d1e1f1g1'])])
-    G2018_a0b5c1d1e1f1g1.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_a0b5c1d1e1f1g1'])])
-    G2018_a0b0c1d1e1f1g1.add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_a0b0c1d1e1f1g1'])])
-'''
+    for graph in graph_list:
+        key = str(graph).lstrip('G2018_')
+        graph_list[graph].add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_{key}'.format(key=key)])])
+
 '''
 #CACHE-USING VERSION
 @cache.memoize(timeout=TIMEOUT)
@@ -346,22 +323,18 @@ for n, p in pos2018_zero().items():
 
 '''
 # NON-CACHE-USING VERSION
-# pos = forceatlas2.forceatlas2_networkx_layout(G,pos=None, iterations=1000)
+print('applying forceatlas2 algorithm to netowrk')
+for graph in graph_list:
+    pos = forceatlas2.forceatlas2_networkx_layout(graph_list[graph], pos = None, iterations = 1000)
+    for n,p in pos.items():
+        graph_list[graph].nodes[n]['pos'] = p
 
-# for n, p in pos.items():
-#    G.nodes[n]['pos'] = p
-for symbols in slider_symbols_list:
-    key = leppard(symbols)
-    pos2018_{key} = forceatlas2.forceatlas2_networkx_layout(G2018_{key}, pos=None, iterations=1000).format(key=key)
-    for n, p in pos2018_{key}.items().format(key=key):
-        G2018_{key}.nodes[n]['pos2018_{key}}'.format(key=key)] = p
-
+print('exporting networks to json files')
 # export to json
 json_dict = {}
-for symbols in slider_symbols_list:
-    key = leppard(symbols)
-
-    json_dict['G2018_{key}'] = json_graph.node_link_data(G2018_{key}).format(key=key)
+for graph in graph_list:
+    json_dict[str(graph)] = json_graph.node_link_data(graph_list[graph])
+  #  json_dict['G2018_{key}'] = json_graph.node_link_data(G2018_{key}).format(key=key)
 
 for name, value in json_dict.items():
     filename = ROOTBEER + 'data/json/' + name + '.json'
