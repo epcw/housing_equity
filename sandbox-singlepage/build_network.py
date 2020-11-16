@@ -99,11 +99,18 @@ for graph_name in graphs_dict:
         node_trace2018[key].marker.color = colors
         node_trace2018[key].marker.size = (1.5 + df_combo.omega18) * 20
 
-    with open(os.path.join(network_dir, 'node_trace_2018{key}'.format(key=key)), 'w') as node_trace_file:
-        node_trace2018[key].write_json(node_trace_file)
+    fig = go.Figure(data=[edge_trace2018[key],node_trace2018[key]],
+                    go.Layout(
+                        title='',
+                        titlefont=dict(size=16),
+                        showlegend=False,
+                        hovermode='closest',
+                        margin=dict(b=20, l=5, r=5, t=40),
+                        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
 
-    with open(os.path.join(network_dir, 'edge_trace_2018{key}'.format(key=key)), 'w') as edge_trace_file:
-        edge_trace2018[key].write_json(edge_trace_file)
+    with open(os.path.join(network_dir, 'network_{key}'.format(key=key)), 'w') as network_file:
+        fig.write_json(network_file)
 
     break
 
