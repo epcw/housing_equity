@@ -14,7 +14,7 @@ ROOTBEER = '' #local
 with open(ROOTBEER + 'data/washingtongeo.json','r') as GeoJSON:
     tracts = json.load(GeoJSON)
 
-#set directory for graph jsons
+#set directory for graph_name jsons
 json_dir = ROOTBEER + 'data/json/*'
 graphs_dict = {} #set a dictionary to hold graphs
 for file in glob.iglob(json_dir):
@@ -24,8 +24,9 @@ for file in glob.iglob(json_dir):
         graph = json.load(json_file)
         graphs_dict[graph_name] = json_graph.node_link_graph(graph) #sets a value that consists of the networkx graph
 
+print('loading graph files')
 #loop over graph_dict to write all the variables for the graph
-#for graph_name, graph in graphs_dict.items():
+#for graph_name_name, graph in graphs_dict.items():
 #    exec(graph_name + '=graph')
 
 node_trace2018 = {}
@@ -34,63 +35,74 @@ edge_trace2018 = {}
 df_combo = pd.read_csv(ROOTBEER + 'data/df_combo.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
 
 #from build_network import get_nodes, get_edges
-
-for graph in graphs_dict:
-    key = str(graph).lstrip('G2018_')
+print('creating graph objects')
+for graph_name in graphs_dict:
+    key = str(graph_name).lstrip('G2018_')
     node_trace2018[key] = go.Scatter(
-    x=[],
-    y=[],
-    mode='markers+text',  #make markers+text to show labels
-    text=[],
-    hoverinfo='text',
-    customdata=df_combo['GEOID'],
-    marker=dict(
-        showscale=False,
-        colorscale='YlGnBu',
-        reversescale=False,
-        color=[],
-        size=20,
-        opacity=0.8,
-        colorbar=dict(
-            thickness=10,
-            title='COLOR GROUP BY CENSUS TRACT NUMBER',
-            xanchor='left',
-            titleside='right'
+        x=[],
+        y=[],
+        mode='markers+text',  #make markers+text to show labels
+        text=[],
+        hoverinfo='text',
+        customdata=df_combo['GEOID'],
+        marker=dict(
+            showscale=False,
+            colorscale='YlGnBu',
+            reversescale=False,
+            color=[],
+            size=20,
+            opacity=0.8,
+            colorbar=dict(
+                thickness=10,
+                title='COLOR GROUP BY CENSUS TRACT NUMBER',
+                xanchor='left',
+                titleside='right'
+            ),
+            line=dict(width=0)
         ),
-        line=dict(width=0)
-    ),
-    showlegend=True,
-    marker_line_width=1
-    )
+        showlegend=True,
+        marker_line_width=1
+        )
     edge_trace2018[key] = go.Scatter(
-    x=[],
-    y=[],
-    line=dict(width=1, color='#c6c6c6'),
-    hoverinfo='text',
-    mode='lines'
-    )
+        x=[],
+        y=[],
+        line=dict(width=1, color='#c6c6c6'),
+        hoverinfo='text',
+        mode='lines'
+        )
 
 colorsIndex = {'wallingford':'#ef553b','rainier_beach':'#636efa'}  #manually assign colors
 colors = df_combo['neighborhood'].map(colorsIndex)
 
-for graph in graphs_dict:
-    key = str(graph).lstrip('G2018_')
-    for edge in graphs_dict[graph].edges():
-        x0, y0 = graphs_dict[graph].nodes[edge[0]]['pos']
-        x1, y1 = graphs_dict[graph].nodes[edge[1]]['pos']
+print('adding nodes and edges to graphs')
+for graph_name in graphs_dict:
+    key = str(graph_name).lstrip('G2018_')
+    print('building edges for ' + graph_name)
+    for edge in graphs_dict[graph_name].edges():
+        x0, y0 = graphs_dict[graph_name].nodes[edge[0]]['pos']
+        x1, y1 = graphs_dict[graph_name].nodes[edge[1]]['pos']
         edge_trace2018[key]['x'] += tuple([x0, x1, None])
         edge_trace2018[key]['y'] += tuple([y0, y1, None])
-    for node in graphs_dict[graph].nodes():
-        x, y = graphs_dict[graph].nodes[node]['pos']
+for graph_name in graphs_dict:
+    key = str(graph_name).lstrip('G2018_')
+    print('building nodes for ' + graph_name)
+    for node in graphs_dict[graph_name].nodes():
+        x, y = graphs_dict[graph_name].nodes[node]['pos']
+        print(graph_name + ' ' + node + ' x')
         node_trace2018[key]['x'] += tuple([x])
+        print(graph_name + ' ' + node + ' y')
         node_trace2018[key]['y'] += tuple([y])
+        print(graph_name + ' ' + node + ' text')
         node_trace2018[key].text = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  # tract version
+        print(graph_name + ' ' + node + ' markers')
         node_trace2018[key].marker.color = colors
         node_trace2018[key].marker.size = (1.5 + df_combo.omega18) * 20
 
+print('calculating adjacencies')
+
 node_adjacencies = {}
-for graph in graphs_dict:
-    key = str(graph).lstrip('G2018_')
+for graph_name in graphs_dict:
+    key = str(graph_name).lstrip('G2018_')
     node_adjacencies[key] = []
     for node, adjacencies in enumerate(graphs_dict[graph].adjacency()):
         node_adjacencies[key].append(len(adjacencies[1]))
