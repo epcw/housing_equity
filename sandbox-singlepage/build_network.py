@@ -74,6 +74,8 @@ for graph_name in graphs_dict:
 colorsIndex = {'wallingford':'#ef553b','rainier_beach':'#636efa'}  #manually assign colors
 colors = df_combo['neighborhood'].map(colorsIndex)
 
+network_dir = os.path.join(ROOTBEER + 'data/network/')
+
 print('adding nodes and edges to graphs')
 for graph_name in graphs_dict:
     key = str(graph_name).lstrip('G2018_')
@@ -83,8 +85,7 @@ for graph_name in graphs_dict:
         x1, y1 = graphs_dict[graph_name].nodes[edge[1]]['pos']
         edge_trace2018[key]['x'] += tuple([x0, x1, None])
         edge_trace2018[key]['y'] += tuple([y0, y1, None])
-for graph_name in graphs_dict:
-    key = str(graph_name).lstrip('G2018_')
+
     print('building nodes for ' + graph_name)
     for node in graphs_dict[graph_name].nodes():
         x, y = graphs_dict[graph_name].nodes[node]['pos']
@@ -97,6 +98,14 @@ for graph_name in graphs_dict:
         print(graph_name + ' ' + node + ' markers')
         node_trace2018[key].marker.color = colors
         node_trace2018[key].marker.size = (1.5 + df_combo.omega18) * 20
+
+    with open(os.path.join(network_dir, 'node_trace_2018{key}'.format(key=key)), 'w') as node_trace_file:
+        node_trace2018[key].write_json(node_trace_file)
+
+    with open(os.path.join(network_dir, 'edge_trace_2018{key}'.format(key=key)), 'w') as edge_trace_file:
+        edge_trace2018[key].write_json(edge_trace_file)
+
+    break
 
 print('calculating adjacencies')
 
