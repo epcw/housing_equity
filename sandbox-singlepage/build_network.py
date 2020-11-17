@@ -100,7 +100,7 @@ for graph_name in graphs_dict:
         node_trace2018[key].marker.size = (1.5 + df_combo.omega18) * 20
 
     fig = go.Figure(data=[edge_trace2018[key],node_trace2018[key]],
-                    go.Layout(
+                    layout=go.Layout(
                         title='',
                         titlefont=dict(size=16),
                         showlegend=False,
@@ -108,6 +108,7 @@ for graph_name in graphs_dict:
                         margin=dict(b=20, l=5, r=5, t=40),
                         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
+                    )
 
     with open(os.path.join(network_dir, 'network_{key}.json'.format(key=key)), 'w') as network_file:
         fig.write_json(network_file)
