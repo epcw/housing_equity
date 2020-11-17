@@ -8,6 +8,10 @@ import plotly.express as px  #version for maps
 #from sklearn.cluster import KMeans  #commented out because hiding Kmeans clusters for now.
 from dash.dependencies import Input, Output
 import itertools
+import json
+from plotly.io import read_json
+import os
+import sys
 
 #from dashbase import app, application  #production version
 app = dash.Dash(__name__)  #local
@@ -26,19 +30,18 @@ cache = Cache(app.server, config={
 
 TIMEOUT = 60
 
+#set root directory for data files
+#ROOTBEER = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
+ROOTBEER = '' #local
+
+with open(ROOTBEER + 'data/washingtongeo.json','r') as GeoJSON:
+    tracts = json.load(GeoJSON)
+
 #set a map center (for maps only, obviously)
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 pikes_place = {"lat": 47.6145537,"lon": -122.3497373}
 
-from build_network import tracts
-
-@cache.memoize(timeout=TIMEOUT)
-def get_maps():
-    from build_network import get_maps
-    df_combo = get_maps(subset='one')
-    return df_combo
-
-df_combo = get_maps()
+df_combo = pd.read_csv(ROOTBEER + 'data/df_combo.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
 
 #master loop function for slider variables
 slider_names = ('alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot','golf') #IF YOU CHANGE THIS, also change the networkx_var dict inside update_network below. And don't forget to add a slider in the HTML.
@@ -53,11 +56,11 @@ slider_keys = [leppard(slider_values) for slider_values in slider_values_list]
 node_trace2018 = {}
 edge_trace2018 = {}
 
-from build_network import get_nodes, get_edges
+#from build_network import get_nodes, get_edges
 
-for slider_key in slider_keys:
-    node_trace2018[slider_key] = get_nodes(subset=slider_key)
-    edge_trace2018[slider_key] = get_edges(subset=slider_key)
+#for slider_key in slider_keys:
+#    node_trace2018[slider_key] = get_nodes(subset=slider_key)
+#    edge_trace2018[slider_key] = get_edges(subset=slider_key)
 
 
 '''
@@ -249,6 +252,7 @@ grp3_length = str(grp3.shape)
 grp3 = grp3.sort_values('omega_change')
 '''
 
+#fig = read_json(r'C:\Users\tibur\Dropbox\EPCW\Projects\housing_equity\sandbox-singlepage\data\network\network_a0b0c0d0e0f5g5.json')
 
 #here we make the graph a function called serve_layout(), which then allows us to have it run every time the page is loaded (unlike the normal which would just be app.layer = GRAPH CONTENT, which would run every time the app was started on the server (aka, once))
 def serve_layout():
@@ -292,7 +296,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=1
+                            value=0
                         )], className='col-6')], className='multi-col'),
                 html.Div([
                     html.Div([
@@ -303,7 +307,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=1
+                            value=0
                         )], className='col-6')], className='multi-col'),
                 html.Div([
                     html.Div([
@@ -314,7 +318,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=1
+                            value=0
                         )], className='col-6')], className='multi-col'),
                 html.Div([
                     html.Div([
@@ -325,7 +329,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=1
+                            value=0
                         )], className='col-6')], className='multi-col'),
                 html.Div([
                     html.Div([
@@ -336,7 +340,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=1
+                            value=0
                         )], className='col-6')], className='multi-col'),
                 html.Div([
                     html.Div([
@@ -358,7 +362,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=1
+                            value=0.5
                         )], className='col-6')], className='multi-col'),
             ], className='container'),
             html.H1('Change in displacement pressure map'),
@@ -386,7 +390,6 @@ def serve_layout():
         ], className='container')
     ], id='sandbox')
 
-
 def generate_table(dataframe, max_rows=1422):
     return html.Table([
         html.Thead(
@@ -398,18 +401,6 @@ def generate_table(dataframe, max_rows=1422):
             ]) for i in range(min(len(dataframe), max_rows))
         ])
     ])
-
-
-# callback for network
-@app.callback(
-    Output('housing_networkx18', 'figure'),
-    [Input('alpha_slider', 'value'),
-     Input('bravo_slider','value'),
-     Input('charlie_slider','value'),
-     Input('delta_slider','value'),
-     Input('echo_slider','value'),
-     Input('foxtrot_slider','value'),
-     Input('golf_slider','value')])
 
 def key_code(value):
    return 1 if value == 1 else 5 if value == 0.5 else 0
@@ -426,25 +417,10 @@ def get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slid
     key = leppard(networkx_var)
     return key
 
-# updates graph based on user input
-def update_graph(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
-    return {
-        'data': [
-            edge_trace2018[get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)],
-            node_trace2018[get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)]
-                ],
-        'layout': go.Layout(
-                title='',
-                titlefont=dict(size=16),
-                showlegend=False,
-                hovermode='closest',
-                margin=dict(b=20,l=5,r=5,t=40),
-                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
-    }
 
+# callback for network
 @app.callback(
-    Output('block_grp_map', 'figure'),
+    Output('housing_networkx18', 'figure'),
     [Input('alpha_slider', 'value'),
      Input('bravo_slider','value'),
      Input('charlie_slider','value'),
@@ -452,7 +428,40 @@ def update_graph(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_
      Input('echo_slider','value'),
      Input('foxtrot_slider','value'),
      Input('golf_slider','value')])
+# updates graph based on user input
+def update_graph(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
+    print(alpha_slider)
+    key = get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)
+    file_name = os.path.join(r'C:\Users\tibur\Dropbox\EPCW\Projects\housing_equity\sandbox-singlepage\data\network', 'network_{key}.json'.format(key=key))
+    figure = read_json(file_name)
+    #figure = read_json(r'C:\Users\tibur\Dropbox\EPCW\Projects\housing_equity\sandbox-singlepage\data\network\network_a0b0c0d0e0f5g5.json')
+    return figure
 
+    #
+    # return {
+    #     'data': [
+    #         edge_trace2018[get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)],
+    #         node_trace2018[get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)]
+    #             ],
+    #     'layout': go.Layout(
+    #             title='',
+    #             titlefont=dict(size=16),
+    #             showlegend=False,
+    #             hovermode='closest',
+    #             margin=dict(b=20,l=5,r=5,t=40),
+    #             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+    #             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
+    # }
+
+@app.callback(
+    Output('block_grp_map', 'figure'),
+    [Input('alpha_slider', 'value'),
+     Input('bravo_slider', 'value'),
+     Input('charlie_slider', 'value'),
+     Input('delta_slider', 'value'),
+     Input('echo_slider', 'value'),
+     Input('foxtrot_slider', 'value'),
+     Input('golf_slider', 'value')])
 # updates graph based on user input
 def update_change_map(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
     key = get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)
@@ -522,7 +531,12 @@ def update_scatter_plot(alpha_slider, bravo_slider, charlie_slider, delta_slider
     Output('displacement_2013', 'figure'),
     Output('displacement_2018', 'figure')],
     [Input('alpha_slider', 'value'),
-     Input('bravo_slider','value')])
+     Input('bravo_slider', 'value'),
+     Input('charlie_slider', 'value'),
+     Input('delta_slider', 'value'),
+     Input('echo_slider', 'value'),
+     Input('foxtrot_slider', 'value'),
+     Input('golf_slider', 'value')])
 
 # updates graph based on user input
 def update_displacement_maps(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
