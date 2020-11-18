@@ -40,86 +40,96 @@ slider_keys = [leppard(slider_values) for slider_values in slider_values_list]
 
 for slider in slider_keys:
     print('exporting maps for ' + slider)
-    fig4 = px.choropleth_mapbox(df_combo,
-                                geojson=tracts,
-                                locations=df_combo['GEOID_long'],
-                                featureidkey='properties.GEOID',
-                                color=df_combo['omegadf_{key}'.format(key=slider)],
-                                opacity=0.7,
-                                color_continuous_scale='RdYlGn_r')
-    fig4.update_layout(mapbox_style="open-street-map",
-                       mapbox_zoom=10.5,
-                       mapbox_center=pikes_place)
-    with open(os.path.join(maps_dir, 'fig4_{key}.json'.format(key=slider)), 'w') as map_file4:
-        fig4.write_json(map_file4)
-
-    fig3 = px.scatter(df_combo,
-                      x='omega13df_{key}'.format(key=slider),
-                      y='omega18df_{key}'.format(key=slider),
-                      color='neighborhood',
-                      text='GEOID'
-                      )
-    fig3.update_yaxes(
-        scaleanchor="x",
-        scaleratio=1,
-    )
-    #  update_yaxes(
-    #    range=[-1.5, 1.5]
-    # )
-    # fig3.update_xaxes(
-    #    range=[-1.5, 1.5]
-    # )
-    fig3.update_traces(textposition="middle right")
-
-    # can set axis ratios, as well
-    # fig.update_yaxes(
-    #    scaleanchor = "x",
-    #    scaleratio = 1,
-    #  )
-    #
-
-    fig3.update_traces(marker=dict(size=20))
-    # Add Diagonal Line so you can see movement btw 2013 and 2018
-    fig3.add_shape(
-        type="line",
-        x0=-5,
-        y0=-5,
-        x1=5,
-        y1=5,
-        line=dict(
-            color="MediumPurple",
-            width=4,
-            dash="dash",
+    map_file3_name = os.path.join(maps_dir, 'fig3_{key}.json'.format(key=slider))
+    if not os.path.exists(map_file3_name):
+        fig3 = px.scatter(df_combo,
+                          x='omega13df_{key}'.format(key=slider),
+                          y='omega18df_{key}'.format(key=slider),
+                          color='neighborhood',
+                          text='GEOID'
+                          )
+        fig3.update_yaxes(
+            scaleanchor="x",
+            scaleratio=1,
         )
-    )
-    with open(os.path.join(maps_dir, 'fig3_{key}.json'.format(key=slider)), 'w') as map_file3:
-        fig3.write_json(map_file3)
+        #  update_yaxes(
+        #    range=[-1.5, 1.5]
+        # )
+        # fig3.update_xaxes(
+        #    range=[-1.5, 1.5]
+        # )
+        fig3.update_traces(textposition="middle right")
 
-    fig5 = px.choropleth_mapbox(df_combo,
-                                geojson=tracts,
-                                locations=df_combo['GEOID_long'],
-                                featureidkey='properties.GEOID',
-                                color=df_combo['omega13df_{key}'.format(key=slider)],
-                                opacity=0.7,
-                                color_continuous_scale='RdYlGn_r')
-    fig5.update_layout(mapbox_style="open-street-map",
-                       mapbox_zoom=10.5,
-                       mapbox_center=pikes_place)
-    fig6 = px.choropleth_mapbox(df_combo,
-                                geojson=tracts,
-                                locations=df_combo['GEOID_long'],
-                                featureidkey='properties.GEOID',
-                                color=df_combo['omega18df_{key}'.format(key=slider)],
-                                opacity=0.7,
-                                color_continuous_scale='RdYlGn_r')
-    fig6.update_layout(mapbox_style="open-street-map",
-                       mapbox_zoom=10.5,
-                       mapbox_center=pikes_place)
-    with open(os.path.join(maps_dir, 'fig5_{key}.json'.format(key=slider)), 'w') as map_file5:
-        fig5.write_json(map_file5)
-        
-    with open(os.path.join(maps_dir, 'fig6_{key}.json'.format(key=slider)), 'w') as map_file6:
-        fig6.write_json(map_file6)
+        # can set axis ratios, as well
+        # fig.update_yaxes(
+        #    scaleanchor = "x",
+        #    scaleratio = 1,
+        #  )
+        #
+
+        fig3.update_traces(marker=dict(size=20))
+        # Add Diagonal Line so you can see movement btw 2013 and 2018
+        fig3.add_shape(
+            type="line",
+            x0=-5,
+            y0=-5,
+            x1=5,
+            y1=5,
+            line=dict(
+                color="MediumPurple",
+                width=4,
+                dash="dash",
+            )
+        )
+        with open(map_file3_name, 'w') as map_file3:
+            fig3.write_json(map_file3)
+
+    map_file4_name = os.path.join(maps_dir, 'fig4_{key}.json'.format(key=slider))
+    if not os.path.exists(map_file4_name):
+        fig4 = px.choropleth_mapbox(df_combo,
+                                    geojson=tracts,
+                                    locations=df_combo['GEOID_long'],
+                                    featureidkey='properties.GEOID',
+                                    color=df_combo['omegadf_{key}'.format(key=slider)],
+                                    opacity=0.7,
+                                    color_continuous_scale='RdYlGn_r')
+        fig4.update_layout(mapbox_style="open-street-map",
+                           mapbox_zoom=10.5,
+                           mapbox_center=pikes_place)
+        with open(map_file4_name, 'w') as map_file4:
+            fig4.write_json(map_file4)
+
+    map_file5_name = os.path.join(maps_dir, 'fig5_{key}.json'.format(key=slider)) 
+    if not os.path.exists(map_file5_name):
+        fig5 = px.choropleth_mapbox(df_combo,
+                                    geojson=tracts,
+                                    locations=df_combo['GEOID_long'],
+                                    featureidkey='properties.GEOID',
+                                    color=df_combo['omega13df_{key}'.format(key=slider)],
+                                    opacity=0.7,
+                                    color_continuous_scale='RdYlGn_r')
+        fig5.update_layout(mapbox_style="open-street-map",
+                           mapbox_zoom=10.5,
+                           mapbox_center=pikes_place)
+        with open(map_file5_name, 'w') as map_file5:
+            fig5.write_json(map_file5)
+
+    map_file6_name = os.path.join(maps_dir, 'fig6_{key}.json'.format(key=slider)) 
+    if not os.path.exists(map_file6_name):
+        fig6 = px.choropleth_mapbox(df_combo,
+                                    geojson=tracts,
+                                    locations=df_combo['GEOID_long'],
+                                    featureidkey='properties.GEOID',
+                                    color=df_combo['omega18df_{key}'.format(key=slider)],
+                                    opacity=0.7,
+                                    color_continuous_scale='RdYlGn_r')
+        fig6.update_layout(mapbox_style="open-street-map",
+                           mapbox_zoom=10.5,
+                           mapbox_center=pikes_place)
+
+        with open(map_file6_name, 'w') as map_file6:
+            fig6.write_json(map_file6)
+
 
 '''
 #set directory for graph_name jsons
@@ -218,47 +228,4 @@ for graph_name in graphs_dict:
 
     with open(os.path.join(network_dir, 'network_{key}.json'.format(key=key)), 'w') as network_file:
         fig.write_json(network_file)
-
-
-#node_adjacencies = {}
-#for graph_name in graphs_dict:
-#    key = str(graph_name).lstrip('G2018_')
-#    node_adjacencies[key] = []
-#    for node, adjacencies in enumerate(graphs_dict[graph].items().adjacency()):
-#        node_adjacencies[key].append(len(adjacencies[1]))
 '''
-'''
-def get_nodes(subset='a1b1c1d1e1f1g1'):
-    subsets = {}
-    for node_trace in node_trace2018:
-        key = str(node_trace)
-        subset[key] = node_trace2018[node_trace]
-
-    if subset in subsets:
-        return subsets[subset]
-    else:
-        raise('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
-
-
-def get_edges(subset='a1b1c1d1e1f1g1'):
-    for edge_trace in edge_trace2018:
-        key = str(edge_trace)
-        subset[key] = edge_trace2018[edge_trace]
-
-    if subset in subsets:
-        return subsets[subset]
-    else:
-        raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
-
-'''
-def get_maps(subset='one'):
-    subsets = {
-        'one': df_combo,
-        'half': df_combo,
-        'zero': df_combo
-    }
-
-    if subset in subsets:
-        return subsets[subset]
-    else:
-        raise ('ERROR - Unrecognized subset. Must be one of {}, bet received: {}'.format(subsets.keys(), subset))
