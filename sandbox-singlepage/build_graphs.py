@@ -132,7 +132,7 @@ def normalize(x):
     return z
 
 slider_values_list = [symbol for symbol in slider_symbols_list]
-
+'''
 # NETWORK VERSIONS
 # 2013 + change version
 print ('calculating network 2013 v 2018 dfs')
@@ -183,8 +183,8 @@ for symbols in slider_symbols_list:
         (values_dict['golf'] *gdf.median_housing_age_change_delta_2018)
         )
     )
-
-
+'''
+df_new = df_combo[['GEOID','GEOID_long','COUNTY','TRACT_NUM','neighborhood']]
 # MAP VERSIONS
 # combo
 print ('calculating 2013 dfs')
@@ -192,7 +192,7 @@ for symbols in slider_symbols_list:
     key = leppard(symbols)
     values_dict = dict([(name, value_code(symbol)) for name, symbol in symbols.items()])
     z = normalize(list(values_dict.values()))
-    df_combo['omega13df_{key}'.format(key=key)] = 1.0 / ( z * (
+    df_new['omega13df_{key}'.format(key=key)] = 1.0 / ( z * (
         (values_dict['alpha'] * df_combo.white_pop_pct_2013z.fillna(0)) + \
         (values_dict['bravo'] * df_combo.rent_25th_pctile_2013z.fillna(0)) + \
         (values_dict['charlie'] * df_combo.totpop_2013z.fillna(0)) + \
@@ -207,7 +207,7 @@ for symbols in slider_symbols_list:
     key = leppard(symbols)
     values_dict = dict([(name, value_code(symbol)) for name, symbol in symbols.items()])
     z = normalize(list(values_dict.values()))
-    df_combo['omega18df_{key}'.format(key=key)] = 1.0 / ( z * (
+    df_new['omega18df_{key}'.format(key=key)] = 1.0 / ( z * (
         (values_dict['alpha'] * df_combo.white_pop_pct_2018z.fillna(0)) + \
         (values_dict['bravo'] * df_combo.rent_25th_pctile_2018z.fillna(0)) + \
         (values_dict['charlie'] * df_combo.totpop_2018z.fillna(0)) + \
@@ -222,10 +222,15 @@ for symbols in slider_symbols_list:
     key = leppard(symbols)
     values_dict = dict([(name, value_code(symbol)) for name, symbol in symbols.items()])
     z = normalize(list(values_dict.values()))
-    df_combo['omegadf_{key}'.format(key=key)] = df_combo['omega18df_{key}'.format(key=key)] - df_combo['omega13df_{key}'.format(key=key)]
+    df_new['omegadf_{key}'.format(key=key)] = df_new['omega18df_{key}'.format(key=key)] - df_new['omega13df_{key}'.format(key=key)]
+
+
+#export df_combo for maps
+df_new_filename = ROOTBEER + 'data/df_combo.csv'
+df_new.to_csv(df_new_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
 
 slider_keys = [leppard(symbols) for symbols in slider_symbols_list]
-
+'''
 # PLOT
 node_list = list(set(df_combo['GEOID']))
 
@@ -267,7 +272,7 @@ for i, row in gdf_combo.iterrows():
     for graph in graph_list:
         key = str(graph).lstrip('G2018_')
         graph_list[graph].add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_{key}'.format(key=key)])])
-
+'''
 '''
 #CACHE-USING VERSION
 @cache.memoize(timeout=TIMEOUT)
@@ -322,6 +327,7 @@ for n, p in pos2018_zero().items():
     G2018_zero.nodes[n]['pos'] = p
 
 '''
+'''
 # NON-CACHE-USING VERSION
 print('applying forceatlas2 algorithm to netowrk')
 for graph in graph_list:
@@ -340,7 +346,4 @@ for name, value in json_dict.items():
     filename = ROOTBEER + 'data/json/' + name + '.json'
     with open(filename, 'w') as outfile:
         json.dump(value, outfile)
-
-#export df_combo for maps
-df_combo_filename = ROOTBEER + 'data/df_combo.csv'
-df_combo.to_csv(df_combo_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
+'''

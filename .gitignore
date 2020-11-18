@@ -16,3 +16,4 @@ click-test/data*
 *nan-check.csv
 /sandbox-singlepage/data/json/
 /sandbox-singlepage/data/network/
+/sandbox-singlepage/data/maps/

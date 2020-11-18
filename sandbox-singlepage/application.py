@@ -41,7 +41,7 @@ with open(ROOTBEER + 'data/washingtongeo.json','r') as GeoJSON:
 the_bounty = {"lat": 47.6615392, "lon": -122.3446507}
 pikes_place = {"lat": 47.6145537,"lon": -122.3497373}
 
-df_combo = pd.read_csv(ROOTBEER + 'data/df_combo.csv', dtype={"GEOID": str,"TRACT_NUM": str,"YEAR":str})
+df_combo = pd.read_csv(ROOTBEER + 'data/df_combo.csv', dtype={"GEOID_long": str,"TRACT_NUM": str,"YEAR":str})
 
 #master loop function for slider variables
 slider_names = ('alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot','golf') #IF YOU CHANGE THIS, also change the networkx_var dict inside update_network below. And don't forget to add a slider in the HTML.
@@ -97,7 +97,16 @@ grp3_length = str(grp3.shape)
 grp3 = grp3.sort_values('omega_change')
 '''
 
-#fig = read_json(r'C:\Users\tibur\Dropbox\EPCW\Projects\housing_equity\sandbox-singlepage\data\network\network_a0b0c0d0e0f5g5.json')
+fig4 = px.choropleth_mapbox(df_combo,
+                                geojson=tracts,
+                                locations=df_combo['GEOID_long'],
+                                featureidkey='properties.GEOID',
+                                color=df_combo['omegadf_a1b1c1d1e1f1g1'],
+                                opacity=0.7,
+                                color_continuous_scale='RdYlGn_r')
+fig4.update_layout(mapbox_style="open-street-map",
+            mapbox_zoom=10.5,
+            mapbox_center=pikes_place)
 
 #here we make the graph a function called serve_layout(), which then allows us to have it run every time the page is loaded (unlike the normal which would just be app.layer = GRAPH CONTENT, which would run every time the app was started on the server (aka, once))
 def serve_layout():
@@ -141,7 +150,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=0
+                            value=1
                         )], className='col-6')], className='multi-col'),
                 html.Div([
                     html.Div([
@@ -152,7 +161,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=0
+                            value=1
                         )], className='col-6')], className='multi-col'),
                 html.Div([
                     html.Div([
@@ -163,7 +172,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=0
+                            value=1
                         )], className='col-6')], className='multi-col'),
                 html.Div([
                     html.Div([
@@ -174,7 +183,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=0
+                            value=1
                         )], className='col-6')], className='multi-col'),
                 html.Div([
                     html.Div([
@@ -185,7 +194,7 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=0
+                            value=1
                         )], className='col-6')], className='multi-col'),
                 html.Div([
                     html.Div([
@@ -207,15 +216,15 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=0.5
+                            value=1
                         )], className='col-6')], className='multi-col'),
             ], className='container'),
             html.H1('Change in displacement pressure map'),
             html.P(
                 'This map compares displacement pressure (omega) in each census tract.  Red areas had INCREASING displacement pressure between 2013 and 2018. Green had decreasing.',
                 className='description'),
-            dcc.Graph(
-                id='block_grp_map'
+            dcc.Graph(figure=fig4,
+                id='block_grp_map-bak'
             ),
             html.H1('Change in displacement pressure'),
             html.P('This scatterplot compares displacement pressure (what we are calling omega) in the census tract groups in the wealthier northern neighborhoods of Seattle (Wallingford) and the poorer Southeastern neighborhoods (Rainier Beach).  Tracts exactly along the dashed 1:1 line had no change in pressure from 2013-18. Tracts above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018.', className='description'),
@@ -275,28 +284,10 @@ def get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slid
      Input('golf_slider','value')])
 # updates graph based on user input
 def update_graph(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
-    print(alpha_slider)
     key = get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)
-    file_name = os.path.join(r'C:\Users\tibur\Dropbox\EPCW\Projects\housing_equity\sandbox-singlepage\data\network', 'network_{key}.json'.format(key=key))
+    file_name = ROOTBEER + 'data/network/network_{key}.json'.format(key=key)
     figure = read_json(file_name)
-    #figure = read_json(r'C:\Users\tibur\Dropbox\EPCW\Projects\housing_equity\sandbox-singlepage\data\network\network_a0b0c0d0e0f5g5.json')
     return figure
-
-    #
-    # return {
-    #     'data': [
-    #         edge_trace2018[get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)],
-    #         node_trace2018[get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)]
-    #             ],
-    #     'layout': go.Layout(
-    #             title='',
-    #             titlefont=dict(size=16),
-    #             showlegend=False,
-    #             hovermode='closest',
-    #             margin=dict(b=20,l=5,r=5,t=40),
-    #             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-    #             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
-    # }
 
 @app.callback(
     Output('block_grp_map', 'figure'),
@@ -310,17 +301,20 @@ def update_graph(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_
 # updates graph based on user input
 def update_change_map(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
     key = get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)
-    fig4 = px.choropleth_mapbox(df_combo,
-                                geojson=tracts,
-                                locations=df_combo['GEOID_long'],
-                                featureidkey='properties.GEOID',
-                                color=df_combo['omegadf_{keys}'.format(keys=key)],
-                                opacity=0.7,
-                                color_continuous_scale='RdYlGn_r')
-    fig4.update_layout(mapbox_style="open-street-map",
-            mapbox_zoom=10.5,
-            mapbox_center=pikes_place)
+    file_name = ROOTBEER + 'data/maps/fig4_{key}.json'.format(key=key)
+    fig4 = read_json(file_name)
     return fig4
+    # fig4 = px.choropleth_mapbox(df_combo,
+    #                             geojson=tracts,
+    #                             locations=df_combo['GEOID_long'],
+    #                             featureidkey='properties.GEOID',
+    #                             color=df_combo['omegadf_{keys}'.format(keys=key)],
+    #                             opacity=0.7,
+    #                             color_continuous_scale='RdYlGn_r')
+    # fig4.update_layout(mapbox_style="open-street-map",
+    #         mapbox_zoom=10.5,
+    #         mapbox_center=pikes_place)
+    # return fig4
 
 @app.callback(
     Output('displacement_scatter', 'figure'),
@@ -335,42 +329,49 @@ def update_change_map(alpha_slider, bravo_slider, charlie_slider, delta_slider, 
 #updates scatterplot
 def update_scatter_plot(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
     key = get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)
-    fig3 = px.scatter(df_combo,
-                      x='omega13df_{keys}'.format(keys=key),
-                      y='omega18df_{keys}'.format(keys=key),
-                      color='neighborhood',
-                      text='GEOID'
-                      )
-    fig3.update_yaxes(
-        range=[-1.5, 1.5]
-    )
-    fig3.update_xaxes(
-        range=[-1.5, 1.5]
-    )
-    fig3.update_traces(textposition="middle right")
-
-    # can set axis ratios, as well
-    # fig.update_yaxes(
-    #    scaleanchor = "x",
-    #    scaleratio = 1,
-    #  )
-    #
-
-    fig3.update_traces(marker=dict(size=20))
-    # Add Diagonal Line so you can see movement btw 2013 and 2018
-    fig3.add_shape(
-        type="line",
-        x0=-1,
-        y0=-1,
-        x1=1,
-        y1=1,
-        line=dict(
-            color="MediumPurple",
-            width=4,
-            dash="dash",
-        )
-    )
+    file_name = ROOTBEER + 'data/maps/fig3_{key}.json'.format(key=key)
+    fig3 = read_json(file_name)
     return fig3
+    # fig3 = px.scatter(df_combo,
+    #                   x='omega13df_{keys}'.format(keys=key),
+    #                   y='omega18df_{keys}'.format(keys=key),
+    #                   color='neighborhood',
+    #                   text='GEOID'
+    #                   )
+    # fig3.update_yaxes(
+    #     scaleanchor = "x",
+    #     scaleratio = 1,
+    #   )
+    # #  update_yaxes(
+    # #    range=[-1.5, 1.5]
+    # #)
+    # #fig3.update_xaxes(
+    # #    range=[-1.5, 1.5]
+    # #)
+    # fig3.update_traces(textposition="middle right")
+    #
+    # # can set axis ratios, as well
+    # # fig.update_yaxes(
+    # #    scaleanchor = "x",
+    # #    scaleratio = 1,
+    # #  )
+    # #
+    #
+    # fig3.update_traces(marker=dict(size=20))
+    # # Add Diagonal Line so you can see movement btw 2013 and 2018
+    # fig3.add_shape(
+    #     type="line",
+    #     x0=-5,
+    #     y0=-5,
+    #     x1=5,
+    #     y1=5,
+    #     line=dict(
+    #         color="MediumPurple",
+    #         width=4,
+    #         dash="dash",
+    #     )
+    # )
+    # return fig3
 
 @app.callback([
     Output('displacement_2013', 'figure'),
@@ -386,27 +387,33 @@ def update_scatter_plot(alpha_slider, bravo_slider, charlie_slider, delta_slider
 # updates graph based on user input
 def update_displacement_maps(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
     key = get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)
-    fig5 = px.choropleth_mapbox(df_combo,
-                                geojson=tracts,
-                                locations=df_combo['GEOID_long'],
-                                featureidkey='properties.GEOID',
-                                color=df_combo['omega13df_{keys}'.format(keys=key)],
-                                opacity=0.7,
-                                color_continuous_scale='RdYlGn_r')
-    fig5.update_layout(mapbox_style="open-street-map",
-                       mapbox_zoom=10.5,
-                       mapbox_center=pikes_place)
-    fig6 = px.choropleth_mapbox(df_combo,
-                                geojson=tracts,
-                                locations=df_combo['GEOID_long'],
-                                featureidkey='properties.GEOID',
-                                color=df_combo['omega18df_{keys}'.format(keys=key)],
-                                opacity=0.7,
-                                color_continuous_scale='RdYlGn_r')
-    fig6.update_layout(mapbox_style="open-street-map",
-                       mapbox_zoom=10.5,
-                       mapbox_center=pikes_place)
+    file_name = ROOTBEER + 'data/maps/fig5_{key}.json'.format(key=key)
+    fig5 = read_json(file_name)
+    file_name = ROOTBEER + 'data/maps/fig6_{key}.json'.format(key=key)
+    fig6 = read_json(file_name)
     return fig5, fig6
+
+    # fig5 = px.choropleth_mapbox(df_combo,
+    #                             geojson=tracts,
+    #                             locations=df_combo['GEOID_long'],
+    #                             featureidkey='properties.GEOID',
+    #                             color=df_combo['omega13df_{keys}'.format(keys=key)],
+    #                             opacity=0.7,
+    #                             color_continuous_scale='RdYlGn_r')
+    # fig5.update_layout(mapbox_style="open-street-map",
+    #                    mapbox_zoom=10.5,
+    #                    mapbox_center=pikes_place)
+    # fig6 = px.choropleth_mapbox(df_combo,
+    #                             geojson=tracts,
+    #                             locations=df_combo['GEOID_long'],
+    #                             featureidkey='properties.GEOID',
+    #                             color=df_combo['omega18df_{keys}'.format(keys=key)],
+    #                             opacity=0.7,
+    #                             color_continuous_scale='RdYlGn_r')
+    # fig6.update_layout(mapbox_style="open-street-map",
+    #                    mapbox_zoom=10.5,
+    #                    mapbox_center=pikes_place)
+    # return fig5, fig6
 
 #this calls the serve_layout function to run on app load.
 app.layout = serve_layout
