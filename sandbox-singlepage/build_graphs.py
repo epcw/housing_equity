@@ -8,6 +8,7 @@ import json
 import csv
 import itertools
 import numpy
+import os
 
 # set root directory for data files
 # ROOTBEER = '/home/ubuntu/housing_equity/sandbox-singlepage/' #production
@@ -132,7 +133,7 @@ def normalize(x):
     return z
 
 slider_values_list = [symbol for symbol in slider_symbols_list]
-'''
+
 # NETWORK VERSIONS
 # 2013 + change version
 print ('calculating network 2013 v 2018 dfs')
@@ -183,7 +184,7 @@ for symbols in slider_symbols_list:
         (values_dict['golf'] *gdf.median_housing_age_change_delta_2018)
         )
     )
-'''
+
 df_new = df_combo[['GEOID','GEOID_long','COUNTY','TRACT_NUM','neighborhood']]
 # MAP VERSIONS
 # combo
@@ -230,9 +231,9 @@ df_new_filename = ROOTBEER + 'data/df_combo.csv'
 df_new.to_csv(df_new_filename, index = False, quotechar='"',quoting=csv.QUOTE_ALL)
 
 slider_keys = [leppard(symbols) for symbols in slider_symbols_list]
-'''
+
 # PLOT
-node_list = list(set(df_combo['GEOID']))
+node_list = list(set(df_new['GEOID']))
 
 graph_list = {}
 print('creating graph objects')
@@ -261,18 +262,6 @@ forceatlas2 = ForceAtlas2(
     # Log
     verbose=False)
 
-print('Adding nodes to network')
-for i in node_list:
-    for graph in graph_list:
-        graph_list[graph].add_node(i)
-
-print('building network edges')
-# Build the Edge list for the network graph for 2013
-for i, row in gdf_combo.iterrows():
-    for graph in graph_list:
-        key = str(graph).lstrip('G2018_')
-        graph_list[graph].add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_{key}'.format(key=key)])])
-'''
 '''
 #CACHE-USING VERSION
 @cache.memoize(timeout=TIMEOUT)
@@ -327,23 +316,25 @@ for n, p in pos2018_zero().items():
     G2018_zero.nodes[n]['pos'] = p
 
 '''
-'''
 # NON-CACHE-USING VERSION
-print('applying forceatlas2 algorithm to netowrk')
 for graph in graph_list:
-    pos = forceatlas2.forceatlas2_networkx_layout(graph_list[graph], pos = None, iterations = 1000)
-    for n,p in pos.items():
-        graph_list[graph].nodes[n]['pos'] = p
+    filename = ROOTBEER + 'data/json/{key}.json'.format(key=graph)
+    if not os.path.exists(filename):
+        print('Adding nodes to network')
+        for i in node_list:
+            graph_list[graph].add_node(i)
+        print('building network edges')
+        # Build the Edge list for the network graph for 2013
+        for i, row in gdf_combo.iterrows():
+            key = str(graph).lstrip('G2018_')
+            graph_list[graph].add_weighted_edges_from([(row['GEOID_a'], row['GEOID_b'], row['omega18_{key}'.format(key=key)])])
+        print('applying forceatlas2 algorithm to netowrk')
+        pos = forceatlas2.forceatlas2_networkx_layout(graph_list[graph], pos = None, iterations = 1000)
+        for n,p in pos.items():
+            graph_list[graph].nodes[n]['pos'] = p
 
-print('exporting networks to json files')
-# export to json
-json_dict = {}
-for graph in graph_list:
-    json_dict[str(graph)] = json_graph.node_link_data(graph_list[graph])
-  #  json_dict['G2018_{key}'] = json_graph.node_link_data(G2018_{key}).format(key=key)
-
-for name, value in json_dict.items():
-    filename = ROOTBEER + 'data/json/' + name + '.json'
-    with open(filename, 'w') as outfile:
-        json.dump(value, outfile)
-'''
+        print('exporting networks to json files')
+        # export to json
+        # test_list.append(str(graph))
+        with open(filename, 'w') as outfile:
+            json.dump(json_graph.node_link_data(graph_list[graph]), outfile)

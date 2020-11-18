@@ -14,6 +14,7 @@ import itertools
 ROOTBEER = '' #local
 
 network_dir = os.path.join(ROOTBEER + 'data/network/')
+network_missing_dir = os.path.join(ROOTBEER + 'data/network-missing/')
 maps_dir = os.path.join(ROOTBEER + 'data/maps/')
 
 #set a map center (for maps only, obviously)
@@ -37,7 +38,7 @@ slider_keys = [leppard(slider_values) for slider_values in slider_values_list]
 
 #if 'a0b0c0d0e0f0g0' in slider_keys:
 #    slider_keys.remove('a0b0c0d0e0f0g0')
-
+'''
 for slider in slider_keys:
     print('exporting maps for ' + slider)
     map_file3_name = os.path.join(maps_dir, 'fig3_{key}.json'.format(key=slider))
@@ -158,74 +159,76 @@ colors = df_combo['neighborhood'].map(colorsIndex)
 print('adding nodes and edges to graphs')
 for graph_name in graphs_dict:
     key = str(graph_name).lstrip('G2018_')
-    print('creating graph objects for ' + graph_name)
-    node_trace2018 = go.Scatter(
-        x=[],
-        y=[],
-        mode='markers+text',  # make markers+text to show labels
-        text=[],
-        hoverinfo='text',
-        customdata=df_combo['GEOID'],
-        marker=dict(
-            showscale=False,
-            colorscale='YlGnBu',
-            reversescale=False,
-            color=[],
-            size=20,
-            opacity=0.8,
-            colorbar=dict(
-                thickness=10,
-                title='COLOR GROUP BY CENSUS TRACT NUMBER',
-                xanchor='left',
-                titleside='right'
+    network_file_name = os.path.join(network_dir, 'network_{key}.json'.format(key=key))
+    network_missing_file_name = os.path.join(network_missing_dir, 'network_{key}.json'.format(key=key))
+    if not os.path.exists(network_file_name):
+        print('creating graph objects for ' + graph_name)
+        node_trace2018 = go.Scatter(
+            x=[],
+            y=[],
+            mode='markers+text',  # make markers+text to show labels
+            text=[],
+            hoverinfo='text',
+            customdata=df_combo['GEOID'],
+            marker=dict(
+                showscale=False,
+                colorscale='YlGnBu',
+                reversescale=False,
+                color=[],
+                size=20,
+                opacity=0.8,
+                colorbar=dict(
+                    thickness=10,
+                    title='COLOR GROUP BY CENSUS TRACT NUMBER',
+                    xanchor='left',
+                    titleside='right'
+                ),
+                line=dict(width=0)
             ),
-            line=dict(width=0)
-        ),
-        showlegend=True,
-        marker_line_width=1
-    )
-    edge_trace2018 = go.Scatter(
-        x=[],
-        y=[],
-        line=dict(width=1, color='#c6c6c6'),
-        hoverinfo='text',
-        mode='lines'
-    )
-    print('building edges for ' + graph_name)
-    for edge in graphs_dict[graph_name].edges():
-        x0, y0 = graphs_dict[graph_name].nodes[edge[0]]['pos']
-        x1, y1 = graphs_dict[graph_name].nodes[edge[1]]['pos']
-        edge_trace2018['x'] += tuple([x0, x1, None])
-        edge_trace2018['y'] += tuple([y0, y1, None])
+            showlegend=True,
+            marker_line_width=1
+        )
+        edge_trace2018 = go.Scatter(
+            x=[],
+            y=[],
+            line=dict(width=1, color='#c6c6c6'),
+            hoverinfo='text',
+            mode='lines'
+        )
+        print('building edges for ' + graph_name)
+        for edge in graphs_dict[graph_name].edges():
+            x0, y0 = graphs_dict[graph_name].nodes[edge[0]]['pos']
+            x1, y1 = graphs_dict[graph_name].nodes[edge[1]]['pos']
+            edge_trace2018['x'] += tuple([x0, x1, None])
+            edge_trace2018['y'] += tuple([y0, y1, None])
 
-    print('building nodes for ' + graph_name)
-    for node in graphs_dict[graph_name].nodes():
-        x, y = graphs_dict[graph_name].nodes[node]['pos']
-        print(graph_name + ' ' + node + ' x')
-        node_trace2018['x'] += tuple([x])
-        print(graph_name + ' ' + node + ' y')
-        node_trace2018['y'] += tuple([y])
-        print(graph_name + ' ' + node + ' text')
-        node_trace2018.text = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  # tract version
-        print(graph_name + ' ' + node + ' markers')
-        node_trace2018.marker.color = colors
-        node_trace2018.marker.size = (1.5 + df_combo.omega18) * 20
+        print('building nodes for ' + graph_name)
+        for node in graphs_dict[graph_name].nodes():
+            x, y = graphs_dict[graph_name].nodes[node]['pos']
+            print(graph_name + ' ' + node + ' x')
+            node_trace2018['x'] += tuple([x])
+            print(graph_name + ' ' + node + ' y')
+            node_trace2018['y'] += tuple([y])
+            print(graph_name + ' ' + node + ' text')
+            node_trace2018.text = df_combo['neighborhood'] + '<br>' + df_combo["TRACT_NUM"]  # tract version
+            print(graph_name + ' ' + node + ' markers')
+            node_trace2018.marker.color = colors
+            # node_trace2018.marker.size = (1.5 + df_combo.omega18) * 20
 
-#    node_adjacencies = []
-#   for node, adjacencies in enumerate(graphs_dict[graph_name].items().adjacency()):
-#        node_adjacencies.append(len(adjacencies[1]))
+    #    node_adjacencies = []
+    #   for node, adjacencies in enumerate(graphs_dict[graph_name].items().adjacency()):
+    #        node_adjacencies.append(len(adjacencies[1]))
 
-    fig = go.Figure(data=[edge_trace2018,node_trace2018],
-                    layout=go.Layout(
-                        title='',
-                        titlefont=dict(size=16),
-                        showlegend=False,
-                        hovermode='closest',
-                        margin=dict(b=20, l=5, r=5, t=40),
-                        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
-                    )
+        fig = go.Figure(data=[edge_trace2018,node_trace2018],
+                        layout=go.Layout(
+                            title='',
+                            titlefont=dict(size=16),
+                            showlegend=False,
+                            hovermode='closest',
+                            margin=dict(b=20, l=5, r=5, t=40),
+                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
+                        )
 
-    with open(os.path.join(network_dir, 'network_{key}.json'.format(key=key)), 'w') as network_file:
-        fig.write_json(network_file)
-'''
+        with open(network_missing_file_name, 'w') as network_file:
+            fig.write_json(network_file)

@@ -128,8 +128,11 @@ def serve_layout():
                           )
             ]),
             html.Div([
-                html.P(['NOTE: ONLY THE RACIAL MINORITY and 25TH %ILE RENT sliders currently function, but, when working, the rest will allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
-                ]),
+                html.P([
+                           'These sliders allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
+                           ]),
+                html.P([
+                    'NOTE: This is a pilot server, so it will take a few seconds for the map to load after tweaking the slider settings.'
                 html.Div([
                     html.Div([
                         html.H4('Racial Minority Population Percentage')], className='col-4'),
