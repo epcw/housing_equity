@@ -1,5 +1,9 @@
 #charlie_wrapper {
-display:none;}
+display:none;
+}
+#alpha_slider, #bravo_slider, #charlie_slider, #delta_slider, #echo_slider, #foxtrot_slider, #golf_slider, #hotel_slider {
+    padding: 20px 25px 15px!important;
+}
 body h1, #subheading,.gtitle {
   font-family: 'Barlow', sans-serif;
   text-align:center;
