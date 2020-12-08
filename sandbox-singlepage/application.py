@@ -104,8 +104,9 @@ def serve_layout():
         html.Div([
             html.Div([
                 html.H1('Displacement pressure in Seattle, 2010 vs 2018'),
-                html.P('These maps compare the displacement Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure.',
-                       className='description graph_title'),
+                html.P(
+                    'These maps compare the displacement Pressure (omega) in Seattle from 2010-2018. Red areas have HIGH displacement pressure; green have LOW displacement pressure.',
+                    className='description graph_title'),
                 html.Div([
                     html.Div([
                         html.H2(className='graph_title', children='2013'),
@@ -119,20 +120,27 @@ def serve_layout():
                         )], className='col-6')], className='multi-col'),
             ], className='container'),
             html.H1('Network Model of displacement Pressure'),
-            html.P("Our pilot network model compares equitable access to housing and displacement pressure in two Seattle neighborhoods in 2018.  Current evaluation tools, such as the City of Seattle's Displacement Risk Index are statistics computed over geographic regions and presented as map overlays. Geographic regions are related by adjacency. In contrast, the network model defines the strength of relationships between groups of people and revealing communities among these groups. Groups in the network model are related when they share access to resources. The network shows relationships between groups of people, not properties of a geography.", className='description'),
-            html.P('In the network model below, tracts that are closer together are more similar than those further apart.  One can best think of this network as a comparison of SIMILARITY.  Nodes closer together have more similar demographic properties than those further apart.', className='description'),
-            html.P('Edge weights are determined by racial minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income, and median monthly housing cost.', className='description'),
+            html.P(
+                "Our pilot network model compares equitable access to housing and displacement pressure in two Seattle neighborhoods in 2018.  Current evaluation tools, such as the City of Seattle's Displacement Risk Index are statistics computed over geographic regions and presented as map overlays. Geographic regions are related by adjacency. In contrast, the network model defines the strength of relationships between groups of people and revealing communities among these groups. Groups in the network model are related when they share access to resources. The network shows relationships between groups of people, not properties of a geography.",
+                className='description'),
+            html.P(
+                'In the network model below, tracts that are closer together are more similar than those further apart.  One can best think of this network as a comparison of SIMILARITY.  Nodes closer together have more similar demographic properties than those further apart.',
+                className='description'),
+            html.P(
+                'Edge weights are determined by racial minority population percentage, by lowest quartile housing cost, housing tenancy, affordable housing stock, and housing cost as a percentage of household income, and median monthly housing cost.',
+                className='description'),
             html.Div([
                 dcc.Graph(
-                          id='housing_networkx18',
-                          )
+                    id='housing_networkx18',
+                )
             ]),
             html.Div([
                 html.P([
-                           'These sliders allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
-                           ]),
+                    'These sliders allow a user to tweak the factors used to measure displacement pressure.  Think that the cost of housing is more or less important relative to the availability of low-cost units or the racial breakdown of a neighborhood?  Tweak the weights and see how it affects the model.'
+                ]),
                 html.P([
                     'NOTE: This is a pilot server, so it will take a few seconds for the map to load after tweaking the slider settings.'
+                ]),
                 html.Div([
                     html.Div([
                         html.H4('Racial Minority Population Percentage')], className='col-4'),
@@ -219,20 +227,22 @@ def serve_layout():
                 id='block_grp_map'
             ),
             html.H1('Change in displacement pressure'),
-            html.P('This scatterplot compares displacement pressure (what we are calling omega) in the census tract groups in the wealthier northern neighborhoods of Seattle (Wallingford) and the poorer Southeastern neighborhoods (Rainier Beach).  Tracts exactly along the dashed 1:1 line had no change in pressure from 2013-18. Tracts above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018.', className='description'),
+            html.P(
+                'This scatterplot compares displacement pressure (what we are calling omega) in the census tract groups in the wealthier northern neighborhoods of Seattle (Wallingford) and the poorer Southeastern neighborhoods (Rainier Beach).  Tracts exactly along the dashed 1:1 line had no change in pressure from 2013-18. Tracts above the line had a higher displacement pressure in 2018; those below had a lower pressure in 2018.',
+                className='description'),
             dcc.Graph(
-                      id='displacement_scatter'
-                      ),
-#             html.H1('Groupings'),
-#             html.H4('Census Tracts', className='description'),
-#            html.P('Group 0 - size: ' + str(grp0_length), className='description'),
-#            generate_table(grp0),
-#            html.P('Group 1 - size: ' + str(grp1_length), className='description'),
-#            generate_table(grp1),
-#            html.P('Group 2 - size: ' + str(grp2_length), className='description'),
-#            generate_table(grp2),
-#            html.P('Group 3 - size: ' + str(grp3_length), className='description'),
-#            generate_table(grp3)
+                id='displacement_scatter'
+            ),
+            #             html.H1('Groupings'),
+            #             html.H4('Census Tracts', className='description'),
+            #            html.P('Group 0 - size: ' + str(grp0_length), className='description'),
+            #            generate_table(grp0),
+            #            html.P('Group 1 - size: ' + str(grp1_length), className='description'),
+            #            generate_table(grp1),
+            #            html.P('Group 2 - size: ' + str(grp2_length), className='description'),
+            #            generate_table(grp2),
+            #            html.P('Group 3 - size: ' + str(grp3_length), className='description'),
+            #            generate_table(grp3)
         ], className='container')
     ], id='sandbox')
 
@@ -292,20 +302,26 @@ def update_graph(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_
 # updates graph based on user input
 def update_change_map(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider):
     key = get_keys(alpha_slider, bravo_slider, charlie_slider, delta_slider, echo_slider, foxtrot_slider, golf_slider)
-    # file_name = ROOTBEER + 'data/maps/fig4_{key}.json'.format(key=key)
-    # fig4 = read_json(file_name)
-    # return fig4
-    fig4 = px.choropleth_mapbox(df_combo,
-                                geojson=tracts,
-                                locations=df_combo['GEOID_long'],
-                                featureidkey='properties.GEOID',
-                                color=df_combo['omegadf_{keys}'.format(keys=key)],
-                                opacity=0.7,
-                                color_continuous_scale='RdYlGn_r')
-    fig4.update_layout(mapbox_style="open-street-map",
-            mapbox_zoom=10.5,
-            mapbox_center=pikes_place)
+    file_name = ROOTBEER + 'data/maps/fig4_{key}.json'.format(key=key)
+    fig4 = read_json(file_name)
     return fig4
+    # zmin = df_combo['omegadf_{keys}'.format(keys=key)].quantile(0.05)
+    # zmax = df_combo['omegadf_{keys}'.format(keys=key)].quantile(0.95)
+    # fig4 = px.choropleth_mapbox(df_combo,
+    #                             geojson=tracts,
+    #                             locations=df_combo['GEOID_long'],
+    #                             featureidkey='properties.GEOID',
+    #                             color=df_combo['omegadf_{keys}'.format(keys=key)],
+    #                             opacity=0.7,
+    #                             color_continuous_scale='RdYlGn_r',
+    #                             range_color=(zmin, zmax),
+    #                             color_continuous_midpoint=0
+    #                             )
+    # fig4.update_layout(mapbox_style="open-street-map",
+    #         mapbox_zoom=10.5,
+    #         mapbox_center=pikes_place
+    #                    )
+    # return fig4
 
 @app.callback(
     Output('displacement_scatter', 'figure'),
@@ -323,17 +339,22 @@ def update_scatter_plot(alpha_slider, bravo_slider, charlie_slider, delta_slider
     fig3 = read_json(file_name)
     fig3.add_shape(
         type="line",
-        x0=-200,
-        y0=-200,
-        x1=200,
-        y1=200,
+        x0=-100,
+        y0=-100,
+        x1=100,
+        y1=100,
         line=dict(
             color="MediumPurple",
             width=4,
             dash="dash",
         )
     )
-
+    fig3.update_yaxes(
+        range=[-100,100]
+    )
+    fig3.update_xaxes(
+        range=[-100,100]
+    )
     return fig3
     # fig3 = px.scatter(df_combo,
     #                   x='omega13df_{keys}'.format(keys=key),

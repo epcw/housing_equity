@@ -38,7 +38,7 @@ slider_keys = [leppard(slider_values) for slider_values in slider_values_list]
 
 #if 'a0b0c0d0e0f0g0' in slider_keys:
 #    slider_keys.remove('a0b0c0d0e0f0g0')
-'''
+
 for slider in slider_keys:
     print('exporting maps for ' + slider)
     map_file3_name = os.path.join(maps_dir, 'fig3_{key}.json'.format(key=slider))
@@ -87,13 +87,18 @@ for slider in slider_keys:
 
     map_file4_name = os.path.join(maps_dir, 'fig4_{key}.json'.format(key=slider))
     if not os.path.exists(map_file4_name):
+        zmin = df_combo['omegadf_{key}'.format(key=slider)].quantile(0.05)
+        zmax = df_combo['omegadf_{key}'.format(key=slider)].quantile(0.95)
         fig4 = px.choropleth_mapbox(df_combo,
                                     geojson=tracts,
                                     locations=df_combo['GEOID_long'],
                                     featureidkey='properties.GEOID',
                                     color=df_combo['omegadf_{key}'.format(key=slider)],
                                     opacity=0.7,
-                                    color_continuous_scale='RdYlGn_r')
+                                    color_continuous_scale='RdYlGn_r',
+                                    range_color=(zmin, zmax),
+                                    color_continuous_midpoint=0
+                                    )
         fig4.update_layout(mapbox_style="open-street-map",
                            mapbox_zoom=10.5,
                            mapbox_center=pikes_place)
@@ -102,13 +107,18 @@ for slider in slider_keys:
 
     map_file5_name = os.path.join(maps_dir, 'fig5_{key}.json'.format(key=slider)) 
     if not os.path.exists(map_file5_name):
+        zmin = df_combo['omega13df_{key}'.format(key=slider)].quantile(0.05)
+        zmax = df_combo['omega13df_{key}'.format(key=slider)].quantile(0.95)
         fig5 = px.choropleth_mapbox(df_combo,
                                     geojson=tracts,
                                     locations=df_combo['GEOID_long'],
                                     featureidkey='properties.GEOID',
                                     color=df_combo['omega13df_{key}'.format(key=slider)],
                                     opacity=0.7,
-                                    color_continuous_scale='RdYlGn_r')
+                                    color_continuous_scale='RdYlGn_r',
+                                    range_color=(zmin, zmax),
+                                    color_continuous_midpoint=0
+                                    )
         fig5.update_layout(mapbox_style="open-street-map",
                            mapbox_zoom=10.5,
                            mapbox_center=pikes_place)
@@ -117,20 +127,24 @@ for slider in slider_keys:
 
     map_file6_name = os.path.join(maps_dir, 'fig6_{key}.json'.format(key=slider)) 
     if not os.path.exists(map_file6_name):
+        zmin = df_combo['omega18df_{key}'.format(key=slider)].quantile(0.05)
+        zmax = df_combo['omega18df_{key}'.format(key=slider)].quantile(0.95)
         fig6 = px.choropleth_mapbox(df_combo,
                                     geojson=tracts,
                                     locations=df_combo['GEOID_long'],
                                     featureidkey='properties.GEOID',
                                     color=df_combo['omega18df_{key}'.format(key=slider)],
                                     opacity=0.7,
-                                    color_continuous_scale='RdYlGn_r')
+                                    color_continuous_scale='RdYlGn_r',
+                                    range_color=(zmin, zmax),
+                                    color_continuous_midpoint=0
+                                    )
         fig6.update_layout(mapbox_style="open-street-map",
                            mapbox_zoom=10.5,
                            mapbox_center=pikes_place)
 
         with open(map_file6_name, 'w') as map_file6:
             fig6.write_json(map_file6)
-
 
 '''
 #set directory for graph_name jsons
@@ -151,7 +165,6 @@ print('loading graph files')
 #from build_network import get_nodes, get_edges
 for graph_name in graphs_dict:
     key = str(graph_name).lstrip('G2018_')
-
 
 colorsIndex = {'wallingford':'#ef553b','rainier_beach':'#636efa'}  #manually assign colors
 colors = df_combo['neighborhood'].map(colorsIndex)
@@ -232,3 +245,4 @@ for graph_name in graphs_dict:
 
         with open(network_missing_file_name, 'w') as network_file:
             fig.write_json(network_file)
+'''
