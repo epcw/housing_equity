@@ -172,8 +172,8 @@ def serve_layout():
                             min=0,
                             max=1,
                             step=0.5,
-                            value=1
-                        )], className='col-6')], className='multi-col'),
+                            value=0
+                        )], className='col-6')], className='multi-col', id="charlie_wrapper"),
                 html.Div([
                     html.Div([
                         html.H4('Rent as a percentage of income')], className='col-4'),
