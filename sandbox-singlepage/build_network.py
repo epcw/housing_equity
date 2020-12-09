@@ -96,7 +96,8 @@ for slider in slider_keys:
                                     color=df_combo['omegadf_{key}'.format(key=slider)],
                                     opacity=0.7,
                                     color_continuous_scale='RdYlGn_r',
-                                    range_color=(zmin, zmax),
+                                    # range_color=(zmin, zmax),
+                                    range_color=(-40, 40),
                                     color_continuous_midpoint=0
                                     )
         fig4.update_layout(mapbox_style="open-street-map",
@@ -116,7 +117,8 @@ for slider in slider_keys:
                                     color=df_combo['omega13df_{key}'.format(key=slider)],
                                     opacity=0.7,
                                     color_continuous_scale='RdYlGn_r',
-                                    range_color=(zmin, zmax),
+                                    # range_color=(zmin, zmax),
+                                    range_color=(-40, 40),
                                     color_continuous_midpoint=0
                                     )
         fig5.update_layout(mapbox_style="open-street-map",
@@ -136,7 +138,8 @@ for slider in slider_keys:
                                     color=df_combo['omega18df_{key}'.format(key=slider)],
                                     opacity=0.7,
                                     color_continuous_scale='RdYlGn_r',
-                                    range_color=(zmin, zmax),
+                                    # range_color=(zmin, zmax),
+                                    range_color=(-40, 40),
                                     color_continuous_midpoint=0
                                     )
         fig6.update_layout(mapbox_style="open-street-map",

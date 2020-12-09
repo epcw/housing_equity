@@ -339,10 +339,10 @@ def update_scatter_plot(alpha_slider, bravo_slider, charlie_slider, delta_slider
     fig3 = read_json(file_name)
     fig3.add_shape(
         type="line",
-        x0=-100,
-        y0=-100,
-        x1=100,
-        y1=100,
+        x0=-70,
+        y0=-70,
+        x1=70,
+        y1=70,
         line=dict(
             color="MediumPurple",
             width=4,
@@ -350,10 +350,10 @@ def update_scatter_plot(alpha_slider, bravo_slider, charlie_slider, delta_slider
         )
     )
     fig3.update_yaxes(
-        range=[-100,100]
+        range=[-70,70]
     )
     fig3.update_xaxes(
-        range=[-100,100]
+        range=[-70,70]
     )
     return fig3
     # fig3 = px.scatter(df_combo,
