@@ -13,17 +13,13 @@ Richard W. Sharp\
 Patrick W. Zimmerman
 
 ### Use guide (first time, run in this order)
-
-#####Build dataframes from new data (WILL NEED TO SUPPLY NEW RAW DATA in CSV format - OUTPUT IS CSVs)
+##### Build dataframes from new data (WILL NEED TO SUPPLY NEW RAW DATA in CSV format - OUTPUT IS CSVs)
 data_build.sh
-
-#####Build network graph from above dataframes
+##### Build network graph from above dataframes
 build_graphs.py
-
-#####Build maps and other graphs
+##### Build maps and other graphs
 build_network.py
-
-#####Launch dashboard server
+##### Launch dashboard server
 application.py
 
 
