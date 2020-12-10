@@ -11,7 +11,18 @@ Data crunching: Python [Pandas](https://pandas.pydata.org/) with some pre-work i
 ### Principal researchers
 Richard W. Sharp\
 Patrick W. Zimmerman
-cd 
+
+### Use guide (first time, run in this order)
+#####Build dataframes from new data (WILL NEED TO SUPPLY NEW RAW DATA in CSV format - OUTPUT IS CSVs)
+data_build.sh
+#####Build network graph from above dataframes
+build_graphs.py
+#####Build maps and other graphs
+build_network.py
+#####Launch dashboard server
+application.py
+
+
 #### Package requirements (as well as all their dependencies)
 dash\
 Flask-Caching\
@@ -37,4 +48,7 @@ rtree (usually this needs to be installed with 'sudo apt-get install python3-rtr
 |-- sandbox-singlepage - Network model pilot app
 |   |-- assets - Has CSS and javascript files along with favicon\
 |   |-- data - Your datafiles go here (REMOVED FOR SPACE CONSIDERATIONS - the app expects to find .csv files and a geojson for maps)\
-|   |   |-- shapefiles - Exactly what it says on the tin.  These are also used by interactive-maps, but removed to save space
+|   |   |-- shapefiles - Exactly what it says on the tin.  These are also used by interactive-maps, but removed to save space\
+|   |   |-- maps - json files for scatterplot and choropleth maps\
+|   |   |-- json - json files that are an intermediate step in the network build\
+|   |   |-- network - network options for server to swap between

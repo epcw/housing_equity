@@ -87,8 +87,8 @@ for slider in slider_keys:
 
     map_file4_name = os.path.join(maps_dir, 'fig4_{key}.json'.format(key=slider))
     if not os.path.exists(map_file4_name):
-        zmin = df_combo['omegadf_{key}'.format(key=slider)].quantile(0.05)
-        zmax = df_combo['omegadf_{key}'.format(key=slider)].quantile(0.95)
+        # zmin = df_combo['omegadf_{key}'.format(key=slider)].quantile(0.05)
+        # zmax = df_combo['omegadf_{key}'.format(key=slider)].quantile(0.95)
         fig4 = px.choropleth_mapbox(df_combo,
                                     geojson=tracts,
                                     locations=df_combo['GEOID_long'],
@@ -97,7 +97,7 @@ for slider in slider_keys:
                                     opacity=0.7,
                                     color_continuous_scale='RdYlGn_r',
                                     # range_color=(zmin, zmax),
-                                    range_color=(-40, 40),
+                                    range_color=(-20, 20),
                                     color_continuous_midpoint=0
                                     )
         fig4.update_layout(mapbox_style="open-street-map",
@@ -108,8 +108,8 @@ for slider in slider_keys:
 
     map_file5_name = os.path.join(maps_dir, 'fig5_{key}.json'.format(key=slider)) 
     if not os.path.exists(map_file5_name):
-        zmin = df_combo['omega13df_{key}'.format(key=slider)].quantile(0.05)
-        zmax = df_combo['omega13df_{key}'.format(key=slider)].quantile(0.95)
+        # zmin = df_combo['omega13df_{key}'.format(key=slider)].quantile(0.05)
+        # zmax = df_combo['omega13df_{key}'.format(key=slider)].quantile(0.95)
         fig5 = px.choropleth_mapbox(df_combo,
                                     geojson=tracts,
                                     locations=df_combo['GEOID_long'],
@@ -118,7 +118,7 @@ for slider in slider_keys:
                                     opacity=0.7,
                                     color_continuous_scale='RdYlGn_r',
                                     # range_color=(zmin, zmax),
-                                    range_color=(-40, 40),
+                                    range_color=(-20, 20),
                                     color_continuous_midpoint=0
                                     )
         fig5.update_layout(mapbox_style="open-street-map",
@@ -129,8 +129,8 @@ for slider in slider_keys:
 
     map_file6_name = os.path.join(maps_dir, 'fig6_{key}.json'.format(key=slider)) 
     if not os.path.exists(map_file6_name):
-        zmin = df_combo['omega18df_{key}'.format(key=slider)].quantile(0.05)
-        zmax = df_combo['omega18df_{key}'.format(key=slider)].quantile(0.95)
+        # zmin = df_combo['omega18df_{key}'.format(key=slider)].quantile(0.05)
+        # zmax = df_combo['omega18df_{key}'.format(key=slider)].quantile(0.95)
         fig6 = px.choropleth_mapbox(df_combo,
                                     geojson=tracts,
                                     locations=df_combo['GEOID_long'],
@@ -139,7 +139,7 @@ for slider in slider_keys:
                                     opacity=0.7,
                                     color_continuous_scale='RdYlGn_r',
                                     # range_color=(zmin, zmax),
-                                    range_color=(-40, 40),
+                                    range_color=(-20, 20),
                                     color_continuous_midpoint=0
                                     )
         fig6.update_layout(mapbox_style="open-street-map",
