@@ -14,13 +14,13 @@ Patrick W. Zimmerman
 
 ### Use guide (first time, run in this order)
 ##### Build dataframes from new data (WILL NEED TO SUPPLY NEW RAW DATA in CSV format - OUTPUT IS CSVs)
-data_build.sh
+/sandbox-singlepage/data_build.sh
 ##### Build network graph from above dataframes
-build_graphs.py
+/sandbox-singlepage/build_graphs.py
 ##### Build maps and other graphs
-build_network.py
+/sandbox-singlepage/build_network.py
 ##### Launch dashboard server
-application.py
+/sandbox-singlepage/application.py
 
 
 #### Package requirements (as well as all their dependencies)
