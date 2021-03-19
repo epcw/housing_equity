@@ -154,11 +154,11 @@ def update_graph13(data_selection):
             zmin=-50 if data_selection == 'Median Monthly Housing Costs'
                 else(0 if data_selection == 'Non-white Population'
                 else(10000/12 if data_selection == 'Area Median Monthly Income'
-                else .15)),
+                else .2)),
             zmax=2500 if data_selection == 'Median Monthly Housing Costs'
                 else(.7 if data_selection == 'Non-white Population'
-                else(60000/12 if data_selection == 'Area Median Monthly Income'
-                else .6)),
+                else(80000/12 if data_selection == 'Area Median Monthly Income'
+                else .35)),
             colorscale='RdYlGn_r' if data_selection == 'Median Monthly Housing Cost'
             else('RdYlGn' if data_selection == 'Area Median Monthly Income'
             else('RdYlGn' if data_selection == 'Non-white Population'
@@ -194,11 +194,11 @@ def update_graph18(data_selection):
             zmin=-50 if data_selection == 'Median Monthly Housing Costs'
                 else(0 if data_selection == 'Non-white Population'
                 else(10000/12 if data_selection == 'Area Median Monthly Income'
-                else .15)),
+                else .2)),
             zmax=2500 if data_selection == 'Median Monthly Housing Costs'
                 else(.7 if data_selection == 'Non-white Population'
-                else(60000/12 if data_selection == 'Area Median Monthly Income'
-                else .60)),
+                else(80000/12 if data_selection == 'Area Median Monthly Income'
+                else .35)),
             colorscale='RdYlGn_r' if data_selection == 'Median Monthly Housing Cost'
             else('RdYlGn' if data_selection == 'Area Median Monthly Income'
             else('RdYlGn' if data_selection == 'Non-white Population'
