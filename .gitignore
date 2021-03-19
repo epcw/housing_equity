@@ -40,3 +40,6 @@ archive*
 /housing_pct_ami/data/wallingford_df.csv
 /housing_pct_ami/data/wallingford_gdf.csv
 /housing_pct_ami/data/washingtongeo_dist.csv
+/housing_pct_ami/data/housing-costs-and-ami-suppl.csv
+/housing_pct_ami/data/housing_details.csv
+/housing_pct_ami/data/affordable_housing_units-allyears-tract.csv
