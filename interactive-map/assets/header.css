@@ -17,7 +17,7 @@ position: static;
   float: left;
 }
 .c-layout-header .c-brand {
-    margin: 40px 0 37px 0;
+    margin: 15px 0 15px 0!important;
   }
 }
 .c-layout-header .c-navbar > .container-fluid {
@@ -195,4 +195,75 @@ margin-left: -30%;
 .fa {
   font-size:40px;
 }
+}
+
+/* dropdown menu styling */
+
+.dropdown-menu>li>a {
+    color: white!important;
+    background-color: #660066;
+    padding: 0;	
+    font-weight: 300!important;
+	font-size:smaller!important
+}
+@media only screen and (min-width:992px) {
+	.dropdown-menu>li:first-child>a {
+    margin-top: -34px;
+}
+	
+.c-layout-header .c-navbar .c-mega-menu>.nav.navbar-nav>li>.dropdown-menu.c-menu-type-classic {
+    min-width: 150px;
+    width: 150px;
+    border: 1px solid white;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+	.dropdown-menu>li:last-child>a {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+}
+@media only screen and (max-width:991px) {
+	
+.dropdown-menu>li  {
+    border-bottom: 1px solid white!important;
+    color: white!important;
+}
+.c-open .dropdown-toggle, .nav.navbar-nav>li>.c-link{
+border-bottom:none!important;
+	}
+}
+.dropdown-menu {
+    padding: 0px;
+}
+.c-layout-header .c-navbar .c-mega-menu > .nav.navbar-nav > li .dropdown-menu>li>a {
+	padding-left:15px!important;
+}
+.c-layout-header .c-navbar .c-mega-menu.c-mega-menu-dark > .nav.navbar-nav > li .dropdown-menu>li:hover>a {
+    background: #660066!important;
+    color: #ffd140!important;
+}
+
+.c-layout-header .c-navbar .c-mega-menu > .nav.navbar-nav > li .dropdown-submenu > a > .c-arrow, .c-layout-header .c-navbar .c-mega-menu > .nav.navbar-nav > li a.dropdown-toggle>.c-arrow {
+	padding-right:45px!important;
+}
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    list-style: none;
+    font-size: 14px;
+    text-align: left;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    background-clip: padding-box;
 }
